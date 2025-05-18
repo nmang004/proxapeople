@@ -77,6 +77,8 @@ type MeetingFormValues = z.infer<typeof meetingSchema>;
 export default function OneOnOne() {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [isScheduling, setIsScheduling] = useState(false);
+  const [isNotesFormOpen, setIsNotesFormOpen] = useState(false);
+  const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
   
   const { data: meetings, isLoading, error } = useQuery<OneOnOneMeeting[]>({
     queryKey: ['/api/one-on-ones'],
