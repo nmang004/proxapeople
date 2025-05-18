@@ -24,12 +24,15 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "@/lib/types";
 import { Helmet } from 'react-helmet';
+import { EmployeeForm } from "@/components/forms/employee-form";
+import { User } from "@shared/schema";
 
 export default function EmployeeDirectory() {
   const [searchQuery, setSearchQuery] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("all");
+  const [isEmployeeFormOpen, setIsEmployeeFormOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Partial<User> | undefined>(undefined);
   
   const { data: users, isLoading, error } = useQuery<User[]>({
     queryKey: ['/api/users'],
@@ -90,7 +93,10 @@ export default function EmployeeDirectory() {
                 </SelectContent>
               </Select>
               
-              <Button>
+              <Button onClick={() => {
+                setSelectedEmployee(undefined);
+                setIsEmployeeFormOpen(true);
+              }}>
                 <i className="ri-add-line mr-1"></i>
                 Add Employee
               </Button>
@@ -140,7 +146,14 @@ export default function EmployeeDirectory() {
                     <TableCell>{user.managerId ? "Has Manager" : "No Manager"}</TableCell>
                     <TableCell>{user.hireDate ? new Date(user.hireDate).toLocaleDateString() : "N/A"}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          setSelectedEmployee(user);
+                          setIsEmployeeFormOpen(true);
+                        }}
+                      >
                         <i className="ri-eye-line mr-1"></i>
                         View
                       </Button>
@@ -154,6 +167,19 @@ export default function EmployeeDirectory() {
           )}
         </CardContent>
       </Card>
+      {/* Employee Form Dialog */}
+      {isEmployeeFormOpen && (
+        <EmployeeForm
+          open={isEmployeeFormOpen}
+          onClose={() => setIsEmployeeFormOpen(false)}
+          initialData={selectedEmployee}
+          departments={departments}
+          managers={users?.filter(user => user.role === "manager" || user.role === "admin").map(user => ({
+            id: user.id,
+            name: `${user.firstName} ${user.lastName}`
+          })) || []}
+        />
+      )}
     </>
   );
 }
