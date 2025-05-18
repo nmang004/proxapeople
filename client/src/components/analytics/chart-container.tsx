@@ -6,7 +6,7 @@ import {
   CardTitle,
   CardDescription
 } from "@/components/ui/card";
-import { ResponsiveContainer } from "recharts";
+
 
 interface ChartContainerProps {
   title: string;
@@ -23,9 +23,9 @@ export function ChartContainer({ title, description, children, height = 300 }: C
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent style={{ height }}>
-        <ResponsiveContainer width="100%" height="100%">
-          {React.Children.only(children)}
-        </ResponsiveContainer>
+        <div style={{ width: '100%', height: '100%' }}>
+          {children}
+        </div>
       </CardContent>
     </Card>
   );

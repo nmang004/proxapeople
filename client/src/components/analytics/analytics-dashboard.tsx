@@ -23,7 +23,8 @@ import {
   PieChart,
   Pie,
   LineChart,
-  Line
+  Line,
+  ResponsiveContainer
 } from 'recharts';
 
 // Default colors for charts
@@ -148,23 +149,25 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
             description="Team engagement score trend"
             height="320px"
           >
-            <LineChart
-              data={engagementData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="quarter" />
-              <YAxis domain={[0, 10]} />
-              <Tooltip />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="score" 
-                stroke="#8A4FFF" 
-                activeDot={{ r: 8 }}
-                strokeWidth={2}
-              />
-            </LineChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={engagementData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="quarter" />
+                <YAxis domain={[0, 10]} />
+                <Tooltip />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="score" 
+                  stroke="#8A4FFF" 
+                  activeDot={{ r: 8 }}
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </ChartContainer>
           
           <ChartContainer 
@@ -172,22 +175,24 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
             description="Engagement scores by department"
             height="320px"
           >
-            <BarChart
-              data={departmentEngagement}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              layout="vertical"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" domain={[0, 10]} />
-              <YAxis dataKey="name" type="category" width={100} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="score" fill="#8A4FFF">
-                {departmentEngagement.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={departmentEngagement}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                layout="vertical"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" domain={[0, 10]} />
+                <YAxis dataKey="name" type="category" width={100} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="score" fill="#8A4FFF">
+                  {departmentEngagement.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </div>
         
