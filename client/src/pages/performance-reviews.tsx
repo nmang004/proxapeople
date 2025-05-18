@@ -189,7 +189,24 @@ export default function PerformanceReviews() {
                       <TableCell>Nov 15, 2023</TableCell>
                       <TableCell>Ashley Johnson</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="outline" size="sm">View</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedReview({
+                              employeeId: 1,
+                              reviewerId: 5,
+                              reviewCycleId: 1,
+                              dueDate: "2023-11-15",
+                              status: "self_review",
+                              type: "quarterly",
+                              feedback: "Good progress on design system implementation."
+                            });
+                            setIsReviewFormOpen(true);
+                          }}
+                        >
+                          View
+                        </Button>
                       </TableCell>
                     </TableRow>
                     <TableRow>
