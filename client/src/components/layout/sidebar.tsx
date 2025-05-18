@@ -24,7 +24,7 @@ export function Sidebar() {
   const [location] = useLocation();
 
   return (
-    <div className="hidden md:flex md:flex-shrink-0">
+    <div className="flex flex-shrink-0 h-full">
       <div className="flex flex-col w-64 border-r border-neutral-200">
         {/* Logo */}
         <div className="flex items-center justify-center h-16 px-4 bg-white border-b border-neutral-200">

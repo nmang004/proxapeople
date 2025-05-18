@@ -13,11 +13,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Desktop Sidebar */}
-      <Sidebar />
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
       
       {/* Mobile Sidebar */}
       <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-        <SheetContent side="left" className="p-0">
+        <SheetContent side="left" className="p-0 w-[250px] sm:w-[300px]">
           <Sidebar />
         </SheetContent>
       </Sheet>
