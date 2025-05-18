@@ -30,12 +30,17 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PerformanceReview, ReviewStatus } from "@/lib/types";
 import { Helmet } from 'react-helmet';
+import { ReviewForm } from "@/components/forms/review-form";
+import { PerformanceReview, reviewStatusEnum } from "@shared/schema";
+
+type ReviewStatus = typeof reviewStatusEnum.enum;
 
 export default function PerformanceReviews() {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [cycleFilter, setCycleFilter] = useState("current");
+  const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<Partial<PerformanceReview> | undefined>(undefined);
   
   const { data: reviews, isLoading, error } = useQuery<PerformanceReview[]>({
     queryKey: ['/api/reviews'],
@@ -127,7 +132,10 @@ export default function PerformanceReviews() {
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between">
             <CardTitle>Review Management</CardTitle>
-            <Button>
+            <Button onClick={() => {
+              setSelectedReview(undefined);
+              setIsReviewFormOpen(true);
+            }}>
               <i className="ri-add-line mr-1"></i>
               Start New Review
             </Button>
@@ -232,6 +240,28 @@ export default function PerformanceReviews() {
           </Tabs>
         </CardContent>
       </Card>
+      {/* Review Form Dialog */}
+      {isReviewFormOpen && (
+        <ReviewForm
+          open={isReviewFormOpen}
+          onClose={() => setIsReviewFormOpen(false)}
+          initialData={selectedReview}
+          employees={reviews?.map(review => ({
+            id: review.employeeId,
+            name: `Employee ID: ${review.employeeId}`
+          })) || []}
+          reviewers={reviews?.map(review => ({
+            id: review.reviewerId, 
+            name: `Reviewer ID: ${review.reviewerId}`
+          })) || []}
+          reviewCycles={[
+            { id: 1, name: "Q4 2023" },
+            { id: 2, name: "Q1 2024" },
+            { id: 3, name: "Q2 2024" },
+            { id: 4, name: "Q3 2024" }
+          ]}
+        />
+      )}
     </>
   );
 }
