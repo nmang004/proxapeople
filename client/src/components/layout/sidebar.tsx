@@ -1,4 +1,4 @@
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { ProxaLogo } from "@/lib/proxa-logo";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -35,18 +35,18 @@ export function Sidebar() {
         <div className="flex flex-col flex-1 overflow-y-auto bg-white">
           <nav className="flex-1 px-2 py-4 space-y-1">
             {links.map((link) => (
-              <Button 
-                key={link.href} 
-                variant="ghost"
-                onClick={() => window.location.href = link.href}
-                className={cn(
-                  "sidebar-link justify-start w-full", 
-                  location === link.href && "active"
-                )}
-              >
-                <i className={cn(link.icon, "mr-3 text-xl")} />
-                {link.label}
-              </Button>
+              <Link href={link.href} key={link.href}>
+                <Button 
+                  variant="ghost"
+                  className={cn(
+                    "sidebar-link justify-start w-full", 
+                    location === link.href && "active"
+                  )}
+                >
+                  <i className={cn(link.icon, "mr-3 text-xl")} />
+                  {link.label}
+                </Button>
+              </Link>
             ))}
           </nav>
         </div>

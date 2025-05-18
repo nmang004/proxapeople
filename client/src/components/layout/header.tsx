@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ export function Header() {
         type="button" 
         className="md:hidden px-4 border-r border-neutral-200 text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
         aria-label="Open sidebar"
+        onClick={() => setIsMobileSidebarOpen(true)}
       >
         <i className="ri-menu-line text-xl"></i>
       </button>
