@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import SurveyForm from "@/components/forms/survey-form";
 import { 
   Card, 
   CardContent, 
@@ -23,9 +24,15 @@ import { format } from "date-fns";
 
 export default function Surveys() {
   const [activeTab, setActiveTab] = useState("active");
+  const [isSurveyFormOpen, setIsSurveyFormOpen] = useState(false);
+  const [selectedSurvey, setSelectedSurvey] = useState<any>(undefined);
   
   const { data: surveys, isLoading, error } = useQuery<Survey[]>({
     queryKey: ['/api/surveys'],
+  });
+  
+  const { data: templates } = useQuery({
+    queryKey: ['/api/survey-templates'],
   });
 
   const formatDate = (dateString: string) => {
@@ -109,7 +116,10 @@ export default function Surveys() {
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between">
             <CardTitle>Survey Management</CardTitle>
-            <Button>
+            <Button onClick={() => {
+              setSelectedSurvey(undefined);
+              setIsSurveyFormOpen(true);
+            }}>
               <i className="ri-add-line mr-1"></i>
               Create New Survey
             </Button>
@@ -497,6 +507,18 @@ export default function Surveys() {
           </div>
         </CardContent>
       </Card>
+      {/* Survey Form Dialog */}
+      {isSurveyFormOpen && (
+        <SurveyForm
+          open={isSurveyFormOpen}
+          onClose={() => setIsSurveyFormOpen(false)}
+          initialData={selectedSurvey}
+          templates={templates?.map(template => ({
+            id: template.id.toString(),
+            name: template.name
+          }))}
+        />
+      )}
     </>
   );
 }
