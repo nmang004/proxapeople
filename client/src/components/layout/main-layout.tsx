@@ -24,7 +24,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       
       {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Header />
+        <Header onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)} />
         
         {/* Page Content */}
         <main className="flex-1 relative overflow-y-auto focus:outline-none bg-neutral-50 p-4 md:p-6">

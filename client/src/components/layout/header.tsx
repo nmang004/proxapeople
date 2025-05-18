@@ -11,7 +11,11 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 
-export function Header() {
+interface HeaderProps {
+  onOpenMobileSidebar: () => void;
+}
+
+export function Header({ onOpenMobileSidebar }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   
   return (
@@ -20,7 +24,7 @@ export function Header() {
         type="button" 
         className="md:hidden px-4 border-r border-neutral-200 text-neutral-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
         aria-label="Open sidebar"
-        onClick={() => setIsMobileSidebarOpen(true)}
+        onClick={onOpenMobileSidebar}
       >
         <i className="ri-menu-line text-xl"></i>
       </button>
