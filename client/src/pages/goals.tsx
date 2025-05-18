@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { GoalForm } from "@/components/forms/goal-form";
 import { 
   Card, 
   CardContent, 

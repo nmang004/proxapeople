@@ -207,6 +207,23 @@ export default function OneOnOne() {
         </Card>
       </div>
       
+      {/* Add the MeetingNotesForm component */}
+      {isNotesFormOpen && selectedMeetingId && (
+        <MeetingNotesForm
+          open={isNotesFormOpen}
+          onClose={() => setIsNotesFormOpen(false)}
+          meetingId={selectedMeetingId}
+          teamMembers={users?.map(user => ({
+            id: user.id.toString(),
+            name: `${user.firstName} ${user.lastName}`
+          })) || [
+            { id: "1", name: "Michael Chen" },
+            { id: "2", name: "Sarah Wilson" },
+            { id: "3", name: "Ashley Johnson" }
+          ]}
+        />
+      )}
+      
       <Card className="shadow-sm">
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between">
