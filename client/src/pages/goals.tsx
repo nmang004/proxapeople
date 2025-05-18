@@ -23,12 +23,19 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import { Goal } from "@/lib/types";
+import { Goal, User } from "@/lib/types";
 import { Helmet } from 'react-helmet';
 
 export default function Goals() {
+  const [isGoalFormOpen, setIsGoalFormOpen] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState<Partial<Goal> | undefined>(undefined);
+  
   const { data: goals, isLoading, error } = useQuery<Goal[]>({
     queryKey: ['/api/goals'],
+  });
+  
+  const { data: users } = useQuery<User[]>({
+    queryKey: ['/api/users'],
   });
   
   return (
@@ -104,7 +111,10 @@ export default function Goals() {
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between">
             <CardTitle>Goals Dashboard</CardTitle>
-            <Button>
+            <Button onClick={() => {
+              setSelectedGoal(undefined);
+              setIsGoalFormOpen(true);
+            }}>
               <i className="ri-add-line mr-1"></i>
               Create New Goal
             </Button>
@@ -152,7 +162,24 @@ export default function Goals() {
                         <span className="status-badge status-badge-info">In Progress</span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="outline" size="sm">View</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedGoal({
+                              title: "Increase customer satisfaction score to 9.2",
+                              description: "Work with the customer success team to improve overall satisfaction scores through improved service quality and responsiveness.",
+                              category: "team",
+                              ownerId: "3", // Customer Success Team
+                              dueDate: "2023-12-31",
+                              progress: 75,
+                              status: "in_progress"
+                            });
+                            setIsGoalFormOpen(true);
+                          }}
+                        >
+                          View
+                        </Button>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -231,6 +258,29 @@ export default function Goals() {
           </Tabs>
         </CardContent>
       </Card>
+      {/* Goal Form Dialog */}
+      {isGoalFormOpen && (
+        <GoalForm
+          open={isGoalFormOpen}
+          onClose={() => setIsGoalFormOpen(false)}
+          initialData={selectedGoal}
+          users={users?.map(user => ({
+            id: user.id.toString(),
+            name: `${user.firstName} ${user.lastName}`
+          })) || []}
+          teams={[
+            { id: "1", name: "Engineering" },
+            { id: "2", name: "Product" },
+            { id: "3", name: "Marketing" },
+            { id: "4", name: "Sales" },
+            { id: "5", name: "Customer Success" }
+          ]}
+          parentGoals={goals?.map(goal => ({
+            id: goal.id.toString(),
+            title: goal.title
+          }))}
+        />
+      )}
     </>
   );
 }
