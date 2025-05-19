@@ -115,11 +115,11 @@ export default function HomePage() {
                     </motion.span>
                   </Button>
                 </Link>
-                <a href="#demo">
+                <Link href="/dashboard">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto">
                     Book a Demo
                   </Button>
-                </a>
+                </Link>
               </motion.div>
               
               <motion.div 
@@ -402,10 +402,12 @@ export default function HomePage() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Button className="w-full">
-                    <span>View detailed plan</span>
-                    <ChevronRight size={16} className="ml-1" />
-                  </Button>
+                  <Link href="/dashboard">
+                    <Button className="w-full">
+                      <span>View detailed plan</span>
+                      <ChevronRight size={16} className="ml-1" />
+                    </Button>
+                  </Link>
                 </motion.div>
               </div>
             </motion.div>
@@ -476,9 +478,9 @@ export default function HomePage() {
                   </div>
                   <h3 className="font-heading text-lg font-bold mb-2">{feature.title}</h3>
                   <p className="text-neutral-600 text-sm mb-4">{feature.description}</p>
-                  <a href="#" className="text-primary text-sm font-medium flex items-center">
+                  <Link href="/dashboard" className="text-primary text-sm font-medium flex items-center">
                     Learn more <ChevronRight size={16} className="ml-1" />
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}

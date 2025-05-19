@@ -83,8 +83,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
       {/* Mobile Sidebar - Enhanced */}
       <CustomSheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
         <CustomSheetContent 
-          side="right" 
-          className="p-0 w-[280px] sm:w-[320px] border-l-0 focus:outline-none"
+          side="left" 
+          className="p-0 w-[280px] sm:w-[320px] border-r-0 focus:outline-none"
           hideCloseButton={true}
         >
           <div className="relative h-full">
