@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { TeamPerformance } from "@/components/dashboard/team-performance";
@@ -22,11 +22,6 @@ import { ScheduleMeetingDialog } from "@/components/dialogs/schedule-meeting-dia
 import { NewSurveyDialog } from "@/components/dialogs/new-survey-dialog";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  ResizableHandle, 
-  ResizablePanel, 
-  ResizablePanelGroup 
-} from "@/components/ui/resizable";
 
 // Team member interface
 interface TeamMember {
@@ -195,15 +190,16 @@ interface Widget {
   title: string;
   component: JSX.Element;
   colSpan?: string; // For controlling grid layout
-  minSize?: number; // Minimum size for resizable panels
-  defaultSize?: number; // Default size for resizable panels
-  maxSize?: number; // Maximum size for resizable panels
+  isMinimized?: boolean; // To track if widget is minimized
+  isMaximized?: boolean; // To track if widget is maximized
+  originalSize?: { width: string; height: string }; // To store original size when maximizing
 }
 
 export default function Dashboard() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
+  const [widgetStates, setWidgetStates] = useState<{[key: string]: {isMinimized: boolean, isMaximized: boolean}}>({});
   
   // Simulating data fetch for dashboard stats
   const { data: dashboardData, isLoading } = useQuery({
@@ -231,46 +227,34 @@ export default function Dashboard() {
         }}
         isLoading={isLoading}
       />,
-      colSpan: "col-span-3",
-      defaultSize: 100,
-      minSize: 30
+      colSpan: "col-span-3"
     },
     { 
       id: "team-performance", 
       title: "Team Performance", 
       component: <TeamPerformance />,
-      colSpan: "col-span-2",
-      defaultSize: 50,
-      minSize: 20
+      colSpan: "col-span-2"
     },
     { 
       id: "team-goals", 
       title: "Team Goals", 
-      component: <TeamGoals />,
-      defaultSize: 33,
-      minSize: 15
+      component: <TeamGoals />
     },
     { 
       id: "upcoming-reviews", 
       title: "Upcoming Reviews", 
       component: <UpcomingReviews />,
-      colSpan: "col-span-2",
-      defaultSize: 50,
-      minSize: 20
+      colSpan: "col-span-2"
     },
     { 
       id: "one-on-one-meetings", 
       title: "Upcoming 1:1s", 
-      component: <OneOnOneMeetings />,
-      defaultSize: 33,
-      minSize: 15
+      component: <OneOnOneMeetings />
     },
     { 
       id: "engagement-score", 
       title: "Team Engagement", 
-      component: <EngagementScore />,
-      defaultSize: 33,
-      minSize: 15
+      component: <EngagementScore />
     }
   ]);
   
@@ -288,6 +272,51 @@ export default function Dashboard() {
     setActiveTab(tab);
   };
   
+  // Initialize widget states
+  useEffect(() => {
+    const states = widgets.reduce((acc, widget) => {
+      acc[widget.id] = { isMinimized: false, isMaximized: false };
+      return acc;
+    }, {} as {[key: string]: {isMinimized: boolean, isMaximized: boolean}});
+    
+    setWidgetStates(states);
+  }, []);
+
+  // Handle minimizing and maximizing widgets
+  const toggleMinimize = (widgetId: string) => {
+    setWidgetStates(prev => ({
+      ...prev,
+      [widgetId]: {
+        ...prev[widgetId],
+        isMinimized: !prev[widgetId].isMinimized,
+        isMaximized: false, // Reset maximized state when minimizing
+      }
+    }));
+    
+    toast({
+      title: `Widget ${widgetStates[widgetId]?.isMinimized ? "expanded" : "minimized"}`,
+      description: `Widget has been ${widgetStates[widgetId]?.isMinimized ? "expanded" : "minimized"}.`,
+      variant: "default",
+    });
+  };
+  
+  const toggleMaximize = (widgetId: string) => {
+    setWidgetStates(prev => ({
+      ...prev,
+      [widgetId]: {
+        ...prev[widgetId],
+        isMaximized: !prev[widgetId].isMaximized,
+        isMinimized: false, // Reset minimized state when maximizing
+      }
+    }));
+    
+    toast({
+      title: `Widget ${widgetStates[widgetId]?.isMaximized ? "restored" : "maximized"}`,
+      description: `Widget has been ${widgetStates[widgetId]?.isMaximized ? "restored to original size" : "maximized"}.`,
+      variant: "default",
+    });
+  };
+
   // Handle drag end event when widgets are reordered
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -926,92 +955,135 @@ export default function Dashboard() {
                           draggableId={widget.id} 
                           index={index}
                         >
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              className={cn(
-                                widget.colSpan || "",
-                                "transition-all duration-200",
-                                snapshot.isDragging && "z-50"
-                              )}
-                            >
-                              <motion.div 
-                                className="bg-white border border-border rounded-lg overflow-hidden flex flex-col h-full"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ 
-                                  opacity: isLoaded ? 1 : 0, 
-                                  y: isLoaded ? 0 : 20,
-                                  scale: snapshot.isDragging ? 1.02 : 1,
-                                  boxShadow: snapshot.isDragging ? "0 10px 25px -5px rgba(0, 0, 0, 0.1)" : "none"
-                                }}
-                                transition={{ 
-                                  duration: 0.5,
-                                  ease: [0.22, 1, 0.36, 1],
-                                  delay: index * 0.1 + 0.3
+                          {(provided, snapshot) => {
+                            const isMinimized = widgetStates[widget.id]?.isMinimized || false;
+                            const isMaximized = widgetStates[widget.id]?.isMaximized || false;
+                            
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                className={cn(
+                                  widget.colSpan || "",
+                                  "transition-all duration-200",
+                                  snapshot.isDragging && "z-50",
+                                  isMaximized && "col-span-3 row-span-2 z-40",
+                                  isMinimized && "h-auto"
+                                )}
+                                style={{
+                                  ...(isMaximized ? {
+                                    position: "absolute",
+                                    left: "1rem",
+                                    right: "1rem",
+                                    top: "5rem",
+                                    bottom: "1rem",
+                                    width: "calc(100% - 2rem)",
+                                    height: "calc(100% - 6rem)",
+                                    zIndex: 50
+                                  } : {})
                                 }}
                               >
-                                <div 
-                                  className="p-3 border-b border-border bg-gradient-to-r from-white to-gray-50 flex items-center justify-between cursor-move"
-                                  {...provided.dragHandleProps}
+                                <motion.div 
+                                  className="bg-white border border-border rounded-lg overflow-hidden flex flex-col h-full"
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ 
+                                    opacity: isLoaded ? 1 : 0, 
+                                    y: isLoaded ? 0 : 20,
+                                    scale: snapshot.isDragging ? 1.02 : 1,
+                                    boxShadow: isMaximized 
+                                      ? "0 10px 45px -5px rgba(0, 0, 0, 0.2)" 
+                                      : (snapshot.isDragging ? "0 10px 25px -5px rgba(0, 0, 0, 0.1)" : "none")
+                                  }}
+                                  transition={{ 
+                                    duration: 0.5,
+                                    ease: [0.22, 1, 0.36, 1],
+                                    delay: index * 0.1 + 0.3
+                                  }}
                                 >
-                                  <div className="flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
-                                      <circle cx="8" cy="6" r="1"/>
-                                      <circle cx="8" cy="12" r="1"/>
-                                      <circle cx="8" cy="18" r="1"/>
-                                      <circle cx="16" cy="6" r="1"/>
-                                      <circle cx="16" cy="12" r="1"/>
-                                      <circle cx="16" cy="18" r="1"/>
-                                    </svg>
-                                    <span className="font-medium">{widget.title}</span>
+                                  <div 
+                                    className={cn(
+                                      "p-3 border-b border-border bg-gradient-to-r from-white to-gray-50 flex items-center justify-between cursor-move",
+                                      isMaximized && "bg-gradient-to-r from-blue-50 to-indigo-50"
+                                    )}
+                                    {...provided.dragHandleProps}
+                                  >
+                                    <div className="flex items-center">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
+                                        <circle cx="8" cy="6" r="1"/>
+                                        <circle cx="8" cy="12" r="1"/>
+                                        <circle cx="8" cy="18" r="1"/>
+                                        <circle cx="16" cy="6" r="1"/>
+                                        <circle cx="16" cy="12" r="1"/>
+                                        <circle cx="16" cy="18" r="1"/>
+                                      </svg>
+                                      <span className="font-medium">{widget.title}</span>
+                                    </div>
+                                    
+                                    {/* Widget controls */}
+                                    <div className="flex items-center space-x-1">
+                                      <button 
+                                        className="p-1 hover:bg-gray-100 rounded-sm transition-colors"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleMinimize(widget.id);
+                                        }}
+                                        title={isMinimized ? "Expand" : "Minimize"}
+                                      >
+                                        {isMinimized ? (
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                          </svg>
+                                        ) : (
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                          </svg>
+                                        )}
+                                      </button>
+                                      <button 
+                                        className="p-1 hover:bg-gray-100 rounded-sm transition-colors"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleMaximize(widget.id);
+                                        }}
+                                        title={isMaximized ? "Restore" : "Maximize"}
+                                      >
+                                        {isMaximized ? (
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                                            <polyline points="4 14 10 14 10 20" />
+                                            <polyline points="20 10 14 10 14 4" />
+                                            <line x1="14" y1="10" x2="21" y2="3" />
+                                            <line x1="3" y1="21" x2="10" y2="14" />
+                                          </svg>
+                                        ) : (
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                                            <polyline points="15 3 21 3 21 9" />
+                                            <polyline points="9 21 3 21 3 15" />
+                                            <line x1="21" y1="3" x2="14" y2="10" />
+                                            <line x1="3" y1="21" x2="10" y2="14" />
+                                          </svg>
+                                        )}
+                                      </button>
+                                    </div>
                                   </div>
                                   
-                                  {/* Widget controls */}
-                                  <div className="flex items-center space-x-1">
-                                    <button 
-                                      className="p-1 hover:bg-gray-100 rounded-sm transition-colors"
-                                      onClick={(e) => e.stopPropagation()}
-                                      title="Minimize"
-                                    >
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                                        <polyline points="4 14 10 14 10 20" />
-                                        <polyline points="20 10 14 10 14 4" />
-                                        <line x1="14" y1="10" x2="21" y2="3" />
-                                        <line x1="3" y1="21" x2="10" y2="14" />
-                                      </svg>
-                                    </button>
-                                    <button 
-                                      className="p-1 hover:bg-gray-100 rounded-sm transition-colors"
-                                      onClick={(e) => e.stopPropagation()}
-                                      title="Maximize"
-                                    >
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                                        <polyline points="15 3 21 3 21 9" />
-                                        <polyline points="9 21 3 21 3 15" />
-                                        <line x1="21" y1="3" x2="14" y2="10" />
-                                        <line x1="3" y1="21" x2="10" y2="14" />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                </div>
-                                
-                                {/* Resizable content area */}
-                                <ResizablePanelGroup direction="vertical" className="flex-1 h-full overflow-hidden">
-                                  <ResizablePanel 
-                                    defaultSize={widget.defaultSize || 50} 
-                                    minSize={widget.minSize || 20}
-                                    className="flex-1"
-                                  >
-                                    <div className="p-4 h-full overflow-auto flex flex-col">
-                                      {widget.component}
+                                  {/* Widget content area */}
+                                  {!isMinimized && (
+                                    <div className="p-4 h-full overflow-auto flex-1 relative">
+                                      <div className="h-full relative">
+                                        {widget.component}
+                                      </div>
+                                      
+                                      {/* Resize handles - bottom right */}
+                                      <div className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize group">
+                                        <div className="absolute bottom-0 right-0 w-0 h-0 border-b-8 border-r-8 border-gray-300 group-hover:border-primary transition-colors"></div>
+                                      </div>
                                     </div>
-                                  </ResizablePanel>
-                                  <ResizableHandle className="bg-transparent hover:bg-gray-100 h-2 transition-colors" />
-                                </ResizablePanelGroup>
-                              </motion.div>
-                            </div>
-                          )}
+                                  )}
+                                </motion.div>
+                              </div>
+                            );
+                          }}
                         </Draggable>
                       ))}
                       {provided.placeholder}
