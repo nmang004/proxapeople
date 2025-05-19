@@ -331,6 +331,9 @@ export default function Dashboard() {
   const handleResizeStart = useCallback((e: React.MouseEvent, widgetId: string) => {
     e.preventDefault();
     
+    // Prevent resizing if not in edit mode
+    if (!isEditMode) return;
+    
     const widget = document.getElementById(`widget-${widgetId}`);
     if (!widget) return;
     
@@ -347,7 +350,7 @@ export default function Dashboard() {
     // Add event listeners for resize
     document.addEventListener('mousemove', handleResize);
     document.addEventListener('mouseup', handleResizeEnd);
-  }, []);
+  }, [isEditMode]);
   
   const handleResize = useCallback((e: MouseEvent) => {
     if (!resizingWidget || !initialResize) return;

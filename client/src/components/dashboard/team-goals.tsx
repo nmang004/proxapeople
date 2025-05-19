@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// Removed card imports as we're handling this at the dashboard level
 import { Button } from "@/components/ui/button";
 import { GoalProgress } from "@/components/ui/goal-progress";
 import { Goal } from "@/lib/types";
@@ -63,11 +63,12 @@ export function TeamGoals() {
   const goals = apiGoals?.length ? apiGoals : sampleTeamGoals;
 
   return (
-    <Card className="shadow-sm">
-      <CardContent>
+    <div className="h-full">
+      <div className="h-full">
         <div className="flex items-center justify-between mb-4">
           <Link href="/goals" className="text-primary text-sm font-medium hover:underline ml-auto">View All</Link>
         </div>
+        
         {isLoading ? (
           <div className="py-4 text-center text-neutral-500">Loading goals...</div>
         ) : error ? (
@@ -109,7 +110,7 @@ export function TeamGoals() {
         <Button className="mt-5 w-full py-2 bg-secondary text-primary text-sm font-medium rounded-md hover:bg-primary hover:text-white transition-colors duration-200">
           Add New Goal
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

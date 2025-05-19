@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// Removed card imports as we're handling this at the dashboard level
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -51,8 +51,8 @@ export function TeamPerformance() {
     : mockPerformanceData.monthly.slice(0, 6);
 
   return (
-    <Card className="shadow-sm">
-      <CardContent>
+    <div className="h-full">
+      <div className="h-full">
         <div className="flex items-center justify-between mb-6">
           <div className="flex space-x-2">
             <Button
@@ -137,7 +137,7 @@ export function TeamPerformance() {
             </div>
           </>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
