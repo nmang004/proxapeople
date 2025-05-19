@@ -30,6 +30,12 @@ const links: SidebarLink[] = [
     badge: { count: 2, type: "primary" }
   },
   { 
+    href: "/org-chart", 
+    label: "Org Chart", 
+    icon: "ri-git-branch-line", 
+    category: "People"
+  },
+  { 
     href: "/reviews", 
     label: "Performance Reviews", 
     icon: "ri-award-line", 
