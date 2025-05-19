@@ -146,7 +146,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         
         {/* Mobile Fixed Bottom Navigation */}
         <motion.div 
-          className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border h-16 flex items-center px-4 z-20"
+          className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border h-16 flex items-center justify-between z-20"
           initial={{ y: 100 }}
           animate={{ y: 0 }}
           transition={{ 
@@ -209,9 +209,10 @@ interface NavButtonProps {
   active: boolean;
   badge?: number;
   onClick?: () => void;
+  className?: string;
 }
 
-function NavButton({ icon, label, href, active, badge, onClick }: NavButtonProps) {
+function NavButton({ icon, label, href, active, badge, onClick, className }: NavButtonProps) {
   return (
     <Button
       variant="ghost"
@@ -219,7 +220,8 @@ function NavButton({ icon, label, href, active, badge, onClick }: NavButtonProps
       className={cn(
         "flex flex-col items-center justify-center p-0 h-auto w-16 gap-1 rounded-lg transition-all", 
         active ? "text-primary" : "text-muted-foreground",
-        "active:scale-95 hover:bg-transparent"
+        "active:scale-95 hover:bg-transparent",
+        className
       )}
       asChild={!onClick}
       onClick={onClick}
