@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
   Card, 
   CardContent, 
   CardHeader, 
   CardTitle, 
-  CardDescription 
+  CardDescription,
+  CardFooter 
 } from "@/components/ui/card";
 import { 
   Tabs, 
@@ -40,6 +41,43 @@ import { z } from "zod";
 import { Helmet } from 'react-helmet';
 import { ProxaIcon } from "@/lib/proxa-icon";
 import { PermissionManager } from "@/components/rbac/PermissionManager";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import { motion } from "framer-motion";
+import { 
+  User, 
+  Lock, 
+  Bell, 
+  Globe, 
+  Shield, 
+  CreditCard, 
+  Upload, 
+  CheckCircle,
+  Key,
+  Calendar,
+  Clock,
+  LanguagesIcon,
+  Palette,
+  Eye,
+  LogOut,
+  Trash2
+} from "lucide-react";
 
 // Company settings form schema
 const companyFormSchema = z.object({
@@ -49,6 +87,14 @@ const companyFormSchema = z.object({
   description: z.string().optional(),
   website: z.string().url("Please enter a valid URL").or(z.string().length(0)),
   timezone: z.string().min(1, "Please select a timezone"),
+  logo: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zipCode: z.string().optional(),
+  country: z.string().optional(),
+  companyEmail: z.string().email("Please enter a valid email").or(z.string().length(0)),
+  phone: z.string().optional(),
 });
 
 // User settings form schema
@@ -60,36 +106,117 @@ const userFormSchema = z.object({
   department: z.string().min(1, "Please select a department"),
   phoneNumber: z.string().optional(),
   profileImage: z.string().optional(),
+  bio: z.string().optional(),
+  location: z.string().optional(),
+  language: z.string().default("en-US"),
+  userTimezone: z.string().default("America/New_York"),
+  dateFormat: z.string().default("MM/DD/YYYY"),
+  timeFormat: z.string().default("12h"),
+  theme: z.enum(["light", "dark", "system"]).default("system"),
+  showCalendarStatus: z.boolean().default(true),
+});
+
+// Password settings form schema
+const passwordFormSchema = z.object({
+  currentPassword: z.string().min(8, "Password must be at least 8 characters"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 // Notification settings form schema
 const notificationFormSchema = z.object({
-  emailNotifications: z.boolean(),
-  reviewReminders: z.boolean(),
-  goalUpdates: z.boolean(),
-  meetingReminders: z.boolean(),
-  surveyNotifications: z.boolean(),
-  teamUpdates: z.boolean(),
+  // General notification preferences
+  emailNotifications: z.boolean().default(true),
+  appNotifications: z.boolean().default(true),
+  smsNotifications: z.boolean().default(false),
+  
+  // Specific notification types
+  reviewReminders: z.boolean().default(true),
+  reviewAssignments: z.boolean().default(true),
+  reviewCompletions: z.boolean().default(true),
+  goalUpdates: z.boolean().default(true),
+  goalDeadlines: z.boolean().default(true),
+  goalAchievements: z.boolean().default(true), 
+  meetingReminders: z.boolean().default(true),
+  meetingChanges: z.boolean().default(true),
+  surveyNotifications: z.boolean().default(true),
+  surveyDeadlines: z.boolean().default(true),
+  teamUpdates: z.boolean().default(true),
+  teamAnnouncements: z.boolean().default(true),
+  directMessages: z.boolean().default(true),
+  
+  // Frequency preferences
+  emailDigestFrequency: z.enum(["immediate", "daily", "weekly"]).default("daily"),
+  summaryReports: z.boolean().default(true),
+  weeklyUpdates: z.boolean().default(true),
+  
+  // Do not disturb settings
+  doNotDisturbEnabled: z.boolean().default(false),
+  doNotDisturbStart: z.string().default("18:00"),
+  doNotDisturbEnd: z.string().default("09:00"),
+  doNotDisturbWeekends: z.boolean().default(true),
 });
 
 // Integration settings form schema
 const integrationFormSchema = z.object({
   slackWorkspace: z.string().optional(),
-  googleCalendar: z.boolean(),
-  microsoftTeams: z.boolean(),
-  zoom: z.boolean(),
-  jira: z.boolean(),
+  slackEnabled: z.boolean().default(false),
+  googleCalendar: z.boolean().default(false),
+  microsoftTeams: z.boolean().default(false),
+  microsoftOutlook: z.boolean().default(false),
+  zoom: z.boolean().default(false),
+  jira: z.boolean().default(false),
+  jiraDomain: z.string().optional(),
+  asana: z.boolean().default(false),
+  trello: z.boolean().default(false),
+  githubWorkspace: z.string().optional(),
+  githubEnabled: z.boolean().default(false),
   hrisSystem: z.string().optional(),
+  bambooHrEnabled: z.boolean().default(false),
+  workdayEnabled: z.boolean().default(false),
+});
+
+// Security settings form schema
+const securityFormSchema = z.object({
+  twoFactorEnabled: z.boolean().default(false),
+  twoFactorMethod: z.enum(["app", "sms", "email"]).default("app"),
+  loginNotifications: z.boolean().default(true),
+  rememberDevices: z.boolean().default(true),
+  sessionTimeout: z.enum(["30min", "1hour", "4hours", "8hours", "24hours"]).default("4hours"),
+  ipRestrictions: z.boolean().default(false),
+  allowedIPs: z.string().optional(),
+});
+
+// Appearance settings form schema
+const appearanceFormSchema = z.object({
+  theme: z.enum(["light", "dark", "system"]).default("system"),
+  colorScheme: z.enum(["default", "blue", "green", "purple"]).default("default"),
+  density: z.enum(["comfortable", "compact", "spacious"]).default("comfortable"),
+  fontSize: z.enum(["small", "medium", "large"]).default("medium"),
+  animations: z.boolean().default(true),
 });
 
 type CompanyFormValues = z.infer<typeof companyFormSchema>;
 type UserFormValues = z.infer<typeof userFormSchema>;
+type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 type NotificationFormValues = z.infer<typeof notificationFormSchema>;
 type IntegrationFormValues = z.infer<typeof integrationFormSchema>;
+type SecurityFormValues = z.infer<typeof securityFormSchema>;
+type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("company");
   
+  // File input ref for profile image upload
+  const profileImageInputRef = useRef<HTMLInputElement>(null);
+
   // Company form setup
   const companyForm = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
@@ -100,6 +227,14 @@ export default function Settings() {
       description: "A cutting-edge software company focused on innovative solutions",
       website: "https://proxa.example.com",
       timezone: "America/New_York",
+      logo: "",
+      address: "123 Innovation Way",
+      city: "San Francisco",
+      state: "CA",
+      zipCode: "94103",
+      country: "United States",
+      companyEmail: "info@proxa.example.com",
+      phone: "555-987-6543",
     },
   });
 
@@ -114,6 +249,24 @@ export default function Settings() {
       department: "Human Resources",
       phoneNumber: "555-123-4567",
       profileImage: "",
+      bio: "HR professional with 10+ years of experience in talent management and employee development.",
+      location: "San Francisco, CA",
+      language: "en-US",
+      userTimezone: "America/New_York",
+      dateFormat: "MM/DD/YYYY",
+      timeFormat: "12h",
+      theme: "system",
+      showCalendarStatus: true,
+    },
+  });
+
+  // Password form setup
+  const passwordForm = useForm<PasswordFormValues>({
+    resolver: zodResolver(passwordFormSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
 
@@ -121,12 +274,36 @@ export default function Settings() {
   const notificationForm = useForm<NotificationFormValues>({
     resolver: zodResolver(notificationFormSchema),
     defaultValues: {
+      // General notification preferences
       emailNotifications: true,
+      appNotifications: true,
+      smsNotifications: false,
+      
+      // Specific notification types
       reviewReminders: true,
+      reviewAssignments: true,
+      reviewCompletions: true,
       goalUpdates: true,
+      goalDeadlines: true,
+      goalAchievements: true, 
       meetingReminders: true,
+      meetingChanges: true,
       surveyNotifications: true,
-      teamUpdates: false,
+      surveyDeadlines: true,
+      teamUpdates: true,
+      teamAnnouncements: true,
+      directMessages: true,
+      
+      // Frequency preferences
+      emailDigestFrequency: "daily",
+      summaryReports: true,
+      weeklyUpdates: true,
+      
+      // Do not disturb settings
+      doNotDisturbEnabled: false,
+      doNotDisturbStart: "18:00",
+      doNotDisturbEnd: "09:00",
+      doNotDisturbWeekends: true,
     },
   });
 
@@ -135,33 +312,165 @@ export default function Settings() {
     resolver: zodResolver(integrationFormSchema),
     defaultValues: {
       slackWorkspace: "proxa-team",
+      slackEnabled: true,
       googleCalendar: true,
       microsoftTeams: false,
+      microsoftOutlook: false,
       zoom: true,
       jira: false,
+      jiraDomain: "",
+      asana: false,
+      trello: false,
+      githubWorkspace: "",
+      githubEnabled: false,
       hrisSystem: "bamboohr",
+      bambooHrEnabled: true,
+      workdayEnabled: false,
     },
   });
+
+  // Security form setup
+  const securityForm = useForm<SecurityFormValues>({
+    resolver: zodResolver(securityFormSchema),
+    defaultValues: {
+      twoFactorEnabled: false,
+      twoFactorMethod: "app",
+      loginNotifications: true,
+      rememberDevices: true,
+      sessionTimeout: "4hours",
+      ipRestrictions: false,
+      allowedIPs: "",
+    },
+  });
+
+  // Appearance form setup
+  const appearanceForm = useForm<AppearanceFormValues>({
+    resolver: zodResolver(appearanceFormSchema),
+    defaultValues: {
+      theme: "system",
+      colorScheme: "default",
+      density: "comfortable",
+      fontSize: "medium",
+      animations: true,
+    },
+  });
+
+  // File handler for profile image
+  const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // In a real application, this would upload the file to a server
+      // For now, we'll create a local URL for display
+      const imageUrl = URL.createObjectURL(file);
+      userForm.setValue("profileImage", imageUrl);
+      
+      toast({
+        title: "Profile image updated",
+        description: "Your profile image has been updated successfully.",
+      });
+    }
+  };
+
+  // Function to trigger file input click
+  const triggerProfileImageUpload = () => {
+    profileImageInputRef.current?.click();
+  };
 
   // Form submission handlers
   function onCompanyFormSubmit(data: CompanyFormValues) {
     console.log("Company settings saved:", data);
     // API call would be here in a real implementation
+    
+    toast({
+      title: "Company settings saved",
+      description: "Your company settings have been updated successfully.",
+      variant: "default",
+    });
   }
 
   function onUserFormSubmit(data: UserFormValues) {
     console.log("User settings saved:", data);
     // API call would be here in a real implementation
+    
+    toast({
+      title: "Profile updated",
+      description: "Your profile information has been updated successfully.",
+      variant: "default",
+    });
+  }
+
+  function onPasswordFormSubmit(data: PasswordFormValues) {
+    console.log("Password changed:", data);
+    // API call would be here in a real implementation
+    
+    // Reset form after submission
+    passwordForm.reset({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+    
+    toast({
+      title: "Password changed",
+      description: "Your password has been changed successfully. Please use your new password for future logins.",
+      variant: "default",
+    });
   }
 
   function onNotificationFormSubmit(data: NotificationFormValues) {
     console.log("Notification settings saved:", data);
     // API call would be here in a real implementation
+    
+    toast({
+      title: "Notification preferences saved",
+      description: "Your notification preferences have been updated successfully.",
+      variant: "default",
+    });
   }
 
   function onIntegrationFormSubmit(data: IntegrationFormValues) {
     console.log("Integration settings saved:", data);
     // API call would be here in a real implementation
+    
+    toast({
+      title: "Integrations updated",
+      description: "Your integration settings have been updated successfully.",
+      variant: "default",
+    });
+  }
+  
+  function onSecurityFormSubmit(data: SecurityFormValues) {
+    console.log("Security settings saved:", data);
+    // API call would be here in a real implementation
+    
+    toast({
+      title: "Security settings updated",
+      description: "Your security settings have been updated successfully.",
+      variant: "default",
+    });
+  }
+  
+  function onAppearanceFormSubmit(data: AppearanceFormValues) {
+    console.log("Appearance settings saved:", data);
+    // API call would be here in a real implementation
+    
+    toast({
+      title: "Appearance settings updated",
+      description: "Your appearance settings have been updated successfully.",
+      variant: "default",
+    });
+  }
+  
+  // Account deletion handler
+  const deleteAccount = () => {
+    // This would make an API call to delete the account in a real implementation
+    console.log("Account deletion requested");
+    
+    toast({
+      title: "Account deletion requested",
+      description: "Your account deletion request has been submitted. You will receive an email confirmation.",
+      variant: "destructive",
+    });
   }
 
   return (
