@@ -124,7 +124,7 @@ export function Sidebar() {
           
           {/* Mobile Only - Version Label */}
           <div className="md:hidden ml-auto">
-            <Badge variant="outline" className="text-xs bg-primary/5 text-primary border-primary/20">v2.0</Badge>
+            <Badge variant="outline" className="text-xs bg-primary/5 text-primary border-primary/20">Proxa People</Badge>
           </div>
         </motion.div>
         
@@ -254,7 +254,7 @@ export function Sidebar() {
             
             {/* App Version */}
             <div className="mt-4 flex justify-center">
-              <span className="text-xs text-slate-400">Proxa v2.0</span>
+              <span className="text-xs text-slate-400">Proxa People</span>
             </div>
           </motion.div>
           

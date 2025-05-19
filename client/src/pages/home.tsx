@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { 
   ChevronRight, 
@@ -14,11 +14,22 @@ import {
   Award, 
   TrendingUp,
   Activity,
-  DownloadCloud
+  DownloadCloud,
+  CheckCircle,
+  Sparkles,
+  LightbulbIcon,
+  BarChart,
+  Grid,
+  LineChart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import LogoIconPurplePath from "@assets/LogoIcon_Purple.png";
+
+// Import attached images for use in the site
+import DashboardScreenshotPath from "@assets/image_1747624242291.png";
+import MobileScreenshotPath from "@assets/image_1747624781563.png";
+import AnalyticsScreenshotPath from "@assets/image_1747624791802.png";
 
 export default function HomePage() {
   return (
@@ -56,20 +67,50 @@ export default function HomePage() {
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-white pt-16 pb-20 md:pt-24 md:pb-28 lg:py-32">
-        <div className="container mx-auto px-4 md:px-6">
+        {/* Background gradient element */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-[40%] -right-[10%] w-[70%] h-[70%] rounded-full bg-primary/5 blur-3xl"></div>
+          <div className="absolute -bottom-[30%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary/5 blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="flex flex-col">
-              <h1 className="mb-4 font-heading text-4xl sm:text-5xl font-bold tracking-tight text-neutral-800 md:text-6xl">
-                The HR platform <br className="hidden sm:block" />
-                that people love
-              </h1>
-              <p className="mb-6 md:mb-8 text-lg md:text-xl text-neutral-600 max-w-lg">
-                Proxa helps you build stronger teams with intuitive performance management, data-driven insights, and seamless workflows.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                  Introducing Proxa People
+                </span>
+                <h1 className="mb-4 font-heading text-4xl sm:text-5xl font-bold tracking-tight text-neutral-800 md:text-6xl">
+                  The people <br className="hidden sm:block" />
+                  platform that <br className="hidden sm:block" />
+                  <span className="text-primary">drives success</span>
+                </h1>
+                <p className="mb-6 md:mb-8 text-lg md:text-xl text-neutral-600 max-w-lg">
+                  Proxa empowers your team with intelligent performance management, data-driven insights, and frictionless collaboration tools.
+                </p>
+              </motion.div>
+              
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="flex flex-col sm:flex-row gap-3"
+              >
                 <Link href="/dashboard">
-                  <Button size="lg" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto group">
                     Get Started Free
+                    <motion.span
+                      className="ml-2"
+                      initial={{ x: 0 }}
+                      whileHover={{ x: 5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ArrowRight size={16} />
+                    </motion.span>
                   </Button>
                 </Link>
                 <a href="#demo">
@@ -77,9 +118,14 @@ export default function HomePage() {
                     Book a Demo
                   </Button>
                 </a>
-              </div>
+              </motion.div>
               
-              <div className="mt-8 flex items-center gap-3">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="mt-8 flex items-center gap-3"
+              >
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="h-8 w-8 rounded-full bg-neutral-200 border-2 border-white flex items-center justify-center">
@@ -92,29 +138,35 @@ export default function HomePage() {
                 <div className="text-sm text-neutral-600">
                   Trusted by <span className="font-medium">10,000+</span> companies
                 </div>
-              </div>
+              </motion.div>
             </div>
             
             <div className="relative h-full rounded-xl">
+              {/* Main dashboard image */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="relative z-10 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden"
+                transition={{ duration: 0.7, type: "spring", stiffness: 100 }}
+                className="relative z-10 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden bg-white border"
               >
                 <img 
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80" 
-                  alt="Team collaboration" 
+                  src={DashboardScreenshotPath} 
+                  alt="Proxa dashboard" 
                   className="w-full h-auto rounded-xl"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent flex flex-col justify-end p-6">
-                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 max-w-[80%]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Star size={16} className="text-amber-500 fill-amber-500" />
-                      <Star size={16} className="text-amber-500 fill-amber-500" />
-                      <Star size={16} className="text-amber-500 fill-amber-500" />
-                      <Star size={16} className="text-amber-500 fill-amber-500" />
-                      <Star size={16} className="text-amber-500 fill-amber-500" />
+                  <div className="bg-white/95 backdrop-blur-sm rounded-lg p-4 max-w-[80%] shadow-lg">
+                    <div className="flex items-center gap-1 mb-2">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <motion.div 
+                          key={i}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: 0.7 + (i * 0.1) }}
+                        >
+                          <Star size={16} className="text-amber-500 fill-amber-500" />
+                        </motion.div>
+                      ))}
                     </div>
                     <p className="text-sm font-medium text-neutral-800">"Proxa transformed how we manage performance reviews and goals across our organization."</p>
                     <p className="text-xs text-neutral-500 mt-1">Sarah T. — HR Director</p>
@@ -122,31 +174,62 @@ export default function HomePage() {
                 </div>
               </motion.div>
               
+              {/* Mobile app view */}
+              <motion.div 
+                initial={{ opacity: 0, x: 60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.3, type: "spring", stiffness: 50 }}
+                className="absolute -bottom-10 -right-10 z-20 w-48 h-auto rounded-xl shadow-xl overflow-hidden border-4 border-white"
+              >
+                <img 
+                  src={MobileScreenshotPath} 
+                  alt="Proxa mobile app" 
+                  className="w-full h-auto"
+                />
+              </motion.div>
+              
+              {/* Floating achievement card - metrics */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="absolute top-[10%] -right-10 md:-right-16 bg-white rounded-lg shadow-lg p-3 z-20"
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="absolute top-[10%] -right-6 md:-right-12 bg-white rounded-lg shadow-lg p-3 z-30 border"
               >
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                    <Check size={16} />
+                    <CheckCircle size={16} />
                   </div>
-                  <span className="text-sm font-medium">Goals aligned</span>
+                  <span className="text-sm font-medium">92% Goal Completion</span>
                 </div>
               </motion.div>
               
+              {/* Floating achievement card - performance */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="absolute bottom-[20%] -left-10 md:-left-16 bg-white rounded-lg shadow-lg p-3 z-20"
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="absolute top-[40%] -left-6 md:-left-12 bg-white rounded-lg shadow-lg p-3 z-30 border"
               >
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
                     <TrendingUp size={16} />
                   </div>
-                  <span className="text-sm font-medium">Performance up 24%</span>
+                  <span className="text-sm font-medium">Performance +24%</span>
+                </div>
+              </motion.div>
+              
+              {/* Floating analytics card */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.9 }}
+                className="absolute bottom-[30%] -left-6 md:-left-12 bg-white rounded-lg shadow-lg p-3 z-30 border"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-primary">
+                    <Sparkles size={16} />
+                  </div>
+                  <span className="text-sm font-medium">Team Engagement 87%</span>
                 </div>
               </motion.div>
             </div>
@@ -168,17 +251,40 @@ export default function HomePage() {
       </section>
       
       {/* AI Assistant Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+      <section className="py-16 md:py-24 relative overflow-hidden">
+        {/* Background gradient element */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-[20%] right-[10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-3xl"></div>
+          <div className="absolute bottom-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-purple-100 blur-3xl opacity-50"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5 }}
+            className="text-center max-w-3xl mx-auto mb-12 md:mb-16"
+          >
+            <span className="inline-block px-4 py-2 rounded-full bg-purple-100 text-primary text-sm font-medium mb-4">
+              AI-Powered Insights
+            </span>
             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">Proxa AI Assistant</h2>
             <p className="text-lg text-neutral-600">
-              Our AI-powered tool helps managers and HR teams work more efficiently with automated insights, recommendations, and actionable feedback.
+              Our AI-powered tool helps managers and HR teams work more efficiently with automated insights, recommendations, and personalized action plans.
             </p>
-          </div>
+          </motion.div>
           
           <div className="flex flex-col md:flex-row gap-8 items-center justify-center">
-            <div className="bg-neutral-50 p-6 rounded-xl max-w-sm">
+            {/* Manager question card */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(156, 90, 255, 0.1)" }}
+              className="bg-white p-6 rounded-xl max-w-sm border shadow-sm hover:border-primary/20 transition-all duration-300"
+            >
               <div className="flex items-start gap-3 mb-3">
                 <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                   <MessageSquare size={16} />
@@ -191,38 +297,70 @@ export default function HomePage() {
               <Separator className="my-3" />
               <div className="space-y-3">
                 <p className="text-sm text-neutral-700">Based on recent feedback, consider:</p>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <Check size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Implementing weekly check-ins to address concerns early</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Creating a shared document for asynchronous updates</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Establishing clear goals and expectations for all projects</span>
-                  </li>
-                </ul>
+                <div className="space-y-2">
+                  {/* Animated list items */}
+                  {[
+                    "Implementing weekly check-ins to address concerns early",
+                    "Creating a shared document for asynchronous updates",
+                    "Establishing clear goals and expectations for all projects"
+                  ].map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.5 + (index * 0.2) }}
+                      className="flex items-start gap-2"
+                    >
+                      <Check size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm">{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
+            </motion.div>
             
+            {/* Arrow connector - visible on desktop */}
             <div className="relative w-20 hidden md:block">
               <div className="absolute inset-0 flex items-center">
                 <Separator className="w-full" />
               </div>
-              <div className="relative flex justify-center">
-                <div className="bg-white p-1 rounded-full">
-                  <ArrowRight size={24} className="text-neutral-400" />
+              <motion.div 
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+                className="relative flex justify-center"
+              >
+                <div className="bg-white p-1 rounded-full shadow-sm border">
+                  <ArrowRight size={24} className="text-primary" />
                 </div>
-              </div>
+              </motion.div>
             </div>
             
-            <div className="bg-neutral-50 p-6 rounded-xl max-w-sm">
+            {/* Mobile connector - visible on mobile */}
+            <div className="flex justify-center md:hidden py-2">
+              <motion.div
+                initial={{ rotate: 0 }}
+                animate={{ rotate: 90 }}
+                transition={{ duration: 0.5 }}
+              >
+                <ArrowRight size={24} className="text-primary opacity-70" />
+              </motion.div>
+            </div>
+            
+            {/* AI response card */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(156, 90, 255, 0.1)" }}
+              className="bg-white p-6 rounded-xl max-w-sm border shadow-sm hover:border-primary/20 transition-all duration-300"
+            >
               <div className="flex items-start gap-3 mb-3">
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
-                  <Activity size={16} />
+                  <Sparkles size={16} />
                 </div>
                 <div>
                   <h3 className="font-medium text-neutral-800 mb-1">Communication Enhancement Plan</h3>
@@ -233,18 +371,42 @@ export default function HomePage() {
               <div className="space-y-3">
                 <p className="text-sm text-neutral-700">I've analyzed team feedback and created a plan:</p>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white rounded-lg p-3">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.7 }}
+                    className="bg-white rounded-lg p-3 border"
+                  >
                     <p className="text-xs font-medium text-neutral-500 mb-1">Current score</p>
                     <p className="text-2xl font-bold text-neutral-800">6.2/10</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-3">
+                  </motion.div>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8 }}
+                    className="bg-white rounded-lg p-3 border"
+                  >
                     <p className="text-xs font-medium text-neutral-500 mb-1">Target</p>
                     <p className="text-2xl font-bold text-primary">8.5/10</p>
-                  </div>
+                  </motion.div>
                 </div>
-                <Button className="w-full">View detailed plan</Button>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.9 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Button className="w-full">
+                    <span>View detailed plan</span>
+                    <ChevronRight size={16} className="ml-1" />
+                  </Button>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
