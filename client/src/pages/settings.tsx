@@ -39,6 +39,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Helmet } from 'react-helmet';
 import { ProxaIcon } from "@/lib/proxa-icon";
+import { PermissionManager } from "@/components/rbac/PermissionManager";
 
 // Company settings form schema
 const companyFormSchema = z.object({
