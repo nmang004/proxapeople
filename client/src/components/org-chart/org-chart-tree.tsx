@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { motion, AnimatePresence, useDragControls } from "framer-motion";
 import { 
   ChevronDown, 
   ChevronRight, 
@@ -281,11 +281,33 @@ const TreeNode: React.FC<{
         animate="visible"
         className="relative"
       >
-        <Card className="w-60 shadow-md hover:shadow-lg transition-shadow duration-300">
-          <CardContent className="p-4">
-            <div className="flex flex-col items-center text-center">
-              <div className="relative mb-2">
-                <Avatar className="h-20 w-20 border-2 border-primary/10">
+        <Card className="w-64 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 focus:ring-2 focus:ring-primary/40 outline-none" tabIndex={0}>
+          <CardContent className="p-4 relative">
+            {/* Expansion Handle - always visible for parent nodes */}
+            {hasChildren && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-7 w-7 absolute -right-3 -top-3 bg-background shadow-sm border z-10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggle(node.id);
+                }}
+              >
+                {expanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+            
+            <div 
+              className="flex flex-col items-center text-center"
+              onClick={() => hasChildren && onToggle(node.id)}
+            >
+              <div className="relative mb-3">
+                <Avatar className="h-24 w-24 border-2 border-primary/20 shadow-md hover:border-primary/40 transition-all">
                   <AvatarImage src={node.profileImageUrl} alt={`${node.firstName} ${node.lastName}`} />
                   <AvatarFallback className="bg-primary/10 text-primary text-lg">
                     {getInitials(node.firstName, node.lastName)}
@@ -295,7 +317,7 @@ const TreeNode: React.FC<{
                 {department && (
                   <Badge 
                     variant="secondary" 
-                    className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-xs"
+                    className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-xs px-2 py-0.5 shadow-sm"
                   >
                     {department.name}
                   </Badge>
@@ -303,17 +325,22 @@ const TreeNode: React.FC<{
               </div>
               
               <h3 className="font-semibold text-base mt-1">{node.firstName} {node.lastName}</h3>
-              <p className="text-sm text-muted-foreground">{node.title}</p>
+              <p className="text-sm text-muted-foreground font-medium">{node.title}</p>
               
-              <div className="flex flex-row gap-2 mt-3">
+              <div className="flex flex-row gap-2 mt-4 justify-center">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 rounded-full bg-background/50 hover:bg-primary/5"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <Mail className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent side="bottom">
                       <p>{node.email}</p>
                     </TooltipContent>
                   </Tooltip>
@@ -322,11 +349,16 @@ const TreeNode: React.FC<{
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 rounded-full bg-background/50 hover:bg-primary/5"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <Phone className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent side="bottom">
                       <p>+1 (555) 123-4567</p>
                     </TooltipContent>
                   </Tooltip>
@@ -335,31 +367,27 @@ const TreeNode: React.FC<{
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 rounded-full bg-background/50 hover:bg-primary/5"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <Briefcase className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent side="bottom">
                       <p>View profile</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                
-                {hasChildren && (
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8"
-                    onClick={() => onToggle(node.id)}
-                  >
-                    {expanded ? (
-                      <ChevronDown className="h-4 w-4" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-                  </Button>
-                )}
               </div>
+              
+              {hasChildren && (
+                <div className="text-xs text-muted-foreground mt-3">
+                  {expanded ? 'Click to collapse' : 'Click to expand'}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -416,6 +444,11 @@ const TreeNode: React.FC<{
 export default function OrgChartTree({ users, departments, layout }: OrgChartTreeProps) {
   // Instead of processing real user data, we're using our sample hierarchy
   const hierarchy = useMemo(() => buildHierarchy(users), [users]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // State for drag position
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const dragControls = useDragControls();
   
   // State to track expanded nodes
   const [expandedNodes, setExpandedNodes] = useState<Record<number, boolean>>({
@@ -445,20 +478,72 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
     
     return hierarchy.map(processNode);
   }, [hierarchy, expandedNodes]);
+  
+  // Add drag handle and instructions for mobile
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      const instruction = document.createElement('div');
+      instruction.className = 'absolute top-4 right-4 bg-background/80 backdrop-blur-sm p-2 rounded-md shadow-sm text-xs text-muted-foreground md:hidden';
+      instruction.innerHTML = 'Drag to move around<br>Pinch to zoom';
+      
+      // Add then remove after 3 seconds
+      container.appendChild(instruction);
+      setTimeout(() => {
+        instruction.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        setTimeout(() => {
+          if (container.contains(instruction)) {
+            container.removeChild(instruction);
+          }
+        }, 500);
+      }, 3000);
+    }
+  }, []);
+
+  // Double click to center chart
+  const handleDoubleClick = () => {
+    setPosition({ x: 0, y: 0 });
+  };
 
   return (
-    <div className="w-full h-full flex items-center justify-center py-8">
-      {processedHierarchy.map(rootNode => (
-        <TreeNode
-          key={rootNode.id}
-          node={rootNode}
-          departments={departments}
-          layout={layout}
-          onToggle={toggleNode}
-          expanded={!!rootNode.isExpanded}
-          level={0}
-        />
-      ))}
+    <div 
+      ref={containerRef}
+      className="w-full h-full overflow-hidden relative"
+      onDoubleClick={handleDoubleClick}
+    >
+      <div className="absolute top-2 left-2 bg-background/80 backdrop-blur-sm p-2 rounded-md shadow-sm text-xs text-muted-foreground z-10 hidden md:block">
+        Double-click to center • Drag to move
+      </div>
+      
+      <motion.div
+        drag
+        dragControls={dragControls}
+        dragMomentum={false}
+        dragElastic={0.1}
+        dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
+        className="h-full w-full flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
+        style={{ x: position.x, y: position.y }}
+        onDragEnd={(e, info) => {
+          setPosition({ 
+            x: position.x + info.offset.x, 
+            y: position.y + info.offset.y 
+          });
+        }}
+      >
+        <div className={`py-10 px-6 ${layout === "vertical" ? "pt-20" : "pl-20"}`}>
+          {processedHierarchy.map(rootNode => (
+            <TreeNode
+              key={rootNode.id}
+              node={rootNode}
+              departments={departments}
+              layout={layout}
+              onToggle={toggleNode}
+              expanded={!!rootNode.isExpanded}
+              level={0}
+            />
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 }
