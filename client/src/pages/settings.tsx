@@ -437,14 +437,16 @@ export default function Settings() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
+                                    <SelectItem value="Executive">Executive</SelectItem>
+                                    <SelectItem value="Human Resources">Human Resources</SelectItem>
+                                    <SelectItem value="Marketing">Marketing</SelectItem>
+                                    <SelectItem value="Sales">Sales</SelectItem>
                                     <SelectItem value="Engineering">Engineering</SelectItem>
                                     <SelectItem value="Product">Product</SelectItem>
                                     <SelectItem value="Design">Design</SelectItem>
-                                    <SelectItem value="Marketing">Marketing</SelectItem>
-                                    <SelectItem value="Sales">Sales</SelectItem>
-                                    <SelectItem value="Human Resources">Human Resources</SelectItem>
-                                    <SelectItem value="Finance">Finance</SelectItem>
+                                    <SelectItem value="Customer Support">Customer Support</SelectItem>
                                     <SelectItem value="Operations">Operations</SelectItem>
+                                    <SelectItem value="Finance">Finance</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -462,29 +464,10 @@ export default function Settings() {
                               <FormControl>
                                 <Input {...field} />
                               </FormControl>
-                              <FormDescription>Optional</FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                      </div>
-                    </div>
-                    
-                    <Separator className="my-6" />
-                    
-                    <div className="space-y-4">
-                      <h3 className="text-md font-medium">Password & Security</h3>
-                      
-                      <div className="grid grid-cols-1 gap-4">
-                        <Button variant="outline" type="button">
-                          <i className="ri-lock-password-line mr-1"></i>
-                          Change Password
-                        </Button>
-                        
-                        <Button variant="outline" type="button">
-                          <i className="ri-shield-keyhole-line mr-1"></i>
-                          Enable Two-Factor Authentication
-                        </Button>
                       </div>
                     </div>
                     
@@ -496,145 +479,175 @@ export default function Settings() {
               </div>
             </TabsContent>
             
-            {/* Notification Settings Tab */}
+            {/* Notifications Tab */}
             <TabsContent value="notifications" className="mt-0">
               <div className="max-w-2xl">
-                <h2 className="text-lg font-medium mb-4">Notification Preferences</h2>
-                <p className="text-neutral-500 mb-6">Manage how and when you receive notifications</p>
+                <h2 className="text-lg font-medium mb-4">Notification Settings</h2>
+                <p className="text-neutral-500 mb-6">Configure how and when you receive notifications</p>
                 
                 <Form {...notificationForm}>
                   <form onSubmit={notificationForm.handleSubmit(onNotificationFormSubmit)} className="space-y-6">
-                    <FormField
-                      control={notificationForm.control}
-                      name="emailNotifications"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                          <div className="space-y-0.5">
-                            <FormLabel className="text-base">Email Notifications</FormLabel>
-                            <FormDescription>
-                              Receive notifications via email
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Email Notifications</CardTitle>
+                        <CardDescription>Configure email notification preferences</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <FormField
+                          control={notificationForm.control}
+                          name="emailNotifications"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Email Notifications
+                                </FormLabel>
+                                <FormDescription>
+                                  Receive email notifications for important updates
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </CardContent>
+                    </Card>
                     
-                    <Separator className="my-4" />
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Performance & Goals</CardTitle>
+                        <CardDescription>Configure performance tracking notifications</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <FormField
+                          control={notificationForm.control}
+                          name="reviewReminders"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Review Reminders
+                                </FormLabel>
+                                <FormDescription>
+                                  Receive notifications for upcoming and in-progress performance reviews
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={notificationForm.control}
+                          name="goalUpdates"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Goal Updates
+                                </FormLabel>
+                                <FormDescription>
+                                  Receive notifications for goal progress updates and changes
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </CardContent>
+                    </Card>
                     
-                    <div className="space-y-4">
-                      <h3 className="text-md font-medium">Notification Types</h3>
-                      
-                      <FormField
-                        control={notificationForm.control}
-                        name="reviewReminders"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">Performance Review Reminders</FormLabel>
-                              <FormDescription>
-                                Get reminders about upcoming and due reviews
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={notificationForm.control}
-                        name="goalUpdates"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">Goal Updates</FormLabel>
-                              <FormDescription>
-                                Notifications when goals are updated or completed
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={notificationForm.control}
-                        name="meetingReminders"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">1:1 Meeting Reminders</FormLabel>
-                              <FormDescription>
-                                Get reminders about upcoming 1:1 meetings
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={notificationForm.control}
-                        name="surveyNotifications"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">Survey Notifications</FormLabel>
-                              <FormDescription>
-                                Receive notifications about new surveys and completions
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={notificationForm.control}
-                        name="teamUpdates"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">Team Updates</FormLabel>
-                              <FormDescription>
-                                Notifications about team changes and announcements
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Meetings & Surveys</CardTitle>
+                        <CardDescription>Configure meeting and survey notifications</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <FormField
+                          control={notificationForm.control}
+                          name="meetingReminders"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Meeting Reminders
+                                </FormLabel>
+                                <FormDescription>
+                                  Receive reminders for upcoming one-on-one meetings
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={notificationForm.control}
+                          name="surveyNotifications"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Survey Notifications
+                                </FormLabel>
+                                <FormDescription>
+                                  Receive notifications for new surveys and survey deadlines
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={notificationForm.control}
+                          name="teamUpdates"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Team Updates
+                                </FormLabel>
+                                <FormDescription>
+                                  Receive notifications for changes to team structure and membership
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </CardContent>
+                    </Card>
                     
                     <div className="pt-4">
                       <Button type="submit">Save Notification Settings</Button>
@@ -647,174 +660,172 @@ export default function Settings() {
             {/* Integrations Tab */}
             <TabsContent value="integrations" className="mt-0">
               <div className="max-w-2xl">
-                <h2 className="text-lg font-medium mb-4">Integrations</h2>
-                <p className="text-neutral-500 mb-6">Connect Proxa with your other tools and services</p>
+                <h2 className="text-lg font-medium mb-4">Integration Settings</h2>
+                <p className="text-neutral-500 mb-6">Connect Proxa with your existing tools and services</p>
                 
                 <Form {...integrationForm}>
                   <form onSubmit={integrationForm.handleSubmit(onIntegrationFormSubmit)} className="space-y-6">
-                    <div className="space-y-4">
-                      <h3 className="text-md font-medium">Communication Tools</h3>
-                      
-                      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <div className="flex items-center space-x-4">
-                          <div className="bg-[#4A154B] w-10 h-10 rounded flex items-center justify-center text-white">
-                            <i className="ri-slack-fill text-xl"></i>
-                          </div>
-                          <div className="space-y-0.5">
-                            <h4 className="text-base font-medium">Slack</h4>
-                            <p className="text-sm text-neutral-500">
-                              Send notifications and updates to Slack channels
-                            </p>
-                          </div>
-                        </div>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Communication Tools</CardTitle>
+                        <CardDescription>Connect with team communication platforms</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
                         <FormField
                           control={integrationForm.control}
                           name="slackWorkspace"
                           render={({ field }) => (
-                            <div className="w-32">
-                              <Input {...field} placeholder="Workspace" />
-                            </div>
+                            <FormItem>
+                              <FormLabel>Slack Workspace</FormLabel>
+                              <FormControl>
+                                <Input {...field} placeholder="workspace-name" />
+                              </FormControl>
+                              <FormDescription>
+                                Connect Proxa to your Slack workspace for notifications and updates
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
                           )}
                         />
-                      </div>
-                      
-                      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <div className="flex items-center space-x-4">
-                          <div className="bg-[#6264A7] w-10 h-10 rounded flex items-center justify-center text-white">
-                            <i className="ri-microsoft-fill text-xl"></i>
-                          </div>
-                          <div className="space-y-0.5">
-                            <h4 className="text-base font-medium">Microsoft Teams</h4>
-                            <p className="text-sm text-neutral-500">
-                              Connect with Microsoft Teams
-                            </p>
-                          </div>
-                        </div>
+                        
                         <FormField
                           control={integrationForm.control}
                           name="microsoftTeams"
                           render={({ field }) => (
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Microsoft Teams
+                                </FormLabel>
+                                <FormDescription>
+                                  Connect with Microsoft Teams for meeting integration
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
                           )}
                         />
-                      </div>
-                    </div>
+                      </CardContent>
+                    </Card>
                     
-                    <div className="space-y-4">
-                      <h3 className="text-md font-medium">Calendar & Meeting Tools</h3>
-                      
-                      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <div className="flex items-center space-x-4">
-                          <div className="bg-[#4285F4] w-10 h-10 rounded flex items-center justify-center text-white">
-                            <i className="ri-google-fill text-xl"></i>
-                          </div>
-                          <div className="space-y-0.5">
-                            <h4 className="text-base font-medium">Google Calendar</h4>
-                            <p className="text-sm text-neutral-500">
-                              Sync 1:1 meetings with Google Calendar
-                            </p>
-                          </div>
-                        </div>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Calendar & Meeting Tools</CardTitle>
+                        <CardDescription>Connect with calendar services</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
                         <FormField
                           control={integrationForm.control}
                           name="googleCalendar"
                           render={({ field }) => (
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Google Calendar
+                                </FormLabel>
+                                <FormDescription>
+                                  Sync one-on-one meetings with Google Calendar
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
                           )}
                         />
-                      </div>
-                      
-                      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <div className="flex items-center space-x-4">
-                          <div className="bg-[#2D8CFF] w-10 h-10 rounded flex items-center justify-center text-white">
-                            <i className="ri-video-chat-fill text-xl"></i>
-                          </div>
-                          <div className="space-y-0.5">
-                            <h4 className="text-base font-medium">Zoom</h4>
-                            <p className="text-sm text-neutral-500">
-                              Automatically generate Zoom links for meetings
-                            </p>
-                          </div>
-                        </div>
+                        
                         <FormField
                           control={integrationForm.control}
                           name="zoom"
                           render={({ field }) => (
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Zoom
+                                </FormLabel>
+                                <FormDescription>
+                                  Automatically create Zoom meetings for one-on-ones
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
                           )}
                         />
-                      </div>
-                    </div>
+                      </CardContent>
+                    </Card>
                     
-                    <div className="space-y-4">
-                      <h3 className="text-md font-medium">Work Tools</h3>
-                      
-                      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <div className="flex items-center space-x-4">
-                          <div className="bg-[#0052CC] w-10 h-10 rounded flex items-center justify-center text-white">
-                            <i className="ri-jira-fill text-xl"></i>
-                          </div>
-                          <div className="space-y-0.5">
-                            <h4 className="text-base font-medium">Jira</h4>
-                            <p className="text-sm text-neutral-500">
-                              Link goals and OKRs with Jira tickets
-                            </p>
-                          </div>
-                        </div>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Work Management Tools</CardTitle>
+                        <CardDescription>Connect with project and work management tools</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
                         <FormField
                           control={integrationForm.control}
                           name="jira"
                           render={({ field }) => (
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Jira
+                                </FormLabel>
+                                <FormDescription>
+                                  Connect goals with Jira tickets and epics
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
                           )}
                         />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="text-md font-medium">HRIS Integration</h3>
-                      
-                      <FormField
-                        control={integrationForm.control}
-                        name="hrisSystem"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>HRIS System</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select HRIS system" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="none">None</SelectItem>
-                                <SelectItem value="bamboohr">BambooHR</SelectItem>
-                                <SelectItem value="gusto">Gusto</SelectItem>
-                                <SelectItem value="workday">Workday</SelectItem>
-                                <SelectItem value="adp">ADP</SelectItem>
-                                <SelectItem value="greenhouse">Greenhouse</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              Connect to your HR Information System to sync employee data
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                        
+                        <FormField
+                          control={integrationForm.control}
+                          name="hrisSystem"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>HRIS System</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select HRIS system" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="bamboohr">BambooHR</SelectItem>
+                                  <SelectItem value="workday">Workday</SelectItem>
+                                  <SelectItem value="gusto">Gusto</SelectItem>
+                                  <SelectItem value="adp">ADP</SelectItem>
+                                  <SelectItem value="namely">Namely</SelectItem>
+                                  <SelectItem value="other">Other</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormDescription>
+                                Connect to your HR Information System to sync employee data
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </CardContent>
+                    </Card>
                     
                     <div className="pt-4">
                       <Button type="submit">Save Integration Settings</Button>
@@ -826,89 +837,25 @@ export default function Settings() {
             
             {/* Access & Permissions Tab */}
             <TabsContent value="access" className="mt-0">
-              <div className="max-w-2xl">
+              <div className="max-w-full">
                 <h2 className="text-lg font-medium mb-4">Access & Permissions</h2>
                 <p className="text-neutral-500 mb-6">Manage user roles and access controls</p>
                 
-                <div className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">User Roles</CardTitle>
-                      <CardDescription>Configure available roles and their permissions</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between border-b pb-4">
-                          <div>
-                            <h4 className="font-medium">Admin</h4>
-                            <p className="text-sm text-neutral-500">Full access to all settings and data</p>
-                          </div>
-                          <Button variant="outline" size="sm">Edit Permissions</Button>
-                        </div>
-                        
-                        <div className="flex items-center justify-between border-b pb-4">
-                          <div>
-                            <h4 className="font-medium">Manager</h4>
-                            <p className="text-sm text-neutral-500">Can manage their direct reports and teams</p>
-                          </div>
-                          <Button variant="outline" size="sm">Edit Permissions</Button>
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium">Employee</h4>
-                            <p className="text-sm text-neutral-500">Limited access to personal data only</p>
-                          </div>
-                          <Button variant="outline" size="sm">Edit Permissions</Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Team Access Controls</CardTitle>
-                      <CardDescription>Set which teams can access specific modules</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button variant="outline">Configure Team Access</Button>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-base">Data Privacy</CardTitle>
-                      <CardDescription>Configure data visibility and privacy settings</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium">Anonymous Survey Responses</h4>
-                            <p className="text-sm text-neutral-500">Keep survey responses anonymous by default</p>
-                          </div>
-                          <Switch defaultChecked={true} />
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium">Peer Feedback Privacy</h4>
-                            <p className="text-sm text-neutral-500">Keep peer feedback private to managers only</p>
-                          </div>
-                          <Switch defaultChecked={true} />
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium">Goal Visibility</h4>
-                            <p className="text-sm text-neutral-500">Allow employees to see team and company goals</p>
-                          </div>
-                          <Switch defaultChecked={true} />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                <div className="bg-amber-50 border border-amber-200 rounded-md p-4 mb-6">
+                  <div className="flex items-start">
+                    <i className="ri-information-line text-amber-500 text-lg mt-0.5 mr-3"></i>
+                    <div>
+                      <h3 className="font-medium text-amber-800">Access Control Configuration</h3>
+                      <p className="text-amber-700 text-sm mt-1">
+                        Configuring access controls and permissions requires admin privileges. 
+                        Changes made here will affect how users interact with the platform.
+                      </p>
+                    </div>
+                  </div>
                 </div>
+                
+                {/* Permission Manager Component */}
+                <PermissionManager />
               </div>
             </TabsContent>
             
@@ -916,87 +863,89 @@ export default function Settings() {
             <TabsContent value="billing" className="mt-0">
               <div className="max-w-2xl">
                 <h2 className="text-lg font-medium mb-4">Billing & Subscription</h2>
-                <p className="text-neutral-500 mb-6">Manage your subscription plan and billing information</p>
+                <p className="text-neutral-500 mb-6">Manage your billing information and subscription plan</p>
                 
-                <Card className="mb-6">
-                  <CardHeader>
-                    <CardTitle className="text-base">Current Plan</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between">
-                      <div>
-                        <div className="inline-block bg-primary/10 text-primary font-medium px-3 py-1 rounded-full text-sm mb-2">
-                          Professional Plan
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base">Current Plan</CardTitle>
+                      <CardDescription>Your subscription details</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h3 className="font-semibold text-primary">Premium Plan</h3>
+                            <p className="text-sm text-neutral-500">All features included</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-semibold">$499<span className="text-sm font-normal">/month</span></div>
+                            <p className="text-sm text-neutral-500">Billed annually</p>
+                          </div>
                         </div>
-                        <p className="text-xl font-bold">$12 <span className="text-sm font-normal text-neutral-500">per user/month</span></p>
-                        <p className="text-sm text-neutral-500 mt-1">Billed annually for 150 users</p>
-                      </div>
-                      <div className="mt-4 md:mt-0 space-x-2">
-                        <Button variant="outline">Change Plan</Button>
-                        <Button variant="outline" className="text-red-500 hover:text-red-600">Cancel Subscription</Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="mb-6">
-                  <CardHeader>
-                    <CardTitle className="text-base">Payment Information</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="bg-neutral-100 p-2 rounded mr-4">
-                          <i className="ri-visa-line text-xl"></i>
+                        
+                        <Separator />
+                        
+                        <div className="flex flex-col gap-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Next billing date:</span>
+                            <span className="font-medium">June 15, 2023</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span>Payment method:</span>
+                            <span className="font-medium">Visa ending in 4242</span>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">Visa ending in 4242</p>
-                          <p className="text-sm text-neutral-500">Expires 12/2025</p>
-                        </div>
-                      </div>
-                      <Button variant="outline">Update Payment Method</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Billing History</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">October 1, 2023</p>
-                          <p className="text-sm text-neutral-500">Professional Plan - Annual</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium">$21,600.00</p>
-                          <Button variant="ghost" size="sm">
-                            <i className="ri-download-line mr-1"></i>
-                            Invoice
-                          </Button>
+                        
+                        <div className="flex flex-col gap-2 pt-4">
+                          <Button variant="outline">Update Payment Method</Button>
+                          <Button variant="outline" className="text-red-500">Cancel Subscription</Button>
                         </div>
                       </div>
-                      
-                      <Separator />
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">October 1, 2022</p>
-                          <p className="text-sm text-neutral-500">Professional Plan - Annual</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium">$19,800.00</p>
-                          <Button variant="ghost" size="sm">
-                            <i className="ri-download-line mr-1"></i>
-                            Invoice
-                          </Button>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base">Billing History</CardTitle>
+                      <CardDescription>View your recent invoices</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b">
+                                <th className="text-left font-medium text-sm p-2">Date</th>
+                                <th className="text-left font-medium text-sm p-2">Description</th>
+                                <th className="text-right font-medium text-sm p-2">Amount</th>
+                                <th className="text-right font-medium text-sm p-2">Receipt</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="border-b">
+                                <td className="p-2 text-sm">May 15, 2023</td>
+                                <td className="p-2 text-sm">Premium Plan (Annual)</td>
+                                <td className="p-2 text-sm text-right">$5,988.00</td>
+                                <td className="p-2 text-sm text-right">
+                                  <Button variant="link" size="sm" className="h-auto p-0">Download</Button>
+                                </td>
+                              </tr>
+                              <tr className="border-b">
+                                <td className="p-2 text-sm">May 15, 2022</td>
+                                <td className="p-2 text-sm">Premium Plan (Annual)</td>
+                                <td className="p-2 text-sm text-right">$5,988.00</td>
+                                <td className="p-2 text-sm text-right">
+                                  <Button variant="link" size="sm" className="h-auto p-0">Download</Button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
