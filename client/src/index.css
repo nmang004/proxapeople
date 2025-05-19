@@ -89,12 +89,14 @@
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
+    @apply selection:bg-primary/20 selection:text-primary;
   }
   
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
+    @apply sm:w-2 sm:h-2;
   }
   
   ::-webkit-scrollbar-track {
@@ -119,6 +121,40 @@
   
   .btn-glow:hover {
     box-shadow: 0 0 15px 2px hsl(var(--primary) / 0.6);
+  }
+  
+  /* Apply enhanced focus styles */
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+  
+  /* Mobile Optimizations */
+  @media (max-width: 768px) {
+    /* Reduce animation intensity for mobile */
+    * {
+      --motion-reduce: transform 0.2s ease, opacity 0.2s ease !important;
+    }
+    
+    /* Improve tap targets for mobile */
+    button, a, input, select {
+      @apply min-h-[44px] min-w-[44px];
+    }
+    
+    /* Better mobile scrolling */
+    body {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+  
+  /* Prefers reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -193,6 +229,11 @@
     @apply bg-white/90 backdrop-blur-sm border border-white/20 shadow-sm;
   }
   
+  /* Improved Mobile Card Design */
+  .mobile-card {
+    @apply p-3 sm:p-4 md:p-5 rounded-lg border border-border/50 shadow-sm transition-all;
+  }
+  
   /* Animated tabs underline effect */
   .tab-underline {
     @apply relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300;
@@ -204,5 +245,70 @@
   
   .tab-underline:hover:not(.active) {
     @apply after:w-1/2;
+  }
+  
+  /* Staggered grid animation for cards */
+  .stagger-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6;
+  }
+  
+  .stagger-grid > * {
+    --stagger-delay: 0ms;
+    animation: card-appear 0.5s ease forwards;
+    animation-delay: var(--stagger-delay);
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  
+  @keyframes card-appear {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Gradient text for highlights */
+  .gradient-text {
+    @apply font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500;
+  }
+  
+  /* Mobile touch-friendly buttons */
+  .touch-button {
+    @apply select-none active:scale-95 transition transform duration-100 ease-in-out;
+  }
+  
+  /* Mobile swipe container */
+  .swipe-container {
+    @apply overflow-x-auto scrollbar-hide snap-x snap-mandatory;
+  }
+  
+  .swipe-container > * {
+    @apply snap-center min-w-[280px] md:min-w-[320px];
+  }
+  
+  /* Scrollbar hide utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Ripple effect for buttons */
+  .btn-ripple {
+    @apply relative overflow-hidden;
+  }
+  
+  .btn-ripple::after {
+    content: "";
+    @apply absolute top-1/2 left-1/2 h-0 w-0 rounded-full bg-white/30;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease-out, height 0.6s ease-out;
+  }
+  
+  .btn-ripple:active::after {
+    @apply h-[300px] w-[300px] opacity-0;
   }
 }
