@@ -129,26 +129,54 @@ export default function HomePage() {
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                transition={{ duration: 0.8, delay: 0.7, type: "spring", stiffness: 50 }}
                 className="flex flex-col sm:flex-row gap-3"
               >
                 <Link href="/dashboard">
-                  <Button size="lg" className="w-full sm:w-auto group">
-                    Get Started Free
-                    <motion.span
-                      className="ml-2"
-                      initial={{ x: 0 }}
-                      whileHover={{ x: 5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ArrowRight size={16} />
-                    </motion.span>
-                  </Button>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  >
+                    <Button size="lg" className="w-full sm:w-auto group relative overflow-hidden">
+                      <motion.span className="relative z-10">
+                        Get Started Free
+                      </motion.span>
+                      <motion.span
+                        className="ml-2 relative z-10"
+                        initial={{ x: 0 }}
+                        whileHover={{ x: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ArrowRight size={16} />
+                      </motion.span>
+                      <motion.div 
+                        className="absolute inset-0 bg-primary/10"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: 0 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </Button>
+                  </motion.div>
                 </Link>
                 <Link href="/dashboard">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                    Book a Demo
-                  </Button>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  >
+                    <Button variant="outline" size="lg" className="w-full sm:w-auto relative overflow-hidden group">
+                      <motion.span className="relative z-10">
+                        Book a Demo
+                      </motion.span>
+                      <motion.div 
+                        className="absolute inset-0 bg-primary/5"
+                        initial={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </Button>
+                  </motion.div>
                 </Link>
               </motion.div>
               
@@ -160,7 +188,16 @@ export default function HomePage() {
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, type: "spring", stiffness: 100 }}
+                transition={{ 
+                  duration: 0.9, 
+                  type: "spring", 
+                  stiffness: 80,
+                  damping: 15
+                }}
+                whileHover={{ 
+                  y: -5,
+                  boxShadow: "0 25px 50px -12px rgba(156, 90, 255, 0.25)"
+                }}
                 className="relative z-10 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden bg-white border"
               >
                 <img 
@@ -168,66 +205,178 @@ export default function HomePage() {
                   alt="Proxa dashboard" 
                   className="w-full h-auto rounded-xl"
                 />
-
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2, duration: 0.7 }}
+                  className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"
+                />
               </motion.div>
               
               {/* Mobile app view */}
               <motion.div 
-                initial={{ opacity: 0, x: 60 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.7, delay: 0.3, type: "spring", stiffness: 50 }}
+                initial={{ opacity: 0, x: 60, y: 20 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ 
+                  duration: 0.9, 
+                  delay: 0.5, 
+                  type: "spring", 
+                  stiffness: 60,
+                  damping: 15 
+                }}
+                whileHover={{ 
+                  y: -8,
+                  x: -5,
+                  rotate: -2,
+                  scale: 1.05,
+                  boxShadow: "0 20px 25px -5px rgba(156, 90, 255, 0.3)"
+                }}
                 className="absolute bottom-0 right-0 md:-bottom-6 md:-right-6 z-20 w-28 md:w-40 h-auto rounded-xl shadow-xl overflow-hidden border-4 border-white"
               >
-                <img 
+                <motion.img 
                   src={MobileScreenshotPath} 
                   alt="Proxa mobile app" 
                   className="w-full h-auto"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.3 }}
                 />
               </motion.div>
               
               {/* Floating achievement card - metrics */}
               <motion.div 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
+                initial={{ opacity: 0, scale: 0.8, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.7, 
+                  delay: 0.5, 
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 15
+                }}
+                whileHover={{ 
+                  y: -5, 
+                  scale: 1.05,
+                  boxShadow: "0 15px 30px -5px rgba(156, 90, 255, 0.15)"
+                }}
                 className="absolute top-[5%] right-0 md:-right-4 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
-                <div className="flex items-center gap-2">
-                  <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                <motion.div 
+                  className="flex items-center gap-2"
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <motion.div 
+                    className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600"
+                    whileHover={{ scale: 1.1, backgroundColor: "rgba(16, 185, 129, 0.2)" }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
                     <CheckCircle size={14} />
-                  </div>
-                  <span className="text-xs md:text-sm font-medium">92% Goal Completion</span>
-                </div>
+                  </motion.div>
+                  <motion.span 
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: "auto", opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.6 }}
+                    className="text-xs md:text-sm font-medium overflow-hidden whitespace-nowrap"
+                  >
+                    92% Goal Completion
+                  </motion.span>
+                </motion.div>
               </motion.div>
               
               {/* Floating achievement card - performance */}
               <motion.div 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
+                initial={{ opacity: 0, scale: 0.8, x: -20 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ 
+                  duration: 0.7, 
+                  delay: 0.7, 
+                  type: "spring",
+                  stiffness: 90,
+                  damping: 15
+                }}
+                whileHover={{ 
+                  x: 5, 
+                  scale: 1.05,
+                  boxShadow: "0 15px 30px -5px rgba(59, 130, 246, 0.15)"
+                }}
                 className="absolute top-[40%] left-0 md:-left-4 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
-                <div className="flex items-center gap-2">
-                  <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                <motion.div 
+                  className="flex items-center gap-2"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <motion.div 
+                    className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"
+                    whileHover={{ scale: 1.1, backgroundColor: "rgba(59, 130, 246, 0.2)" }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
                     <TrendingUp size={14} />
-                  </div>
-                  <span className="text-xs md:text-sm font-medium">Performance +24%</span>
-                </div>
+                  </motion.div>
+                  <motion.span 
+                    className="text-xs md:text-sm font-medium"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.8 }}
+                  >
+                    Performance <motion.span
+                      initial={{ color: "#1e40af" }}
+                      animate={{ color: "#2563eb" }}
+                      transition={{ repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
+                    >+24%</motion.span>
+                  </motion.span>
+                </motion.div>
               </motion.div>
               
               {/* Floating analytics card */}
               <motion.div 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.9 }}
+                initial={{ opacity: 0, scale: 0.8, x: -20, y: 10 }}
+                animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                transition={{ 
+                  duration: 0.7, 
+                  delay: 0.9, 
+                  type: "spring",
+                  stiffness: 70,
+                  damping: 10
+                }}
+                whileHover={{ 
+                  x: 5, 
+                  y: -5,
+                  scale: 1.05,
+                  rotate: 1,
+                  boxShadow: "0 15px 30px -5px rgba(156, 90, 255, 0.2)"
+                }}
                 className="absolute bottom-[30%] left-0 md:-left-8 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
-                <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-full bg-purple-100 flex items-center justify-center text-primary">
+                <motion.div 
+                  className="flex items-center gap-2"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <motion.div 
+                    className="h-7 w-7 rounded-full bg-purple-100 flex items-center justify-center text-primary"
+                    whileHover={{ scale: 1.1, backgroundColor: "rgba(156, 90, 255, 0.2)" }}
+                    animate={{ 
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{ 
+                      repeat: Infinity, 
+                      repeatType: "reverse", 
+                      duration: 2,
+                      type: "spring"
+                    }}
+                  >
                     <Sparkles size={14} />
-                  </div>
-                  <span className="text-xs md:text-sm font-medium">Team Engagement 87%</span>
-                </div>
+                  </motion.div>
+                  <motion.div className="flex items-center gap-1">
+                    <span className="text-xs md:text-sm font-medium">Team Engagement</span>
+                    <motion.span 
+                      className="text-xs md:text-sm font-bold text-primary"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 1.1 }}
+                    >
+                      87%
+                    </motion.span>
+                  </motion.div>
+                </motion.div>
               </motion.div>
             </div>
           </div>
