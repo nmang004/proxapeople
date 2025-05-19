@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { NewReviewDialog } from "@/components/dialogs/new-review-dialog";
 import { ScheduleMeetingDialog } from "@/components/dialogs/schedule-meeting-dialog";
 import { NewSurveyDialog } from "@/components/dialogs/new-survey-dialog";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // Team member interface
 interface TeamMember {
@@ -173,9 +174,63 @@ const reviews: Review[] = [
   },
 ];
 
+// Define widget types for the dashboard
+type WidgetId = 
+  | "stats" 
+  | "team-performance" 
+  | "team-goals" 
+  | "upcoming-reviews" 
+  | "one-on-one-meetings" 
+  | "engagement-score";
+
+// Widget configuration interface
+interface Widget {
+  id: WidgetId;
+  title: string;
+  component: JSX.Element;
+  colSpan?: string; // For controlling grid layout 
+}
+
 export default function Dashboard() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+
+  // Define the initial widget order for the dashboard
+  const [widgets, setWidgets] = useState<Widget[]>([
+    { 
+      id: "stats", 
+      title: "Statistics", 
+      component: <StatsCards />,
+      colSpan: "col-span-3" 
+    },
+    { 
+      id: "team-performance", 
+      title: "Team Performance", 
+      component: <TeamPerformance />,
+      colSpan: "col-span-2" 
+    },
+    { 
+      id: "team-goals", 
+      title: "Team Goals", 
+      component: <TeamGoals /> 
+    },
+    { 
+      id: "upcoming-reviews", 
+      title: "Upcoming Reviews", 
+      component: <UpcomingReviews />,
+      colSpan: "col-span-2" 
+    },
+    { 
+      id: "one-on-one-meetings", 
+      title: "Upcoming 1:1s", 
+      component: <OneOnOneMeetings /> 
+    },
+    { 
+      id: "engagement-score", 
+      title: "Team Engagement", 
+      component: <EngagementScore /> 
+    }
+  ]);
   
   // Simulating data fetch for dashboard stats
   const { data: dashboardData, isLoading } = useQuery({
@@ -195,6 +250,17 @@ export default function Dashboard() {
   // Function to handle tab changes
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+  };
+  
+  // Handle drag end event when widgets are reordered
+  const handleDragEnd = (result: any) => {
+    if (!result.destination) return;
+    
+    const items = Array.from(widgets);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    setWidgets(items);
   };
   
   // Get status badge style

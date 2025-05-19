@@ -12,6 +12,11 @@ interface PerformanceData {
     overallScore: number;
     growthScore: number;
   }[];
+  monthly: {
+    month: string;
+    overallScore: number;
+    growthScore: number;
+  }[];
 }
 
 // Mock performance data for visual presentation
@@ -41,7 +46,9 @@ export function TeamPerformance() {
   });
 
   // Use mock data for visual presentation until the API provides real data
-  const performanceData = mockPerformanceData.quarterly;
+  const performanceData = timeRange === 'quarterly' 
+    ? mockPerformanceData.quarterly 
+    : mockPerformanceData.monthly.slice(0, 6);
 
   return (
     <Card className="shadow-sm">
@@ -91,7 +98,7 @@ export function TeamPerformance() {
                 {/* Simulated Bar Chart */}
                 <div className="h-full flex items-end justify-between gap-1">
                   {performanceData.map((item, index) => (
-                    <div key={item.quarter} className="w-1/5 flex flex-col items-center">
+                    <div key={index} className="w-1/5 flex flex-col items-center">
                       <div 
                         className={cn(
                           "w-full rounded-t-md", 
@@ -101,7 +108,10 @@ export function TeamPerformance() {
                         style={{ height: `${(item.overallScore / 10) * 100}%` }}
                       ></div>
                       <span className="text-xs mt-2 text-neutral-500">
-                        {item.quarter} {index === performanceData.length - 1 && "(Current)"}
+                        {timeRange === 'quarterly' 
+                          ? (`Q${index + 1} ${index === performanceData.length - 1 ? '(Current)' : ''}`)
+                          : (item as any).month
+                        }
                       </span>
                     </div>
                   ))}
