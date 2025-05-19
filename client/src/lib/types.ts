@@ -11,6 +11,7 @@ export interface User {
   department: string;
   managerId?: number;
   profileImage?: string;
+  profileImageUrl?: string;
   hireDate?: string;
   createdAt: string;
   updatedAt: string;
@@ -94,25 +95,41 @@ export interface Goal {
 }
 
 // One-on-one meeting related types
-export type MeetingStatus = "scheduled" | "completed" | "canceled";
+export type MeetingStatus = "scheduled" | "completed" | "cancelled";
+export type ActionItemStatus = "not_started" | "in_progress" | "completed";
+
+export interface MeetingActionItem {
+  id: number;
+  description: string;
+  assigneeId: number;
+  dueDate?: string;
+  status: ActionItemStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MeetingNotes {
+  summary: string;
+  discussionPoints?: string;
+  decisions?: string;
+  privateNotes?: string;
+  nextSteps?: MeetingActionItem[];
+}
 
 export interface OneOnOneMeeting {
   id: number;
   managerId: number;
-  employeeId: number;
-  scheduledAt: string;
+  participantId: number; // renamed from employeeId for clarity
+  date: string;          // renamed from scheduledAt for simplicity
   duration: number;
   status: MeetingStatus;
   location?: string;
-  agendaItems?: any[];
-  notes?: string;
+  locationLink?: string;
+  agenda?: string;
+  notes?: MeetingNotes;
+  actionItems?: MeetingActionItem[];
   createdAt: string;
   updatedAt: string;
-  employee?: {
-    id: number;
-    name: string;
-    profileImage?: string;
-  };
 }
 
 // Survey related types
