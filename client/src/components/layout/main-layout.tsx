@@ -80,23 +80,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
       {/* Mobile Sidebar - Enhanced */}
       <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
         <SheetContent 
-          side="left" 
-          className="p-0 w-[280px] sm:w-[320px] border-r-0 focus:outline-none"
-          hideCloseButton
+          side="right" 
+          className="p-0 w-[280px] sm:w-[320px] border-l-0 focus:outline-none"
         >
           <div className="relative h-full">
             <Sidebar />
-            
-            {/* Mobile Close Button - Floating */}
-            <SheetClose asChild>
-              <Button 
-                size="icon" 
-                variant="ghost" 
-                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm border shadow-sm"
-              >
-                <i className="ri-close-line"></i>
-              </Button>
-            </SheetClose>
           </div>
         </SheetContent>
       </Sheet>
