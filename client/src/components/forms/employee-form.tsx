@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,6 +17,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { 
@@ -25,8 +27,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
-import { insertUserSchema } from "@shared/schema";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { insertUserSchema, insertDepartmentSchema } from "@shared/schema";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -47,7 +55,13 @@ const userFormSchema = z.object({
   path: ["confirmPassword"],
 });
 
+const departmentSchema = z.object({
+  name: z.string().min(1, "Department name is required"),
+  managerId: z.number().nullable(),
+});
+
 type UserFormValues = z.infer<typeof userFormSchema>;
+type DepartmentFormValues = z.infer<typeof departmentSchema>;
 
 interface EmployeeFormProps {
   open: boolean;
@@ -66,6 +80,18 @@ export function EmployeeForm({
 }: EmployeeFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showNewDepartmentForm, setShowNewDepartmentForm] = useState(false);
+  const [isCreatingDepartment, setIsCreatingDepartment] = useState(false);
+  const [departmentsList, setDepartmentsList] = useState<string[]>(departments);
+  
+  // Create a separate form for new department
+  const departmentForm = useForm<DepartmentFormValues>({
+    resolver: zodResolver(departmentSchema),
+    defaultValues: {
+      name: "",
+      managerId: null
+    }
+  });
   
   const defaultValues: Partial<UserFormValues> = {
     email: "",
@@ -87,6 +113,47 @@ export function EmployeeForm({
     defaultValues,
   });
 
+  const createDepartment = async (data: DepartmentFormValues) => {
+    setIsCreatingDepartment(true);
+    
+    try {
+      const response = await fetch('/api/departments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create department');
+      }
+      
+      const newDepartment = await response.json();
+      
+      // Update departments list
+      setDepartmentsList(prev => [...prev, newDepartment.name]);
+      
+      // Set the new department in the employee form
+      form.setValue('department', newDepartment.name);
+      
+      toast({
+        title: "Success",
+        description: `Department "${newDepartment.name}" created successfully`,
+      });
+      
+      setShowNewDepartmentForm(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create department. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreatingDepartment(false);
+    }
+  };
+
   const onSubmit = async (data: UserFormValues) => {
     setIsSubmitting(true);
     
@@ -98,13 +165,21 @@ export function EmployeeForm({
         confirmPassword: undefined
       };
       
-      await apiRequest('/api/users', {
+      const response = await fetch('/api/users', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(userData)
       });
       
+      if (!response.ok) {
+        throw new Error('Failed to add employee');
+      }
+      
       // Invalidate users query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['/api/users'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/departments'] });
       
       toast({
         title: "Success",
@@ -227,23 +302,109 @@ export function EmployeeForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Department</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select department" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {departments.map(dept => (
-                          <SelectItem key={dept} value={dept}>
-                            {dept}
+                    <div className="space-y-2">
+                      <Select 
+                        onValueChange={(value) => {
+                          if (value === "new_department") {
+                            setShowNewDepartmentForm(true);
+                          } else {
+                            field.onChange(value);
+                          }
+                        }}
+                        defaultValue={field.value || undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select department" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Existing Departments</SelectLabel>
+                            {departmentsList.map(dept => (
+                              <SelectItem key={dept} value={dept}>
+                                {dept}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                          <SelectItem value="new_department" className="text-primary font-medium">
+                            + Create New Department
                           </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        </SelectContent>
+                      </Select>
+                      
+                      {/* New Department Form Dialog */}
+                      <Dialog open={showNewDepartmentForm} onOpenChange={setShowNewDepartmentForm}>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Create New Department</DialogTitle>
+                            <DialogDescription>
+                              Add a new department to your organization.
+                            </DialogDescription>
+                          </DialogHeader>
+                          
+                          <Form {...departmentForm}>
+                            <form onSubmit={departmentForm.handleSubmit(createDepartment)} className="space-y-4">
+                              <FormField
+                                control={departmentForm.control}
+                                name="name"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Department Name</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="e.g. Engineering, Marketing, HR" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <FormField
+                                control={departmentForm.control}
+                                name="managerId"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Department Manager</FormLabel>
+                                    <Select 
+                                      onValueChange={(value) => field.onChange(value ? parseInt(value) : null)}
+                                      defaultValue={field.value?.toString()}
+                                    >
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select manager" />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectItem value="none">No Manager</SelectItem>
+                                        {managers.map(mgr => (
+                                          <SelectItem key={mgr.id} value={mgr.id.toString()}>
+                                            {mgr.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              
+                              <DialogFooter>
+                                <Button 
+                                  variant="outline" 
+                                  type="button" 
+                                  onClick={() => setShowNewDepartmentForm(false)}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button type="submit" disabled={isCreatingDepartment}>
+                                  {isCreatingDepartment ? 'Creating...' : 'Create Department'}
+                                </Button>
+                              </DialogFooter>
+                            </form>
+                          </Form>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -284,8 +445,14 @@ export function EmployeeForm({
                   <FormItem>
                     <FormLabel>Manager</FormLabel>
                     <Select 
-                      onValueChange={(value) => field.onChange(value ? parseInt(value) : null)}
-                      defaultValue={field.value?.toString()}
+                      onValueChange={(value) => {
+                        if (value === "none") {
+                          field.onChange(null);
+                        } else {
+                          field.onChange(parseInt(value));
+                        }
+                      }}
+                      defaultValue={field.value !== null ? field.value?.toString() : "none"}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -293,7 +460,7 @@ export function EmployeeForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">No Manager</SelectItem>
+                        <SelectItem value="none">No Manager</SelectItem>
                         {managers.map(mgr => (
                           <SelectItem key={mgr.id} value={mgr.id.toString()}>
                             {mgr.name}
