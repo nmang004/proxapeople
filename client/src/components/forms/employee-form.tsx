@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -88,19 +88,21 @@ export function EmployeeForm({
   const [teamsList, setTeamsList] = useState<{id: number, name: string}[]>([]);
   
   // Fetch teams for the dropdown
-  useQuery({
-    queryKey: ['/api/teams'],
-    onSuccess: (data) => {
-      if (data && Array.isArray(data)) {
-        setTeamsList(data.map(team => ({ id: team.id, name: team.name })));
-        
-        // If we don't have any teams, create a default team
-        if (data.length === 0) {
-          createDefaultTeam();
-        }
+  const { data: teamsData } = useQuery({
+    queryKey: ['/api/teams']
+  });
+  
+  // Set teams list when data is loaded
+  useEffect(() => {
+    if (teamsData && Array.isArray(teamsData)) {
+      setTeamsList(teamsData.map(team => ({ id: team.id, name: team.name })));
+      
+      // If we don't have any teams, create a default team
+      if (teamsData.length === 0) {
+        createDefaultTeam();
       }
     }
-  });
+  }, [teamsData]);
   
   // Function to create a default team if none exists
   const createDefaultTeam = async () => {
@@ -481,6 +483,41 @@ export function EmployeeForm({
                         <SelectItem value="admin">Admin</SelectItem>
                         <SelectItem value="manager">Manager</SelectItem>
                         <SelectItem value="employee">Employee</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="teamId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Team</FormLabel>
+                    <Select 
+                      onValueChange={(value) => {
+                        if (value === "none") {
+                          field.onChange(null);
+                        } else {
+                          field.onChange(parseInt(value));
+                        }
+                      }}
+                      defaultValue={field.value !== null ? field.value?.toString() : "none"}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select team" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">No Team</SelectItem>
+                        {teamsList.map(team => (
+                          <SelectItem key={team.id} value={team.id.toString()}>
+                            {team.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
