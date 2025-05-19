@@ -210,13 +210,13 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
-                className="absolute top-[40%] -left-6 md:-left-12 bg-white rounded-lg shadow-lg p-3 z-30 border"
+                className="absolute top-[40%] -left-4 md:-left-8 bg-white rounded-lg shadow-lg p-2 md:p-3 z-30 border"
               >
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                    <TrendingUp size={16} />
+                  <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                    <TrendingUp size={14} />
                   </div>
-                  <span className="text-sm font-medium">Performance +24%</span>
+                  <span className="text-xs md:text-sm font-medium">Performance +24%</span>
                 </div>
               </motion.div>
               
@@ -805,10 +805,10 @@ export default function HomePage() {
           </div>
           
           <div className="relative flex items-center justify-center">
-            <div className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full bg-primary/5 flex items-center justify-center">
-              <div className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-primary/10 flex items-center justify-center">
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white border shadow-sm flex items-center justify-center">
-                  <img src={LogoIconPurplePath} alt="Proxa Logo" className="h-16 w-16" />
+            <div className="absolute w-64 h-64 md:w-96 md:h-96 rounded-full bg-primary/5 flex items-center justify-center">
+              <div className="w-40 h-40 md:w-64 md:h-64 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="w-24 h-24 md:w-40 md:h-40 rounded-full bg-white border shadow-sm flex items-center justify-center">
+                  <img src={LogoIconPurplePath} alt="Proxa Logo" className="h-12 w-12 md:h-16 md:w-16" />
                 </div>
               </div>
             </div>
@@ -825,14 +825,14 @@ export default function HomePage() {
             ].map((integration, i) => {
               const getPosition = () => {
                 switch(integration.position) {
-                  case 'top': return 'top-2 left-1/2 -translate-x-1/2';
-                  case 'top-right': return 'top-[20%] right-[12%]';
-                  case 'right': return 'top-1/2 right-2 -translate-y-1/2';
-                  case 'bottom-right': return 'bottom-[20%] right-[12%]';
-                  case 'bottom': return 'bottom-2 left-1/2 -translate-x-1/2';
-                  case 'bottom-left': return 'bottom-[20%] left-[12%]';
-                  case 'left': return 'top-1/2 left-2 -translate-y-1/2';
-                  case 'top-left': return 'top-[20%] left-[12%]';
+                  case 'top': return 'top-0 md:top-2 left-1/2 -translate-x-1/2';
+                  case 'top-right': return 'top-[15%] md:top-[20%] right-[5%] md:right-[12%]';
+                  case 'right': return 'top-1/2 -translate-y-1/2 right-0 md:right-2';
+                  case 'bottom-right': return 'bottom-[15%] md:bottom-[20%] right-[5%] md:right-[12%]';
+                  case 'bottom': return 'bottom-0 md:bottom-2 left-1/2 -translate-x-1/2';
+                  case 'bottom-left': return 'bottom-[15%] md:bottom-[20%] left-[5%] md:left-[12%]';
+                  case 'left': return 'top-1/2 -translate-y-1/2 left-0 md:left-2';
+                  case 'top-left': return 'top-[15%] md:top-[20%] left-[5%] md:left-[12%]';
                   default: return '';
                 }
               };
