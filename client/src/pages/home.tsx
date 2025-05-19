@@ -242,142 +242,65 @@ export default function HomePage() {
                 />
               </motion.div>
               
-              {/* Floating achievement card - Goal Completion */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8, y: -10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.7, 
-                  delay: 0.5, 
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 15
-                }}
-                whileHover={{ 
-                  y: -5, 
-                  scale: 1.05,
-                  boxShadow: "0 15px 30px -5px rgba(156, 90, 255, 0.15)"
-                }}
-                className="absolute top-[25%] right-0 md:right-[15%] bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
-              >
-                <motion.div 
-                  className="flex items-center gap-2"
-                  whileTap={{ scale: 0.98 }}
-                >
+              {/* Stats cards below the dashboard image */}
+              <div className="absolute -bottom-24 left-0 right-0 hidden md:flex justify-center gap-6 z-30">
+                {/* Card 1: Goal Completion */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 border border-gray-100 dark:border-gray-700">
                   <motion.div 
-                    className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600"
-                    whileHover={{ scale: 1.1, backgroundColor: "rgba(16, 185, 129, 0.2)" }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    whileHover={{ y: -5 }}
                   >
-                    <CheckCircle size={14} />
+                    <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                      <CheckCircle size={18} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-500">Goal Completion</span>
+                      <span className="text-lg font-bold">82%</span>
+                    </div>
                   </motion.div>
-                  <motion.span 
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: "auto", opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.6 }}
-                    className="text-xs md:text-sm font-medium overflow-hidden whitespace-nowrap"
-                  >
-                    82% Goal Completion
-                  </motion.span>
-                </motion.div>
-              </motion.div>
-              
-              {/* Floating achievement card - Performance Rating */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8, x: -20 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                transition={{ 
-                  duration: 0.7, 
-                  delay: 0.7, 
-                  type: "spring",
-                  stiffness: 90,
-                  damping: 15
-                }}
-                whileHover={{ 
-                  x: 5, 
-                  scale: 1.05,
-                  boxShadow: "0 15px 30px -5px rgba(59, 130, 246, 0.15)"
-                }}
-                className="absolute top-[25%] left-0 md:left-[5%] bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
-              >
-                <motion.div 
-                  className="flex items-center gap-2"
-                  whileTap={{ scale: 0.97 }}
-                >
+                </div>
+                
+                {/* Card 2: Performance Rating */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 border border-gray-100 dark:border-gray-700">
                   <motion.div 
-                    className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"
-                    whileHover={{ scale: 1.1, backgroundColor: "rgba(59, 130, 246, 0.2)" }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                    whileHover={{ y: -5 }}
                   >
-                    <TrendingUp size={14} />
+                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                      <TrendingUp size={18} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-500">Performance Rating</span>
+                      <span className="text-lg font-bold text-blue-600">4.2/5</span>
+                    </div>
                   </motion.div>
-                  <motion.span 
-                    className="text-xs md:text-sm font-medium"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.8 }}
-                  >
-                    Rating <motion.span
-                      initial={{ color: "#1e40af" }}
-                      animate={{ color: "#2563eb" }}
-                      transition={{ repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-                    >4.2/5</motion.span>
-                  </motion.span>
-                </motion.div>
-              </motion.div>
-              
-              {/* Floating Engagement Score card */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8, x: -20, y: 10 }}
-                animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-                transition={{ 
-                  duration: 0.7, 
-                  delay: 0.9, 
-                  type: "spring",
-                  stiffness: 70,
-                  damping: 10
-                }}
-                whileHover={{ 
-                  x: 5, 
-                  y: -5,
-                  scale: 1.05,
-                  rotate: 1,
-                  boxShadow: "0 15px 30px -5px rgba(156, 90, 255, 0.2)"
-                }}
-                className="absolute top-[12%] left-[35%] bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
-              >
-                <motion.div 
-                  className="flex items-center gap-2"
-                  whileTap={{ scale: 0.97 }}
-                >
+                </div>
+                
+                {/* Card 3: Engagement Score */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 border border-gray-100 dark:border-gray-700">
                   <motion.div 
-                    className="h-7 w-7 rounded-full bg-purple-100 flex items-center justify-center text-primary"
-                    whileHover={{ scale: 1.1, backgroundColor: "rgba(156, 90, 255, 0.2)" }}
-                    animate={{ 
-                      scale: [1, 1.05, 1],
-                    }}
-                    transition={{ 
-                      repeat: Infinity, 
-                      repeatType: "reverse", 
-                      duration: 2,
-                      type: "spring"
-                    }}
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.7 }}
+                    whileHover={{ y: -5 }}
                   >
-                    <Sparkles size={14} />
+                    <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-primary">
+                      <Sparkles size={18} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-500">Engagement Score</span>
+                      <span className="text-lg font-bold text-primary">87%</span>
+                    </div>
                   </motion.div>
-                  <motion.div className="flex items-center gap-1">
-                    <span className="text-xs md:text-sm font-medium">Engagement Score</span>
-                    <motion.span 
-                      className="text-xs md:text-sm font-bold text-primary"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 1.1 }}
-                    >
-                      87%
-                    </motion.span>
-                  </motion.div>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
