@@ -273,24 +273,24 @@ export function EmployeeForm({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{initialData?.id ? 'Edit' : 'Add'} Employee</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel className="text-xs">First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="First name" {...field} />
+                      <Input placeholder="First name" {...field} className="h-9" />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
