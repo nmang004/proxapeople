@@ -21,6 +21,7 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import permissionRoutes from "./routes/permissions";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Prefix all routes with /api
@@ -350,6 +351,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       teamEngagement
     });
   }));
+
+  // Register permission routes
+  apiRouter.use('/rbac', permissionRoutes);
 
   // Use apiRouter with prefix
   app.use('/api', apiRouter);
