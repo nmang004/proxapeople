@@ -95,8 +95,6 @@ export function MeetingNotesForm({
     defaultValues,
   });
 
-  const { fields, append, remove } = form.control._formValues.nextSteps || [];
-
   const onSubmit = async (data: MeetingNotesFormValues) => {
     setIsSubmitting(true);
     
@@ -124,13 +122,25 @@ export function MeetingNotesForm({
   };
 
   const addActionItem = () => {
+    form.setValue('nextSteps', [
+      ...form.getValues().nextSteps || [],
+      { 
+        description: "", 
+        assignee: "", 
+        dueDate: "", 
+        status: "not_started" 
+      }
+    ]);
+  };
+
+  const removeActionItem = (index: number) => {
     const nextSteps = form.getValues().nextSteps || [];
-    append({ 
-      description: "", 
-      assignee: "", 
-      dueDate: "", 
-      status: "not_started" 
-    });
+    if (nextSteps.length > 1) {
+      form.setValue(
+        'nextSteps', 
+        nextSteps.filter((_, i) => i !== index)
+      );
+    }
   };
 
   return (
@@ -217,12 +227,7 @@ export function MeetingNotesForm({
                       variant="ghost"
                       size="sm"
                       className="absolute top-2 right-2 h-6 w-6 p-0"
-                      onClick={() => {
-                        const nextSteps = form.getValues().nextSteps || [];
-                        if (nextSteps.length > 1) {
-                          remove(index);
-                        }
-                      }}
+                      onClick={() => removeActionItem(index)}
                       disabled={form.getValues().nextSteps?.length === 1}
                     >
                       <X className="h-4 w-4" />
@@ -252,7 +257,7 @@ export function MeetingNotesForm({
                                 <FormLabel>Assignee</FormLabel>
                                 <Select 
                                   onValueChange={field.onChange}
-                                  defaultValue={field.value}
+                                  value={field.value}
                                 >
                                   <FormControl>
                                     <SelectTrigger>
@@ -279,7 +284,7 @@ export function MeetingNotesForm({
                               <FormItem>
                                 <FormLabel>Due Date</FormLabel>
                                 <FormControl>
-                                  <Input type="date" {...field} />
+                                  <Input type="date" {...field} value={field.value || ''} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -295,7 +300,7 @@ export function MeetingNotesForm({
                               <FormLabel>Status</FormLabel>
                               <Select 
                                 onValueChange={field.onChange}
-                                defaultValue={field.value}
+                                value={field.value}
                               >
                                 <FormControl>
                                   <SelectTrigger>

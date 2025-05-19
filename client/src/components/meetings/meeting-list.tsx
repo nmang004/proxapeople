@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AnimatedCard } from "@/components/ui/animated-card";
 import { User, OneOnOneMeeting } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+// Custom hook for media queries
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    
+    // Initial check
+    if (media.matches !== matches) {
+      setMatches(media.matches);
+    }
+    
+    // Listen for changes
+    const listener = () => {
+      setMatches(media.matches);
+    };
+    
+    // Modern approach
+    if (media.addEventListener) {
+      media.addEventListener("change", listener);
+      return () => media.removeEventListener("change", listener);
+    } 
+    // Fallback for older browsers
+    else {
+      media.addListener(listener);
+      return () => media.removeListener(listener);
+    }
+  }, [matches, query]);
+
+  return matches;
+}
 
 interface MeetingListProps {
   meetings: OneOnOneMeeting[];
