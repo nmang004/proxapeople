@@ -202,7 +202,7 @@ const securityFormSchema = z.object({
 // Appearance settings form schema
 const appearanceFormSchema = z.object({
   theme: z.enum(["light", "dark", "system"]).default("system"),
-  colorScheme: z.enum(["default", "blue", "green", "purple"]).default("default"),
+  colorScheme: z.enum(["default", "blue", "green", "red", "orange"]).default("default"),
   density: z.enum(["comfortable", "compact", "spacious"]).default("comfortable"),
   fontSize: z.enum(["small", "medium", "large"]).default("medium"),
   animations: z.boolean().default(true),
@@ -457,11 +457,32 @@ export default function Settings() {
   
   function onAppearanceFormSubmit(data: AppearanceFormValues) {
     console.log("Appearance settings saved:", data);
-    // API call would be here in a real implementation
+    
+    // In a real implementation, we would make an API call to save the settings
+    // For example:
+    // apiRequest('/api/settings/appearance', {
+    //   method: 'POST',
+    //   data
+    // });
+    
+    // Apply the theme immediately (in a real app, this would be more sophisticated)
+    document.documentElement.classList.remove('light', 'dark');
+    if (data.theme !== 'system') {
+      document.documentElement.classList.add(data.theme);
+    } else {
+      // Check system preference
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.add('light');
+      }
+    }
+    
+    // Apply color scheme (in a real app, would update CSS variables)
     
     toast({
       title: "Appearance settings updated",
-      description: "Your appearance settings have been updated successfully.",
+      description: "Your appearance settings have been updated and applied.",
       variant: "default",
     });
   }
@@ -497,37 +518,37 @@ export default function Settings() {
         </CardHeader>
         <CardContent className="pt-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6 flex flex-wrap gap-1">
-              <TabsTrigger value="company" className="flex items-center gap-1">
-                <Globe className="h-4 w-4" />
+            <TabsList className="mb-6 flex flex-wrap w-full bg-gray-100 p-1.5 rounded-lg">
+              <TabsTrigger value="company" className="flex items-center gap-2 flex-1 justify-center py-2.5">
+                <Globe className="h-5 w-5" />
                 <span>Company</span>
               </TabsTrigger>
-              <TabsTrigger value="account" className="flex items-center gap-1">
-                <User className="h-4 w-4" />
+              <TabsTrigger value="account" className="flex items-center gap-2 flex-1 justify-center py-2.5">
+                <User className="h-5 w-5" />
                 <span>My Profile</span>
               </TabsTrigger>
-              <TabsTrigger value="security" className="flex items-center gap-1">
-                <Lock className="h-4 w-4" />
+              <TabsTrigger value="security" className="flex items-center gap-2 flex-1 justify-center py-2.5">
+                <Lock className="h-5 w-5" />
                 <span>Security</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="flex items-center gap-1">
-                <Bell className="h-4 w-4" />
+              <TabsTrigger value="notifications" className="flex items-center gap-2 flex-1 justify-center py-2.5">
+                <Bell className="h-5 w-5" />
                 <span>Notifications</span>
               </TabsTrigger>
-              <TabsTrigger value="integrations" className="flex items-center gap-1">
-                <Globe className="h-4 w-4" />
+              <TabsTrigger value="integrations" className="flex items-center gap-2 flex-1 justify-center py-2.5">
+                <Globe className="h-5 w-5" />
                 <span>Integrations</span>
               </TabsTrigger>
-              <TabsTrigger value="appearance" className="flex items-center gap-1">
-                <Palette className="h-4 w-4" />
+              <TabsTrigger value="appearance" className="flex items-center gap-2 flex-1 justify-center py-2.5">
+                <Palette className="h-5 w-5" />
                 <span>Appearance</span>
               </TabsTrigger>
-              <TabsTrigger value="access" className="flex items-center gap-1">
-                <Shield className="h-4 w-4" />
+              <TabsTrigger value="access" className="flex items-center gap-2 flex-1 justify-center py-2.5">
+                <Shield className="h-5 w-5" />
                 <span>Access</span>
               </TabsTrigger>
-              <TabsTrigger value="billing" className="flex items-center gap-1">
-                <CreditCard className="h-4 w-4" />
+              <TabsTrigger value="billing" className="flex items-center gap-2 flex-1 justify-center py-2.5">
+                <CreditCard className="h-5 w-5" />
                 <span>Billing</span>
               </TabsTrigger>
             </TabsList>
@@ -1060,25 +1081,25 @@ export default function Settings() {
                     <div className="space-y-6">
                       <div className="flex flex-col space-y-4">
                         <h3 className="text-md font-medium">Theme</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                           <FormField
                             control={appearanceForm.control}
                             name="theme"
                             render={({ field }) => (
                               <FormItem>
                                 <FormControl>
-                                  <div className="space-y-4">
-                                    <div
-                                      className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
-                                        field.value === "light" ? "border-primary bg-accent" : "hover:border-primary/50"
-                                      }`}
-                                      onClick={() => field.onChange("light")}
-                                    >
-                                      <div className="w-20 h-20 rounded-md bg-white flex items-center justify-center mb-2 shadow-sm">
-                                        <Sun className="w-8 h-8 text-amber-500" />
-                                      </div>
-                                      <span className="font-medium">Light</span>
+                                  <div
+                                    className={`flex flex-col items-center justify-center p-6 border rounded-lg cursor-pointer transition-all ${
+                                      field.value === "light" 
+                                        ? "border-primary bg-accent shadow-md" 
+                                        : "hover:border-primary/50 hover:bg-gray-50"
+                                    }`}
+                                    onClick={() => field.onChange("light")}
+                                  >
+                                    <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm border">
+                                      <Sun className="w-10 h-10 text-amber-500" />
                                     </div>
+                                    <span className="font-medium text-lg">Light</span>
                                   </div>
                                 </FormControl>
                               </FormItem>
@@ -1091,18 +1112,18 @@ export default function Settings() {
                             render={({ field }) => (
                               <FormItem>
                                 <FormControl>
-                                  <div className="space-y-4">
-                                    <div
-                                      className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
-                                        field.value === "dark" ? "border-primary bg-accent" : "hover:border-primary/50"
-                                      }`}
-                                      onClick={() => field.onChange("dark")}
-                                    >
-                                      <div className="w-20 h-20 rounded-md bg-zinc-900 flex items-center justify-center mb-2 shadow-sm">
-                                        <Moon className="w-8 h-8 text-blue-400" />
-                                      </div>
-                                      <span className="font-medium">Dark</span>
+                                  <div
+                                    className={`flex flex-col items-center justify-center p-6 border rounded-lg cursor-pointer transition-all ${
+                                      field.value === "dark" 
+                                        ? "border-primary bg-accent shadow-md" 
+                                        : "hover:border-primary/50 hover:bg-gray-50"
+                                    }`}
+                                    onClick={() => field.onChange("dark")}
+                                  >
+                                    <div className="w-24 h-24 rounded-full bg-zinc-900 flex items-center justify-center mb-3 shadow-sm border">
+                                      <Moon className="w-10 h-10 text-blue-400" />
                                     </div>
+                                    <span className="font-medium text-lg">Dark</span>
                                   </div>
                                 </FormControl>
                               </FormItem>
@@ -1115,18 +1136,25 @@ export default function Settings() {
                             render={({ field }) => (
                               <FormItem>
                                 <FormControl>
-                                  <div className="space-y-4">
-                                    <div
-                                      className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
-                                        field.value === "system" ? "border-primary bg-accent" : "hover:border-primary/50"
-                                      }`}
-                                      onClick={() => field.onChange("system")}
-                                    >
-                                      <div className="w-20 h-20 rounded-md bg-gradient-to-tr from-white to-zinc-900 flex items-center justify-center mb-2 shadow-sm">
-                                        <Monitor className="w-8 h-8 text-purple-500" />
+                                  <div
+                                    className={`flex flex-col items-center justify-center p-6 border rounded-lg cursor-pointer transition-all ${
+                                      field.value === "system" 
+                                        ? "border-primary bg-accent shadow-md" 
+                                        : "hover:border-primary/50 hover:bg-gray-50"
+                                    }`}
+                                    onClick={() => field.onChange("system")}
+                                  >
+                                    <div className="w-24 h-24 rounded-full flex items-center justify-center mb-3 shadow-sm border overflow-hidden">
+                                      <div className="w-full h-full flex">
+                                        <div className="w-1/2 h-full bg-white flex items-center justify-center">
+                                          <Sun className="w-8 h-8 text-amber-500" />
+                                        </div>
+                                        <div className="w-1/2 h-full bg-zinc-900 flex items-center justify-center">
+                                          <Moon className="w-8 h-8 text-blue-400" />
+                                        </div>
                                       </div>
-                                      <span className="font-medium">System</span>
                                     </div>
+                                    <span className="font-medium text-lg">System</span>
                                   </div>
                                 </FormControl>
                               </FormItem>
@@ -1146,7 +1174,7 @@ export default function Settings() {
                                 <RadioGroup
                                   onValueChange={field.onChange}
                                   defaultValue={field.value}
-                                  className="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0"
+                                  className="flex flex-col space-y-4"
                                 >
                                   <FormItem className="flex items-center space-x-3 space-y-0 border rounded-lg p-4 cursor-pointer">
                                     <FormControl>
@@ -1246,37 +1274,37 @@ export default function Settings() {
                         render={({ field }) => (
                           <FormItem className="border-t pt-6">
                             <FormLabel>Color Scheme</FormLabel>
-                            <div className="grid grid-cols-5 gap-4 pt-2">
+                            <div className="grid grid-cols-3 sm:grid-cols-5 gap-4 pt-2">
                               <div 
-                                className={`h-12 w-12 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "default" ? "border-primary" : "border-transparent"}`}
+                                className={`h-16 w-16 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "default" ? "border-primary" : "border-transparent"}`}
                                 style={{ background: "#9C5AFF" }}
                                 onClick={() => field.onChange("default")}
                               >
                                 {field.value === "default" && <CheckCircle className="h-6 w-6 text-white" />}
                               </div>
                               <div 
-                                className={`h-12 w-12 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "blue" ? "border-primary" : "border-transparent"}`}
+                                className={`h-16 w-16 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "blue" ? "border-primary" : "border-transparent"}`}
                                 style={{ background: "#0284c7" }}
                                 onClick={() => field.onChange("blue")}
                               >
                                 {field.value === "blue" && <CheckCircle className="h-6 w-6 text-white" />}
                               </div>
                               <div 
-                                className={`h-12 w-12 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "green" ? "border-primary" : "border-transparent"}`}
+                                className={`h-16 w-16 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "green" ? "border-primary" : "border-transparent"}`}
                                 style={{ background: "#16a34a" }}
                                 onClick={() => field.onChange("green")}
                               >
                                 {field.value === "green" && <CheckCircle className="h-6 w-6 text-white" />}
                               </div>
                               <div 
-                                className={`h-12 w-12 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "red" ? "border-primary" : "border-transparent"}`}
+                                className={`h-16 w-16 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "red" ? "border-primary" : "border-transparent"}`}
                                 style={{ background: "#dc2626" }}
                                 onClick={() => field.onChange("red")}
                               >
                                 {field.value === "red" && <CheckCircle className="h-6 w-6 text-white" />}
                               </div>
                               <div 
-                                className={`h-12 w-12 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "orange" ? "border-primary" : "border-transparent"}`}
+                                className={`h-16 w-16 rounded-full flex items-center justify-center cursor-pointer border-2 ${field.value === "orange" ? "border-primary" : "border-transparent"}`}
                                 style={{ background: "#ea580c" }}
                                 onClick={() => field.onChange("orange")}
                               >
