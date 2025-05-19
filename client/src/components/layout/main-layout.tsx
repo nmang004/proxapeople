@@ -1,7 +1,10 @@
 import { ReactNode, useState, useEffect } from "react";
 import { Sidebar } from "./sidebar";
 import { Header } from "./header";
-import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
+import { 
+  CustomSheet, 
+  CustomSheetContent
+} from "@/components/ui/custom-sheet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
