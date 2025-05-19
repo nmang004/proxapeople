@@ -42,10 +42,12 @@ export default function HomePage() {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-white">
         <div className="container mx-auto flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={LogoIconPurplePath} alt="Proxa Logo" className="h-8 w-8" />
-            <span className="font-heading text-xl font-bold">Proxa</span>
-          </div>
+          <Link href="/dashboard">
+            <div className="flex items-center gap-2 cursor-pointer">
+              <img src={LogoIconPurplePath} alt="Proxa People Logo" className="h-8 w-8" />
+              <span className="font-heading text-xl font-bold">Proxa People</span>
+            </div>
+          </Link>
           
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-sm font-medium text-neutral-600 hover:text-primary">Features</a>
@@ -73,8 +75,8 @@ export default function HomePage() {
           <div className="absolute -bottom-[30%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary/5 blur-3xl"></div>
         </div>
         
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="container mx-auto px-5 md:px-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div className="flex flex-col">
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -179,7 +181,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, x: 60 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7, delay: 0.3, type: "spring", stiffness: 50 }}
-                className="absolute -bottom-10 -right-10 z-20 w-48 h-auto rounded-xl shadow-xl overflow-hidden border-4 border-white"
+                className="absolute -bottom-6 -right-6 md:-bottom-10 md:-right-10 z-20 w-36 md:w-48 h-auto rounded-xl shadow-xl overflow-hidden border-4 border-white"
               >
                 <img 
                   src={MobileScreenshotPath} 
@@ -193,13 +195,13 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
-                className="absolute top-[10%] -right-6 md:-right-12 bg-white rounded-lg shadow-lg p-3 z-30 border"
+                className="absolute top-[10%] -right-4 md:-right-8 bg-white rounded-lg shadow-lg p-2 md:p-3 z-30 border"
               >
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                    <CheckCircle size={16} />
+                  <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                    <CheckCircle size={14} />
                   </div>
-                  <span className="text-sm font-medium">92% Goal Completion</span>
+                  <span className="text-xs md:text-sm font-medium">92% Goal Completion</span>
                 </div>
               </motion.div>
               
