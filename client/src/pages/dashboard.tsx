@@ -901,15 +901,6 @@ export default function Dashboard() {
             <i className="ri-survey-line"></i>
             <span>New Survey</span>
           </AnimatedButton>
-          
-          <AnimatedButton 
-            variant="outline" 
-            size="sm"
-            className="flex items-center gap-1.5"
-          >
-            <i className="ri-file-list-line"></i>
-            <span>Export</span>
-          </AnimatedButton>
         </div>
       </div>
       
