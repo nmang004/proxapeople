@@ -22,6 +22,11 @@ import { ScheduleMeetingDialog } from "@/components/dialogs/schedule-meeting-dia
 import { NewSurveyDialog } from "@/components/dialogs/new-survey-dialog";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  ResizableHandle, 
+  ResizablePanel, 
+  ResizablePanelGroup 
+} from "@/components/ui/resizable";
 
 // Team member interface
 interface TeamMember {
@@ -189,7 +194,10 @@ interface Widget {
   id: WidgetId;
   title: string;
   component: JSX.Element;
-  colSpan?: string; // For controlling grid layout 
+  colSpan?: string; // For controlling grid layout
+  minSize?: number; // Minimum size for resizable panels
+  defaultSize?: number; // Default size for resizable panels
+  maxSize?: number; // Maximum size for resizable panels
 }
 
 export default function Dashboard() {
