@@ -11,7 +11,11 @@ import {
   surveys, type Survey, type InsertSurvey,
   surveyResponses, type SurveyResponse, type InsertSurveyResponse,
   feedback, type Feedback, type InsertFeedback,
-  analytics, type Analytics, type InsertAnalytics
+  analytics, type Analytics, type InsertAnalytics,
+  resources, type Resource, type InsertResource,
+  permissions, type Permission, type InsertPermission,
+  rolePermissions, type RolePermission, type InsertRolePermission,
+  userPermissions, type UserPermission, type InsertUserPermission
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gte } from "drizzle-orm";

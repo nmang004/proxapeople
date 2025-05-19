@@ -3,11 +3,20 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Enums
-export const userRoleEnum = pgEnum('user_role', ['admin', 'manager', 'employee']);
+export const userRoleEnum = pgEnum('user_role', ['admin', 'manager', 'employee', 'hr']);
 export const reviewStatusEnum = pgEnum('review_status', ['not_started', 'self_review', 'peer_review', 'manager_review', 'completed']);
 export const reviewTypeEnum = pgEnum('review_type', ['quarterly', 'annual', 'peer', 'self']);
 export const goalStatusEnum = pgEnum('goal_status', ['not_started', 'in_progress', 'completed']);
 export const meetingStatusEnum = pgEnum('meeting_status', ['scheduled', 'completed', 'canceled']);
+export const permissionTypeEnum = pgEnum('permission_type', [
+  'view', 
+  'create', 
+  'update', 
+  'delete', 
+  'approve', 
+  'assign', 
+  'admin'
+]);
 
 // Users Table
 export const users = pgTable("users", {
@@ -174,6 +183,48 @@ export const analytics = pgTable("analytics", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Resources Table (modules/sections of the application)
+export const resources = pgTable("resources", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  displayName: text("display_name").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Permissions Table (defines available permissions for each resource)
+export const permissions = pgTable("permissions", {
+  id: serial("id").primaryKey(),
+  resourceId: integer("resource_id").references(() => resources.id).notNull(),
+  action: permissionTypeEnum("action").notNull(),
+  description: text("description").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Role Permissions Table (maps which permissions are granted to which roles)
+export const rolePermissions = pgTable("role_permissions", {
+  id: serial("id").primaryKey(),
+  role: userRoleEnum("role").notNull(),
+  permissionId: integer("permission_id").references(() => permissions.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// User Custom Permissions (for special access outside of their role)
+export const userPermissions = pgTable("user_permissions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  permissionId: integer("permission_id").references(() => permissions.id).notNull(),
+  granted: boolean("granted").notNull().default(true),
+  grantedBy: integer("granted_by").references(() => users.id),
+  grantedAt: timestamp("granted_at").defaultNow(),
+  expiresAt: timestamp("expires_at"), // NULL means never expires
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert Schemas
 
 export const insertUserSchema = createInsertSchema(users).omit({
@@ -255,6 +306,30 @@ export const insertAnalyticsSchema = createInsertSchema(analytics).omit({
   updatedAt: true,
 });
 
+export const insertResourceSchema = createInsertSchema(resources).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPermissionSchema = createInsertSchema(permissions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertRolePermissionSchema = createInsertSchema(rolePermissions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserPermissionSchema = createInsertSchema(userPermissions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -294,3 +369,15 @@ export type Feedback = typeof feedback.$inferSelect;
 
 export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
 export type Analytics = typeof analytics.$inferSelect;
+
+export type InsertResource = z.infer<typeof insertResourceSchema>;
+export type Resource = typeof resources.$inferSelect;
+
+export type InsertPermission = z.infer<typeof insertPermissionSchema>;
+export type Permission = typeof permissions.$inferSelect;
+
+export type InsertRolePermission = z.infer<typeof insertRolePermissionSchema>;
+export type RolePermission = typeof rolePermissions.$inferSelect;
+
+export type InsertUserPermission = z.infer<typeof insertUserPermissionSchema>;
+export type UserPermission = typeof userPermissions.$inferSelect;
