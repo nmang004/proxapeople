@@ -1077,14 +1077,15 @@ export default function Dashboard() {
                 </div>
               )}
               
-              <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="dashboard-widgets">
-                  {(provided) => (
-                    <div 
-                      className="grid grid-cols-1 lg:grid-cols-6 gap-4 auto-rows-min"
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                    >
+              {isEditMode ? (
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  <Droppable droppableId="dashboard-widgets">
+                    {(provided) => (
+                      <div 
+                        className="grid grid-cols-1 lg:grid-cols-6 gap-4 auto-rows-min"
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
                       {widgets.map((widget, index) => (
                         <Draggable 
                           key={widget.id} 
@@ -1238,6 +1239,49 @@ export default function Dashboard() {
                   )}
                 </Droppable>
               </DragDropContext>
+              ) : (
+                /* Regular non-draggable grid when not in edit mode */
+                <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 auto-rows-min">
+                  {widgets.map((widget, index) => (
+                    <div 
+                      key={widget.id}
+                      className={cn(
+                        widget.colSpan || "",
+                        "transition-all duration-200",
+                      )}
+                      style={{
+                        width: '100%',
+                        height: 'auto'
+                      }}
+                    >
+                      <motion.div 
+                        className="bg-white dark:bg-gray-900 border border-border rounded-lg overflow-hidden flex flex-col h-full shadow-sm"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ 
+                          opacity: isLoaded ? 1 : 0, 
+                          y: isLoaded ? 0 : 20
+                        }}
+                        transition={{ 
+                          duration: 0.5,
+                          ease: [0.22, 1, 0.36, 1],
+                          delay: index * 0.1 + 0.3
+                        }}
+                      >
+                        <div className="p-3 border-b border-border bg-gradient-to-r from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-between">
+                          <div className="flex items-center">
+                            <span className="font-medium">{widget.title}</span>
+                          </div>
+                        </div>
+                        <div className="p-4 h-full overflow-auto flex-1 relative">
+                          <div className="h-full relative">
+                            {widget.component}
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </>
         );
