@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import LogoIconPurplePath from "@assets/LogoIcon_Purple.png";
 
 // Import attached images for use in the site
-import DashboardScreenshotPath from "@assets/dashtest.png";
+import DashboardScreenshotPath from "@assets/image_1747661824376.png";
 import MobileScreenshotPath from "@assets/image_1747624781563.png";
 import AnalyticsScreenshotPath from "@assets/image_1747624791802.png";
 
