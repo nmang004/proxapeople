@@ -823,14 +823,14 @@ export default function HomePage() {
             ].map((integration, i) => {
               const getPosition = () => {
                 switch(integration.position) {
-                  case 'top': return 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2';
-                  case 'top-right': return 'top-[15%] right-[15%] -translate-x-1/2 -translate-y-1/2';
-                  case 'right': return 'top-1/2 right-0 -translate-x-1/2 -translate-y-1/2';
-                  case 'bottom-right': return 'bottom-[15%] right-[15%] -translate-x-1/2 -translate-y-1/2';
-                  case 'bottom': return 'bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2';
-                  case 'bottom-left': return 'bottom-[15%] left-[15%] -translate-x-1/2 -translate-y-1/2';
-                  case 'left': return 'top-1/2 left-0 -translate-x-1/2 -translate-y-1/2';
-                  case 'top-left': return 'top-[15%] left-[15%] -translate-x-1/2 -translate-y-1/2';
+                  case 'top': return 'top-2 left-1/2 -translate-x-1/2';
+                  case 'top-right': return 'top-[20%] right-[12%]';
+                  case 'right': return 'top-1/2 right-2 -translate-y-1/2';
+                  case 'bottom-right': return 'bottom-[20%] right-[12%]';
+                  case 'bottom': return 'bottom-2 left-1/2 -translate-x-1/2';
+                  case 'bottom-left': return 'bottom-[20%] left-[12%]';
+                  case 'left': return 'top-1/2 left-2 -translate-y-1/2';
+                  case 'top-left': return 'top-[20%] left-[12%]';
                   default: return '';
                 }
               };
@@ -842,7 +842,7 @@ export default function HomePage() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: i * 0.1 }}
-                    className={`h-10 w-10 md:h-12 md:w-12 rounded-full shadow-lg ${integration.color} ${integration.textColor} flex items-center justify-center font-bold text-sm`}
+                    className={`h-8 w-8 md:h-10 md:w-10 rounded-full shadow-lg ${integration.color} ${integration.textColor} flex items-center justify-center font-bold text-xs md:text-sm`}
                   >
                     {integration.name.charAt(0)}
                   </motion.div>
