@@ -19,11 +19,12 @@ import { queryClient } from "@/lib/queryClient";
 
 const meetingFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
-  participantId: z.string().min(1, "Please select a participant"),
+  employeeId: z.string().min(1, "Please select a participant"),
   date: z.date({
     required_error: "Meeting date is required",
   }),
   duration: z.string().min(1, "Please select a duration"),
+  location: z.string().optional(),
   agenda: z.string().optional(),
   // We'll handle file validation separately
 });
@@ -125,12 +126,15 @@ export function ScheduleMeetingDialog() {
       
       // Format the data for the API
       const meetingData = {
-        ...data,
-        date: data.date.toISOString(),
+        title: data.title,
+        employeeId: parseInt(data.employeeId),
+        managerId: 1, // Current user (logged in user) as the manager
+        scheduledAt: data.date.toISOString(),
+        duration: parseInt(data.duration),
         status: "scheduled",
-        hostId: 1, // Current user ID
-        documentUrl: fileId, // Add file reference if uploaded
-        documentName: file?.name
+        location: data.location || "Virtual",
+        agendaItems: data.agenda ? JSON.stringify([data.agenda]) : null,
+        notes: file ? `Document attached: ${file.name}` : null,
       };
 
       // Submit to API
@@ -194,7 +198,7 @@ export function ScheduleMeetingDialog() {
 
             <FormField
               control={form.control}
-              name="participantId"
+              name="employeeId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Participant</FormLabel>
@@ -265,6 +269,35 @@ export function ScheduleMeetingDialog() {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || "Virtual"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select meeting location" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Virtual">Virtual</SelectItem>
+                      <SelectItem value="Google Meet">Google Meet</SelectItem>
+                      <SelectItem value="Zoom">Zoom</SelectItem>
+                      <SelectItem value="Microsoft Teams">Microsoft Teams</SelectItem>
+                      <SelectItem value="Conference Room">Conference Room</SelectItem>
+                      <SelectItem value="Office">Office</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
