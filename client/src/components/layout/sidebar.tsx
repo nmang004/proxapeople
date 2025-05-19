@@ -21,7 +21,7 @@ type SidebarLink = {
 };
 
 const links: SidebarLink[] = [
-  { href: "/", label: "Dashboard", icon: "ri-dashboard-line", category: "Overview" },
+  { href: "/dashboard", label: "Dashboard", icon: "ri-dashboard-line", category: "Overview" },
   { 
     href: "/employees", 
     label: "Employee Directory", 

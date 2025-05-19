@@ -176,8 +176,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <NavButton 
             icon="ri-dashboard-line" 
             label="Dashboard" 
-            href="/" 
-            active={location === "/"}
+            href="/dashboard" 
+            active={location === "/dashboard"}
             className="flex-1"
           />
           <NavButton 
