@@ -1140,10 +1140,11 @@ export default function Dashboard() {
                                 >
                                   <div 
                                     className={cn(
-                                      "p-3 border-b border-border bg-gradient-to-r from-white to-gray-50 flex items-center justify-between cursor-move",
-                                      isMaximized && "bg-gradient-to-r from-blue-50 to-indigo-50"
+                                      "p-3 border-b border-border bg-gradient-to-r from-white to-gray-50 flex items-center justify-between",
+                                      isMaximized && "bg-gradient-to-r from-blue-50 to-indigo-50",
+                                      isEditMode && "cursor-move"
                                     )}
-                                    {...provided.dragHandleProps}
+                                    {...(isEditMode ? provided.dragHandleProps : {})}
                                   >
                                     <div className="flex items-center">
                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
@@ -1212,13 +1213,15 @@ export default function Dashboard() {
                                         {widget.component}
                                       </div>
                                       
-                                      {/* Resize handles - bottom right */}
-                                      <div 
-                                        className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize group"
-                                        onMouseDown={(e) => handleResizeStart(e, widget.id)}
-                                      >
-                                        <div className="absolute bottom-0 right-0 w-0 h-0 border-b-8 border-r-8 border-gray-300 group-hover:border-primary transition-colors"></div>
-                                      </div>
+                                      {/* Resize handles - bottom right (only visible in edit mode) */}
+                                      {isEditMode && (
+                                        <div 
+                                          className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize group"
+                                          onMouseDown={(e) => handleResizeStart(e, widget.id)}
+                                        >
+                                          <div className="absolute bottom-0 right-0 w-0 h-0 border-b-8 border-r-8 border-primary/30 group-hover:border-primary transition-colors"></div>
+                                        </div>
+                                      )}
                                     </div>
                                   )}
                                 </motion.div>
