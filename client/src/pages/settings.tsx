@@ -1097,7 +1097,7 @@ export default function Settings() {
                               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                 <div className="flex items-center space-x-3">
                                   <div className="h-10 w-10 rounded bg-neutral-100 flex items-center justify-center">
-                                    <Calendar className="h-5 w-5 text-neutral-500" />
+                                    <CalendarIcon className="h-5 w-5 text-neutral-500" />
                                   </div>
                                   <div className="space-y-0.5">
                                     <FormLabel className="text-base">
@@ -1125,7 +1125,7 @@ export default function Settings() {
                               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                 <div className="flex items-center space-x-3">
                                   <div className="h-10 w-10 rounded bg-neutral-100 flex items-center justify-center">
-                                    <Calendar className="h-5 w-5 text-neutral-500" />
+                                    <CalendarIcon className="h-5 w-5 text-neutral-500" />
                                   </div>
                                   <div className="space-y-0.5">
                                     <FormLabel className="text-base">
@@ -1562,16 +1562,16 @@ export default function Settings() {
                           </div>
                           <ul className="mt-4 space-y-2">
                             <li className="text-sm flex items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Unlimited projects
+                              <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" /> Unlimited projects
                             </li>
                             <li className="text-sm flex items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Advanced analytics
+                              <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" /> Advanced analytics
                             </li>
                             <li className="text-sm flex items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Priority support
+                              <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" /> Priority support
                             </li>
                             <li className="text-sm flex items-center">
-                              <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> Custom integrations
+                              <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" /> Custom integrations
                             </li>
                           </ul>
                         </div>
