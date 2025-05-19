@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GoalProgress } from "@/components/ui/goal-progress";
 import { Goal } from "@/lib/types";
+import { Link } from "wouter";
 
 export function TeamGoals() {
   const { data: goals, isLoading, error } = useQuery<Goal[]>({
@@ -15,7 +16,7 @@ export function TeamGoals() {
       <CardHeader className="pb-0">
         <div className="flex items-center justify-between mb-4">
           <CardTitle className="text-lg font-heading font-medium text-neutral-800">Team Goals</CardTitle>
-          <a href="#" className="text-primary text-sm font-medium hover:underline">View All</a>
+          <Link href="/goals" className="text-primary text-sm font-medium hover:underline">View All</Link>
         </div>
       </CardHeader>
       <CardContent>
