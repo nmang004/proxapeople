@@ -366,8 +366,14 @@ export function EmployeeForm({
                                   <FormItem>
                                     <FormLabel>Department Manager</FormLabel>
                                     <Select 
-                                      onValueChange={(value) => field.onChange(value ? parseInt(value) : null)}
-                                      defaultValue={field.value?.toString()}
+                                      onValueChange={(value) => {
+                                        if (value === "none") {
+                                          field.onChange(null);
+                                        } else {
+                                          field.onChange(parseInt(value));
+                                        }
+                                      }}
+                                      defaultValue={field.value !== null ? field.value?.toString() : "none"}
                                     >
                                       <FormControl>
                                         <SelectTrigger>
