@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { ProxaLogo } from "@/lib/proxa-logo";
-import { ProxaIcon } from "@/lib/proxa-icon";
+import { ProxaLogo } from "@/components/ui/proxa-logo";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -120,8 +119,8 @@ export function Sidebar() {
           transition={{ duration: 0.5 }}
         >
           <div className="flex items-center">
-            <ProxaIcon className="h-8 w-8 mr-2" />
-            <ProxaLogo className="h-6 hidden md:block" />
+            <ProxaLogo variant="icon" size="md" className="mr-2" />
+            <ProxaLogo variant="full" size="md" className="hidden md:block" />
           </div>
           
           {/* Mobile Only - Version Label */}
