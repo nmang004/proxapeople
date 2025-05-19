@@ -119,7 +119,8 @@ export function Sidebar() {
           transition={{ duration: 0.5 }}
         >
           <div className="flex items-center">
-            <ProxaLogo size="md" className="h-8" />
+            <ProxaLogo variant="icon" size="md" className="mr-2" />
+            <ProxaLogo variant="full" size="md" className="hidden md:block" />
           </div>
           
           {/* Mobile Only - Version Label */}
