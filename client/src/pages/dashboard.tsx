@@ -213,6 +213,7 @@ export default function Dashboard() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
+  const [isEditMode, setIsEditMode] = useState(false);
   const [widgetStates, setWidgetStates] = useState<{[key: string]: {isMinimized: boolean, isMaximized: boolean}}>({});
   const [widgetSizes, setWidgetSizes] = useState<WidgetSizeState>({});
   const [resizingWidget, setResizingWidget] = useState<string | null>(null);
@@ -1038,10 +1039,40 @@ export default function Dashboard() {
             <div className="hidden lg:block">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-medium">My Dashboard</h2>
-                <div className="flex items-center gap-2 text-sm bg-amber-50 text-amber-800 px-3 py-1.5 rounded-full">
-                  <span className="text-amber-600">💡</span> Drag and Drop
+                <div className="flex gap-2">
+                  <Button 
+                    size="sm"
+                    variant={isEditMode ? "default" : "outline"}
+                    className="gap-2"
+                    onClick={() => {
+                      setIsEditMode(!isEditMode);
+                      if (isEditMode) {
+                        toast({
+                          title: "Layout changes saved",
+                          description: "Your dashboard customizations have been saved"
+                        });
+                      }
+                    }}
+                  >
+                    {isEditMode ? (
+                      <>
+                        <Check size={14} /> Save Layout
+                      </>
+                    ) : (
+                      <>
+                        <Edit size={14} /> Edit Layout
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
+              
+              {isEditMode && (
+                <div className="flex items-center gap-2 text-sm bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-400 px-4 py-2 rounded mb-4 border border-amber-200 dark:border-amber-900">
+                  <LightbulbIcon size={16} className="mr-1" /> 
+                  <p>Drag widgets to reorder them or resize by dragging the corner handles</p>
+                </div>
+              )}
               
               <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId="dashboard-widgets">
@@ -1056,6 +1087,7 @@ export default function Dashboard() {
                           key={widget.id} 
                           draggableId={widget.id} 
                           index={index}
+                          isDragDisabled={!isEditMode}
                         >
                           {(provided, snapshot) => {
                             const isMinimized = widgetStates[widget.id]?.isMinimized || false;
