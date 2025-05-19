@@ -385,7 +385,65 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="pt-6">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-6 flex flex-wrap w-full bg-gray-100 p-1.5 rounded-lg">
+              {/* Mobile dropdown menu */}
+              <div className="md:hidden mb-6">
+                <Select value={activeTab} onValueChange={setActiveTab}>
+                  <SelectTrigger className="w-full">
+                    <div className="flex items-center">
+                      {activeTab === "security" && <Lock className="h-4 w-4 mr-2" />}
+                      {activeTab === "notifications" && <Bell className="h-4 w-4 mr-2" />}
+                      {activeTab === "integrations" && <Globe className="h-4 w-4 mr-2" />}
+                      {activeTab === "appearance" && <Palette className="h-4 w-4 mr-2" />}
+                      {activeTab === "access" && <Shield className="h-4 w-4 mr-2" />}
+                      {activeTab === "billing" && <CreditCard className="h-4 w-4 mr-2" />}
+                      <span>
+                        {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+                      </span>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="security">
+                      <div className="flex items-center">
+                        <Lock className="h-4 w-4 mr-2" />
+                        <span>Security</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="notifications">
+                      <div className="flex items-center">
+                        <Bell className="h-4 w-4 mr-2" />
+                        <span>Notifications</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="integrations">
+                      <div className="flex items-center">
+                        <Globe className="h-4 w-4 mr-2" />
+                        <span>Integrations</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="appearance">
+                      <div className="flex items-center">
+                        <Palette className="h-4 w-4 mr-2" />
+                        <span>Appearance</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="access">
+                      <div className="flex items-center">
+                        <Shield className="h-4 w-4 mr-2" />
+                        <span>Access</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="billing">
+                      <div className="flex items-center">
+                        <CreditCard className="h-4 w-4 mr-2" />
+                        <span>Billing</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Desktop tab list */}
+              <TabsList className="mb-6 hidden md:flex flex-wrap w-full bg-gray-100 p-1.5 rounded-lg">
                 <TabsTrigger value="security" className="flex items-center gap-2 flex-1 justify-center py-2.5">
                   <Lock className="h-5 w-5" />
                   <span>Security</span>
