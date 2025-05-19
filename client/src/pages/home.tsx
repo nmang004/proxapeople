@@ -198,11 +198,11 @@ export default function HomePage() {
                   y: -5,
                   boxShadow: "0 25px 50px -12px rgba(156, 90, 255, 0.25)"
                 }}
-                className="relative z-10 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden bg-white border"
+                className="relative z-10 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden bg-white border transform scale-110 md:scale-125"
               >
                 <img 
                   src={DashboardScreenshotPath} 
-                  alt="Proxa dashboard" 
+                  alt="Proxa People analytics dashboard" 
                   className="w-full h-auto rounded-xl"
                 />
                 <motion.div
@@ -242,7 +242,7 @@ export default function HomePage() {
                 />
               </motion.div>
               
-              {/* Floating achievement card - metrics */}
+              {/* Floating achievement card - Goal Completion */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8, y: -10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -258,7 +258,7 @@ export default function HomePage() {
                   scale: 1.05,
                   boxShadow: "0 15px 30px -5px rgba(156, 90, 255, 0.15)"
                 }}
-                className="absolute top-[5%] right-0 md:-right-4 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
+                className="absolute top-[25%] right-0 md:right-[15%] bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
                 <motion.div 
                   className="flex items-center gap-2"
@@ -277,12 +277,12 @@ export default function HomePage() {
                     transition={{ duration: 0.3, delay: 0.6 }}
                     className="text-xs md:text-sm font-medium overflow-hidden whitespace-nowrap"
                   >
-                    92% Goal Completion
+                    82% Goal Completion
                   </motion.span>
                 </motion.div>
               </motion.div>
               
-              {/* Floating achievement card - performance */}
+              {/* Floating achievement card - Performance Rating */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8, x: -20 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -298,7 +298,7 @@ export default function HomePage() {
                   scale: 1.05,
                   boxShadow: "0 15px 30px -5px rgba(59, 130, 246, 0.15)"
                 }}
-                className="absolute top-[40%] left-0 md:-left-4 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
+                className="absolute top-[25%] left-0 md:left-[5%] bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
                 <motion.div 
                   className="flex items-center gap-2"
@@ -317,16 +317,16 @@ export default function HomePage() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.8 }}
                   >
-                    Performance <motion.span
+                    Rating <motion.span
                       initial={{ color: "#1e40af" }}
                       animate={{ color: "#2563eb" }}
                       transition={{ repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-                    >+24%</motion.span>
+                    >4.2/5</motion.span>
                   </motion.span>
                 </motion.div>
               </motion.div>
               
-              {/* Floating analytics card */}
+              {/* Floating Engagement Score card */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8, x: -20, y: 10 }}
                 animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
@@ -344,7 +344,7 @@ export default function HomePage() {
                   rotate: 1,
                   boxShadow: "0 15px 30px -5px rgba(156, 90, 255, 0.2)"
                 }}
-                className="absolute bottom-[30%] left-0 md:-left-8 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
+                className="absolute top-[12%] left-[35%] bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
                 <motion.div 
                   className="flex items-center gap-2"
@@ -366,7 +366,7 @@ export default function HomePage() {
                     <Sparkles size={14} />
                   </motion.div>
                   <motion.div className="flex items-center gap-1">
-                    <span className="text-xs md:text-sm font-medium">Team Engagement</span>
+                    <span className="text-xs md:text-sm font-medium">Engagement Score</span>
                     <motion.span 
                       className="text-xs md:text-sm font-bold text-primary"
                       initial={{ opacity: 0 }}
