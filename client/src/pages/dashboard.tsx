@@ -875,32 +875,38 @@ export default function Dashboard() {
       {/* Quick Actions Row - Clean and Minimal */}
       <div className="mb-6 mt-4">
         <div className="flex flex-wrap gap-2">
-          <AnimatedButton 
-            variant="outline" 
-            size="sm"
-            className="flex items-center gap-1.5"
-          >
-            <i className="ri-add-line"></i>
-            <span>New Review</span>
-          </AnimatedButton>
+          <Link href="/reviews/new">
+            <AnimatedButton 
+              variant="outline" 
+              size="sm"
+              className="flex items-center gap-1.5"
+            >
+              <i className="ri-add-line"></i>
+              <span>New Review</span>
+            </AnimatedButton>
+          </Link>
           
-          <AnimatedButton 
-            variant="outline" 
-            size="sm"
-            className="flex items-center gap-1.5"
-          >
-            <i className="ri-calendar-line"></i>
-            <span>Schedule 1:1</span>
-          </AnimatedButton>
+          <Link href="/one-on-one/new">
+            <AnimatedButton 
+              variant="outline" 
+              size="sm"
+              className="flex items-center gap-1.5"
+            >
+              <i className="ri-calendar-line"></i>
+              <span>Schedule 1:1</span>
+            </AnimatedButton>
+          </Link>
           
-          <AnimatedButton 
-            variant="outline" 
-            size="sm"
-            className="flex items-center gap-1.5"
-          >
-            <i className="ri-survey-line"></i>
-            <span>New Survey</span>
-          </AnimatedButton>
+          <Link href="/surveys/new">
+            <AnimatedButton 
+              variant="outline" 
+              size="sm"
+              className="flex items-center gap-1.5"
+            >
+              <i className="ri-survey-line"></i>
+              <span>New Survey</span>
+            </AnimatedButton>
+          </Link>
         </div>
       </div>
       
