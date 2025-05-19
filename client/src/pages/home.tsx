@@ -52,7 +52,6 @@ export default function HomePage() {
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-sm font-medium text-neutral-600 hover:text-primary">Features</a>
             <a href="#integrations" className="text-sm font-medium text-neutral-600 hover:text-primary">Integrations</a>
-            <a href="#testimonials" className="text-sm font-medium text-neutral-600 hover:text-primary">Testimonials</a>
             <a href="#pricing" className="text-sm font-medium text-neutral-600 hover:text-primary">Pricing</a>
           </nav>
           
@@ -81,19 +80,50 @@ export default function HomePage() {
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.8, type: "spring", stiffness: 50 }}
               >
-                <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                <motion.span 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4"
+                >
                   Introducing Proxa People
-                </span>
+                </motion.span>
                 <h1 className="mb-4 font-heading text-4xl sm:text-5xl font-bold tracking-tight text-neutral-800 md:text-6xl">
-                  The people <br className="hidden sm:block" />
-                  platform that <br className="hidden sm:block" />
-                  <span className="text-primary">drives success</span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    className="block"
+                  >
+                    The people <br className="hidden sm:block" />
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="block"
+                  >
+                    platform that <br className="hidden sm:block" />
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="text-primary"
+                  >
+                    drives success
+                  </motion.span>
                 </h1>
-                <p className="mb-6 md:mb-8 text-lg md:text-xl text-neutral-600 max-w-lg">
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  className="mb-6 md:mb-8 text-lg md:text-xl text-neutral-600 max-w-lg"
+                >
                   Proxa People empowers your team with intelligent performance management, data-driven insights, and frictionless collaboration tools.
-                </p>
+                </motion.p>
               </motion.div>
               
               <motion.div 
@@ -122,25 +152,7 @@ export default function HomePage() {
                 </Link>
               </motion.div>
               
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="mt-8 flex items-center gap-3"
-              >
-                <div className="flex -space-x-2">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-8 w-8 rounded-full bg-neutral-200 border-2 border-white flex items-center justify-center">
-                      <span className="text-xs font-medium text-neutral-600">
-                        {String.fromCharCode(64 + i)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="text-sm text-neutral-600">
-                  Trusted by <span className="font-medium">10,000+</span> companies
-                </div>
-              </motion.div>
+
             </div>
             
             <div className="relative h-full rounded-xl">
@@ -156,24 +168,7 @@ export default function HomePage() {
                   alt="Proxa dashboard" 
                   className="w-full h-auto rounded-xl"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent flex flex-col justify-end p-3 md:p-6">
-                  <div className="bg-white/95 backdrop-blur-sm rounded-lg p-3 md:p-4 max-w-[90%] md:max-w-[80%] shadow-lg">
-                    <div className="flex items-center gap-1 mb-1 md:mb-2">
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <motion.div 
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: 0.7 + (i * 0.1) }}
-                        >
-                          <Star size={14} className="text-amber-500 fill-amber-500" />
-                        </motion.div>
-                      ))}
-                    </div>
-                    <p className="text-xs md:text-sm font-medium text-neutral-800">"Proxa transformed how we manage performance reviews and goals."</p>
-                    <p className="text-xs text-neutral-500 mt-1">Sarah T. — HR Director</p>
-                  </div>
-                </div>
+
               </motion.div>
               
               {/* Mobile app view */}
@@ -239,18 +234,7 @@ export default function HomePage() {
         </div>
       </section>
       
-      {/* Brands Section */}
-      <section className="border-y bg-neutral-50 py-10">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-            {['Acme Inc.', 'GlobalTech', 'Innovex', 'FutureCorp', 'Zenith', 'Quantum'].map((brand) => (
-              <div key={brand} className="text-neutral-500 text-base md:text-lg font-semibold">
-                {brand}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
       
       {/* AI Assistant Section */}
       <section className="py-16 md:py-24 relative overflow-hidden">
@@ -948,18 +932,7 @@ export default function HomePage() {
               </ul>
             </div>
             
-            <div>
-              <h4 className="font-medium text-neutral-800 mb-4">Company</h4>
-              <ul className="space-y-2">
-                {['About Us', 'Careers', 'Contact', 'Partners', 'Legal'].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-sm text-neutral-600 hover:text-primary">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+
             
             <div>
               <h4 className="font-medium text-neutral-800 mb-4">Get In Touch</h4>
@@ -979,7 +952,7 @@ export default function HomePage() {
           
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-neutral-500">
-              &copy; {new Date().getFullYear()} Proxa People, Inc. All rights reserved.
+              &copy; {new Date().getFullYear()} Proxa People. All rights reserved.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-sm text-neutral-500 hover:text-primary">
