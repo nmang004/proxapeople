@@ -51,8 +51,8 @@ export function TeamPerformance() {
     : mockPerformanceData.monthly.slice(0, 6);
 
   return (
-    <div className="h-full">
-      <div className="h-full">
+    <div className="h-full overflow-hidden">
+      <div className="h-full p-1">
         <div className="flex items-center justify-between mb-6">
           <div className="flex space-x-2">
             <Button

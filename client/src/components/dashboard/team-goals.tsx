@@ -63,8 +63,8 @@ export function TeamGoals() {
   const goals = apiGoals?.length ? apiGoals : sampleTeamGoals;
 
   return (
-    <div className="h-full">
-      <div className="h-full">
+    <div className="h-full overflow-hidden">
+      <div className="h-full p-1">
         <div className="flex items-center justify-between mb-4">
           <Link href="/goals" className="text-primary text-sm font-medium hover:underline ml-auto">View All</Link>
         </div>

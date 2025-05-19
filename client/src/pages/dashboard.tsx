@@ -1125,15 +1125,15 @@ export default function Dashboard() {
                                 }}
                               >
                                 <motion.div 
-                                  className="bg-white border border-border rounded-lg overflow-hidden flex flex-col h-full"
+                                  className="bg-white dark:bg-gray-900 border border-border rounded-lg overflow-hidden flex flex-col h-full shadow-sm"
                                   initial={{ opacity: 0, y: 20 }}
                                   animate={{ 
                                     opacity: isLoaded ? 1 : 0, 
                                     y: isLoaded ? 0 : 20,
-                                    scale: snapshot.isDragging ? 1.02 : 1,
+                                    scale: (isEditMode && snapshot.isDragging) ? 1.02 : 1,
                                     boxShadow: isMaximized 
                                       ? "0 10px 45px -5px rgba(0, 0, 0, 0.2)" 
-                                      : (snapshot.isDragging ? "0 10px 25px -5px rgba(0, 0, 0, 0.1)" : "none")
+                                      : ((isEditMode && snapshot.isDragging) ? "0 10px 25px -5px rgba(0, 0, 0, 0.1)" : "none")
                                   }}
                                   transition={{ 
                                     duration: 0.5,
