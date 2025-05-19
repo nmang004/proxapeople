@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Helmet } from 'react-helmet';
 import { EmployeeForm } from "@/components/forms/employee-form";
-import { User } from "@shared/schema";
+import { User, Department } from "@shared/schema";
 
 export default function EmployeeDirectory() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,8 +34,14 @@ export default function EmployeeDirectory() {
   const [isEmployeeFormOpen, setIsEmployeeFormOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Partial<User> | undefined>(undefined);
   
-  const { data: users, isLoading, error } = useQuery<User[]>({
+  // Fetch users
+  const { data: users, isLoading: isLoadingUsers, error: usersError } = useQuery<User[]>({
     queryKey: ['/api/users'],
+  });
+  
+  // Fetch departments
+  const { data: departmentsData, isLoading: isLoadingDepartments } = useQuery<Department[]>({
+    queryKey: ['/api/departments'],
   });
 
   const filteredUsers = users?.filter(user => {
@@ -51,8 +57,18 @@ export default function EmployeeDirectory() {
     return matchesSearch && matchesDepartment;
   });
 
-  // Extract unique departments for filter
-  const departments = users ? [...new Set(users.map(user => user.department))] : [];
+  // Extract department names for form and filtering
+  const departmentNames = departmentsData ? departmentsData.map(dept => dept.name) : [];
+  
+  // Also extract unique departments from users as a fallback
+  const userDepartments = users ? [...new Set(users.map(user => user.department))] : [];
+  
+  // Combine both sources of departments for a complete list
+  const allDepartments = [...new Set([...departmentNames, ...userDepartments])];
+  
+  // Loading state
+  const isLoading = isLoadingUsers || isLoadingDepartments;
+  const error = usersError;
 
   return (
     <>
@@ -87,7 +103,7 @@ export default function EmployeeDirectory() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Departments</SelectItem>
-                  {departments.map(dept => (
+                  {allDepartments.map(dept => (
                     <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                   ))}
                 </SelectContent>
