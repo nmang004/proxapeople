@@ -4,11 +4,69 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { OneOnOneMeeting } from "@/lib/types";
 
+// Sample 1:1 meeting data
+const sampleMeetings: OneOnOneMeeting[] = [
+  {
+    id: 1,
+    title: "Weekly Check-in",
+    managerId: 1,
+    employeeId: 2,
+    scheduledAt: "2025-05-21T10:00:00Z",
+    duration: 30,
+    status: "scheduled",
+    location: "Google Meet",
+    agendaItems: ["Discuss current project progress", "Review goals for next sprint", "Address any blockers"],
+    employee: {
+      id: 2,
+      name: "Michael Chen",
+      jobTitle: "Frontend Developer",
+      profileImage: "https://i.pravatar.cc/150?img=3"
+    }
+  },
+  {
+    id: 2,
+    title: "Monthly Performance Review",
+    managerId: 1,
+    employeeId: 1,
+    scheduledAt: "2025-05-23T14:30:00Z",
+    duration: 45,
+    status: "scheduled",
+    location: "Conference Room B",
+    agendaItems: ["Review last month's goals", "Set objectives for next month", "Career development discussion"],
+    employee: {
+      id: 1,
+      name: "Sarah Johnson",
+      jobTitle: "Product Designer",
+      profileImage: "https://i.pravatar.cc/150?img=1"
+    }
+  },
+  {
+    id: 3,
+    title: "Goal Setting Session",
+    managerId: 1,
+    employeeId: 4,
+    scheduledAt: "2025-05-24T11:00:00Z",
+    duration: 30,
+    status: "scheduled",
+    location: "Zoom",
+    agendaItems: ["Review Q2 objectives", "Align on product roadmap priorities"],
+    employee: {
+      id: 4,
+      name: "Emily Wilson",
+      jobTitle: "Product Manager",
+      profileImage: "https://i.pravatar.cc/150?img=5"
+    }
+  }
+];
+
 export function OneOnOneMeetings() {
-  const { data: meetings, isLoading, error } = useQuery<OneOnOneMeeting[]>({
+  const { data: apiMeetings, isLoading, error } = useQuery<OneOnOneMeeting[]>({
     queryKey: ['/api/dashboard'],
     select: (data) => data.upcomingOneOnOnes || [],
   });
+  
+  // Use sample data for visual representation
+  const meetings = apiMeetings?.length ? apiMeetings : sampleMeetings;
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
