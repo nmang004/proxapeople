@@ -220,10 +220,19 @@ export default function PerformanceReviews() {
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between">
             <CardTitle>Review Management</CardTitle>
-            <Button variant="outline" size="sm">
-              <Filter size={14} className="mr-1" />
-              Filters
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => setIsReviewFormOpen(true)}
+                size="sm"
+              >
+                <PlusCircle size={14} className="mr-1" />
+                Start New Review
+              </Button>
+              <Button variant="outline" size="sm">
+                <Filter size={14} className="mr-1" />
+                Filters
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="pt-6">

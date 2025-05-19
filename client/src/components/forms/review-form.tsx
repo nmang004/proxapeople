@@ -385,7 +385,7 @@ export function ReviewForm({
                           <SelectValue placeholder="Select a score" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Not Rated</SelectItem>
+                          <SelectItem value="0">Not Rated</SelectItem>
                           <SelectItem value="1">1 - Needs Significant Improvement</SelectItem>
                           <SelectItem value="2">2 - Developing</SelectItem>
                           <SelectItem value="3">3 - Meeting Expectations</SelectItem>
