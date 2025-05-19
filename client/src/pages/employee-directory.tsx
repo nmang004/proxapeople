@@ -61,10 +61,10 @@ export default function EmployeeDirectory() {
   const departmentNames = departmentsData ? departmentsData.map(dept => dept.name) : [];
   
   // Also extract unique departments from users as a fallback
-  const userDepartments = users ? [...new Set(users.map(user => user.department))] : [];
+  const userDepartments = users ? Array.from(new Set(users.map(user => user.department))) : [];
   
   // Combine both sources of departments for a complete list
-  const allDepartments = [...new Set([...departmentNames, ...userDepartments])];
+  const allDepartments = Array.from(new Set([...departmentNames, ...userDepartments]));
   
   // Loading state
   const isLoading = isLoadingUsers || isLoadingDepartments;
@@ -148,7 +148,9 @@ export default function EmployeeDirectory() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          <AvatarImage src={user.profileImage} alt={`${user.firstName} ${user.lastName}`} />
+                          {user.profileImage && 
+                            <AvatarImage src={user.profileImage} alt={`${user.firstName} ${user.lastName}`} />
+                          }
                           <AvatarFallback>{user.firstName[0]}{user.lastName[0]}</AvatarFallback>
                         </Avatar>
                         <div>
@@ -189,7 +191,7 @@ export default function EmployeeDirectory() {
           open={isEmployeeFormOpen}
           onClose={() => setIsEmployeeFormOpen(false)}
           initialData={selectedEmployee}
-          departments={departments}
+          departments={allDepartments}
           managers={users?.filter(user => user.role === "manager" || user.role === "admin").map(user => ({
             id: user.id,
             name: `${user.firstName} ${user.lastName}`

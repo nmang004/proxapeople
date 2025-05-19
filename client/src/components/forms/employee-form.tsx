@@ -44,7 +44,7 @@ const userFormSchema = z.object({
   confirmPassword: z.string().min(1, "Confirm password is required"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  role: z.enum(["admin", "manager", "employee"]),
+  role: z.enum(["admin", "manager", "employee", "hr"]),
   jobTitle: z.string().min(1, "Job title is required"),
   department: z.string().min(1, "Department is required"),
   managerId: z.number().nullable(),
