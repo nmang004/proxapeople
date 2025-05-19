@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { 
   Form,
@@ -47,6 +48,7 @@ const userFormSchema = z.object({
   role: z.enum(["admin", "manager", "employee", "hr"]),
   jobTitle: z.string().min(1, "Job title is required"),
   department: z.string().min(1, "Department is required"),
+  teamId: z.number().nullable(),
   managerId: z.number().nullable(),
   profileImage: z.string().nullable(),
   hireDate: z.string().nullable(),
@@ -83,6 +85,48 @@ export function EmployeeForm({
   const [showNewDepartmentForm, setShowNewDepartmentForm] = useState(false);
   const [isCreatingDepartment, setIsCreatingDepartment] = useState(false);
   const [departmentsList, setDepartmentsList] = useState<string[]>(departments);
+  const [teamsList, setTeamsList] = useState<{id: number, name: string}[]>([]);
+  
+  // Fetch teams for the dropdown
+  useQuery({
+    queryKey: ['/api/teams'],
+    onSuccess: (data) => {
+      if (data && Array.isArray(data)) {
+        setTeamsList(data.map(team => ({ id: team.id, name: team.name })));
+        
+        // If we don't have any teams, create a default team
+        if (data.length === 0) {
+          createDefaultTeam();
+        }
+      }
+    }
+  });
+  
+  // Function to create a default team if none exists
+  const createDefaultTeam = async () => {
+    try {
+      const response = await fetch('/api/teams', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: "General",
+          departmentId: null,
+          managerId: null
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create default team');
+      }
+      
+      const team = await response.json();
+      setTeamsList([{ id: team.id, name: team.name }]);
+    } catch (error) {
+      console.error("Error creating default team:", error);
+    }
+  };
   
   // Create a separate form for new department
   const departmentForm = useForm<DepartmentFormValues>({
