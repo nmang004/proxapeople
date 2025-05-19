@@ -1,6 +1,29 @@
 import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
+  Bell, 
+  Calendar,
+  CheckCircle, 
+  ChevronRight, 
+  Clock,
+  CreditCard, 
+  Eye,
+  Globe, 
+  LanguagesIcon,
+  Lock, 
+  LogOut,
+  Monitor, 
+  MonitorSmartphone,
+  Moon, 
+  Palette, 
+  Shield, 
+  Smartphone,
+  Sun, 
+  Trash2, 
+  Upload, 
+  User
+} from "lucide-react";
+import { 
   Card, 
   CardContent, 
   CardHeader, 
@@ -60,24 +83,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { motion } from "framer-motion";
-import { 
-  User, 
-  Lock, 
-  Bell, 
-  Globe, 
-  Shield, 
-  CreditCard, 
-  Upload, 
-  CheckCircle,
-  Key,
-  Calendar,
-  Clock,
-  LanguagesIcon,
-  Palette,
-  Eye,
-  LogOut,
-  Trash2
-} from "lucide-react";
 
 // Company settings form schema
 const companyFormSchema = z.object({
@@ -492,13 +497,39 @@ export default function Settings() {
         </CardHeader>
         <CardContent className="pt-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="company">Company</TabsTrigger>
-              <TabsTrigger value="account">My Account</TabsTrigger>
-              <TabsTrigger value="notifications">Notifications</TabsTrigger>
-              <TabsTrigger value="integrations">Integrations</TabsTrigger>
-              <TabsTrigger value="access">Access & Permissions</TabsTrigger>
-              <TabsTrigger value="billing">Billing</TabsTrigger>
+            <TabsList className="mb-6 flex flex-wrap gap-1">
+              <TabsTrigger value="company" className="flex items-center gap-1">
+                <Globe className="h-4 w-4" />
+                <span>Company</span>
+              </TabsTrigger>
+              <TabsTrigger value="account" className="flex items-center gap-1">
+                <User className="h-4 w-4" />
+                <span>My Profile</span>
+              </TabsTrigger>
+              <TabsTrigger value="security" className="flex items-center gap-1">
+                <Lock className="h-4 w-4" />
+                <span>Security</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="flex items-center gap-1">
+                <Bell className="h-4 w-4" />
+                <span>Notifications</span>
+              </TabsTrigger>
+              <TabsTrigger value="integrations" className="flex items-center gap-1">
+                <Globe className="h-4 w-4" />
+                <span>Integrations</span>
+              </TabsTrigger>
+              <TabsTrigger value="appearance" className="flex items-center gap-1">
+                <Palette className="h-4 w-4" />
+                <span>Appearance</span>
+              </TabsTrigger>
+              <TabsTrigger value="access" className="flex items-center gap-1">
+                <Shield className="h-4 w-4" />
+                <span>Access</span>
+              </TabsTrigger>
+              <TabsTrigger value="billing" className="flex items-center gap-1">
+                <CreditCard className="h-4 w-4" />
+                <span>Billing</span>
+              </TabsTrigger>
             </TabsList>
             
             {/* Company Settings Tab */}
@@ -789,6 +820,231 @@ export default function Settings() {
             </TabsContent>
             
             {/* Notifications Tab */}
+            {/* Security Tab */}
+            <TabsContent value="security" className="mt-0">
+              <div className="max-w-4xl">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+                  <div>
+                    <h2 className="text-lg font-medium mb-1">Security & Password</h2>
+                    <p className="text-neutral-500">Manage your account security settings and password</p>
+                  </div>
+                  <Badge variant="outline" className="rounded-full px-3 py-1 bg-blue-50 text-blue-700 border-blue-200">
+                    <div className="flex items-center gap-1">
+                      <Lock className="h-3 w-3" />
+                      <span>Protected</span>
+                    </div>
+                  </Badge>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-md font-medium mb-4">Change Password</h3>
+                    <Form {...passwordForm}>
+                      <form onSubmit={passwordForm.handleSubmit(onPasswordFormSubmit)} className="space-y-4">
+                        <FormField
+                          control={passwordForm.control}
+                          name="currentPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Current Password</FormLabel>
+                              <FormControl>
+                                <Input {...field} type="password" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={passwordForm.control}
+                          name="newPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>New Password</FormLabel>
+                              <FormControl>
+                                <Input {...field} type="password" />
+                              </FormControl>
+                              <FormDescription>
+                                Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={passwordForm.control}
+                          name="confirmPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Confirm New Password</FormLabel>
+                              <FormControl>
+                                <Input {...field} type="password" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <Button type="submit" className="mt-2">Change Password</Button>
+                      </form>
+                    </Form>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-md font-medium mb-4">Two-Factor Authentication</h3>
+                    <Form {...securityForm}>
+                      <form onSubmit={securityForm.handleSubmit(onSecurityFormSubmit)} className="space-y-4">
+                        <FormField
+                          control={securityForm.control}
+                          name="twoFactorEnabled"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel>
+                                  Enable Two-Factor Authentication
+                                </FormLabel>
+                                <FormDescription>
+                                  Add an extra layer of security to your account by requiring a verification code in addition to your password.
+                                </FormDescription>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        {securityForm.watch("twoFactorEnabled") && (
+                          <FormField
+                            control={securityForm.control}
+                            name="twoFactorMethod"
+                            render={({ field }) => (
+                              <FormItem className="space-y-1">
+                                <FormLabel>Authentication Method</FormLabel>
+                                <FormControl>
+                                  <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    className="flex flex-col space-y-1"
+                                  >
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                      <FormControl>
+                                        <RadioGroupItem value="app" />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        Authenticator App
+                                      </FormLabel>
+                                    </FormItem>
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                      <FormControl>
+                                        <RadioGroupItem value="sms" />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        SMS Text Message
+                                      </FormLabel>
+                                    </FormItem>
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                      <FormControl>
+                                        <RadioGroupItem value="email" />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        Email
+                                      </FormLabel>
+                                    </FormItem>
+                                  </RadioGroup>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+                        
+                        <h3 className="text-md font-medium pt-4 pb-2">Session Settings</h3>
+                        
+                        <FormField
+                          control={securityForm.control}
+                          name="sessionTimeout"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Session Timeout</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select timeout period" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="30min">30 minutes</SelectItem>
+                                  <SelectItem value="1hour">1 hour</SelectItem>
+                                  <SelectItem value="4hours">4 hours</SelectItem>
+                                  <SelectItem value="8hours">8 hours</SelectItem>
+                                  <SelectItem value="24hours">24 hours</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormDescription>
+                                Automatically log out after a period of inactivity
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={securityForm.control}
+                          name="loginNotifications"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-md border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel>Login Notifications</FormLabel>
+                                <FormDescription>
+                                  Receive email notifications for new login attempts
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <Button type="submit" className="mt-2">Save Security Settings</Button>
+                      </form>
+                    </Form>
+                    
+                    <div className="mt-8 pt-4 border-t">
+                      <h3 className="text-md font-medium mb-2">Active Sessions</h3>
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center p-4 rounded-md border">
+                          <div>
+                            <p className="font-medium">Current Session</p>
+                            <p className="text-sm text-muted-foreground">Safari • San Francisco, CA • May 19, 2025</p>
+                          </div>
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Active</Badge>
+                        </div>
+                        <div className="flex justify-between items-center p-4 rounded-md border">
+                          <div>
+                            <p className="font-medium">Mobile App</p>
+                            <p className="text-sm text-muted-foreground">iOS • San Francisco, CA • May 18, 2025</p>
+                          </div>
+                          <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">Revoke</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
             <TabsContent value="notifications" className="mt-0">
               <div className="max-w-2xl">
                 <h2 className="text-lg font-medium mb-4">Notification Settings</h2>
