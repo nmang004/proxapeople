@@ -242,7 +242,7 @@ export default function Dashboard() {
         }}
         isLoading={isLoading}
       />,
-      colSpan: "col-span-3",
+      colSpan: "col-span-6",
       defaultWidth: 800,
       defaultHeight: 250
     },
@@ -250,7 +250,7 @@ export default function Dashboard() {
       id: "team-performance", 
       title: "Team Performance", 
       component: <TeamPerformance />,
-      colSpan: "col-span-2",
+      colSpan: "col-span-3",
       defaultWidth: 600,
       defaultHeight: 380
     },
@@ -258,6 +258,7 @@ export default function Dashboard() {
       id: "team-goals", 
       title: "Team Goals", 
       component: <TeamGoals />,
+      colSpan: "col-span-2",
       defaultWidth: 380,
       defaultHeight: 400
     },
@@ -265,7 +266,7 @@ export default function Dashboard() {
       id: "upcoming-reviews", 
       title: "Upcoming Reviews", 
       component: <UpcomingReviews />,
-      colSpan: "col-span-2",
+      colSpan: "col-span-3",
       defaultWidth: 600, 
       defaultHeight: 350
     },
@@ -273,6 +274,7 @@ export default function Dashboard() {
       id: "one-on-one-meetings", 
       title: "Upcoming 1:1s", 
       component: <OneOnOneMeetings />,
+      colSpan: "col-span-2",
       defaultWidth: 380,
       defaultHeight: 350
     },
@@ -280,6 +282,7 @@ export default function Dashboard() {
       id: "engagement-score", 
       title: "Team Engagement", 
       component: <EngagementScore />,
+      colSpan: "col-span-1",
       defaultWidth: 380,
       defaultHeight: 300
     }
@@ -1042,7 +1045,7 @@ export default function Dashboard() {
                 <Droppable droppableId="dashboard-widgets">
                   {(provided) => (
                     <div 
-                      className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                      className="grid grid-cols-1 lg:grid-cols-6 gap-4 auto-rows-min"
                       {...provided.droppableProps}
                       ref={provided.innerRef}
                     >
