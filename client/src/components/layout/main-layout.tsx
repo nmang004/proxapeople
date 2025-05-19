@@ -146,7 +146,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         
         {/* Mobile Fixed Bottom Navigation */}
         <motion.div 
-          className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border h-16 flex items-center justify-around px-4 z-20"
+          className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border h-16 flex items-center px-4 z-20"
           initial={{ y: 100 }}
           animate={{ y: 0 }}
           transition={{ 
@@ -156,30 +156,36 @@ export default function MainLayout({ children }: MainLayoutProps) {
             delay: 0.6
           }}
         >
-          <NavButton 
-            icon="ri-dashboard-line" 
-            label="Dashboard" 
-            href="/" 
-            active={location === "/"}
-          />
-          <NavButton 
-            icon="ri-team-line" 
-            label="Team" 
-            href="/employees" 
-            active={location === "/employees"}
-          />
+          {/* Reviews on far left */}
           <NavButton 
             icon="ri-award-line" 
             label="Reviews" 
             href="/reviews" 
             active={location === "/reviews"}
             badge={3}
+            className="flex-1"
           />
           <NavButton 
             icon="ri-flag-line" 
             label="Goals" 
             href="/goals" 
             active={location === "/goals"}
+            className="flex-1"
+          />
+          {/* Dashboard centered */}
+          <NavButton 
+            icon="ri-dashboard-line" 
+            label="Dashboard" 
+            href="/" 
+            active={location === "/"}
+            className="flex-1"
+          />
+          <NavButton 
+            icon="ri-team-line" 
+            label="Team" 
+            href="/employees" 
+            active={location === "/employees"}
+            className="flex-1"
           />
           <NavButton 
             icon="ri-more-2-line" 
@@ -187,6 +193,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             href="/more" 
             active={false}
             onClick={() => setIsMobileSidebarOpen(true)}
+            className="flex-1"
           />
         </motion.div>
       </motion.div>
