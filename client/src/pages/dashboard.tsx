@@ -494,48 +494,30 @@ export default function Dashboard() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-900">Team Members</h2>
               <AnimatedButton size="sm" className="flex items-center gap-1.5">
-                <i className="ri-user-add-line"></i>
-                <span>Add Member</span>
+                + Add Team Member
               </AnimatedButton>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {teamMembers.map((member, index) => (
-                <AnimatedCard 
-                  key={member.id}
-                  className="p-4"
-                  fadeInDelay={index * 0.1}
-                >
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-10 w-10 border-2 border-primary/10">
-                      <AvatarImage src={member.avatar} alt={member.name} />
-                      <AvatarFallback>{member.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex justify-between">
+              {teamMembers.map(member => (
+                <Link key={member.id} href={`/team/${member.id}`} className="block">
+                  <AnimatedCard className="p-4 hover:border-primary transition-colors duration-300">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Avatar className="h-12 w-12 border">
+                        <AvatarImage src={member.avatar} alt={member.name} />
+                        <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
                         <h3 className="font-medium">{member.name}</h3>
-                        <div className="flex items-center gap-1">
-                          <span className={cn(
-                            "h-2.5 w-2.5 rounded-full",
-                            member.status === "active" && "bg-green-500",
-                            member.status === "away" && "bg-amber-500",
-                            member.status === "busy" && "bg-red-500",
-                            member.status === "offline" && "bg-gray-400"
-                          )}></span>
-                          <span className="text-xs text-muted-foreground capitalize">{member.status}</span>
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{member.role}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{member.department}</p>
-                      
-                      <div className="flex gap-2 mt-3">
-                        <button className="text-xs text-primary hover:underline">View Profile</button>
-                        <span className="text-xs text-muted-foreground">•</span>
-                        <button className="text-xs text-primary hover:underline">Schedule 1:1</button>
+                        <p className="text-sm text-muted-foreground">{member.role}</p>
                       </div>
                     </div>
-                  </div>
-                </AnimatedCard>
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-sm text-muted-foreground">{member.department}</span>
+                      {getStatusBadge(member.status)}
+                    </div>
+                  </AnimatedCard>
+                </Link>
               ))}
             </div>
           </motion.div>
@@ -551,178 +533,35 @@ export default function Dashboard() {
             className="mt-6"
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Goals & Objectives</h2>
+              <h2 className="text-xl font-bold text-gray-900">Team Goals</h2>
               <AnimatedButton size="sm" className="flex items-center gap-1.5">
-                <i className="ri-add-line"></i>
-                <span>New Goal</span>
+                + Add Goal
               </AnimatedButton>
             </div>
             
-            <AnimatedTabs 
-              items={[
-                {
-                  value: "all",
-                  label: "All Goals",
-                  content: (
-                    <div className="mt-4 space-y-4">
-                      {goals.map((goal, index) => (
-                        <AnimatedCard 
-                          key={goal.id}
-                          className="p-4"
-                          fadeInDelay={index * 0.1}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium">{goal.title}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">{goal.description}</p>
-                            </div>
-                            {getStatusBadge(goal.status)}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 mt-3">
-                            <span className="text-sm font-medium">{goal.progress}%</span>
-                            {renderProgressBar(goal.progress)}
-                          </div>
-                          
-                          <div className="flex justify-between mt-4 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <i className="ri-user-line"></i>
-                              <span>{goal.owner}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-calendar-line"></i>
-                              <span>Due: {new Date(goal.dueDate).toLocaleDateString()}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-group-line"></i>
-                              <span className="capitalize">{goal.type}</span>
-                            </div>
-                          </div>
-                        </AnimatedCard>
-                      ))}
-                    </div>
-                  )
-                },
-                {
-                  value: "personal",
-                  label: "Personal",
-                  content: (
-                    <div className="mt-4 space-y-4">
-                      {goals.filter(g => g.type === "personal").map((goal, index) => (
-                        <AnimatedCard 
-                          key={goal.id}
-                          className="p-4"
-                          fadeInDelay={index * 0.1}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium">{goal.title}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">{goal.description}</p>
-                            </div>
-                            {getStatusBadge(goal.status)}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 mt-3">
-                            <span className="text-sm font-medium">{goal.progress}%</span>
-                            {renderProgressBar(goal.progress)}
-                          </div>
-                          
-                          <div className="flex justify-between mt-4 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <i className="ri-user-line"></i>
-                              <span>{goal.owner}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-calendar-line"></i>
-                              <span>Due: {new Date(goal.dueDate).toLocaleDateString()}</span>
-                            </div>
-                          </div>
-                        </AnimatedCard>
-                      ))}
-                    </div>
-                  )
-                },
-                {
-                  value: "team",
-                  label: "Team",
-                  content: (
-                    <div className="mt-4 space-y-4">
-                      {goals.filter(g => g.type === "team").map((goal, index) => (
-                        <AnimatedCard 
-                          key={goal.id}
-                          className="p-4"
-                          fadeInDelay={index * 0.1}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium">{goal.title}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">{goal.description}</p>
-                            </div>
-                            {getStatusBadge(goal.status)}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 mt-3">
-                            <span className="text-sm font-medium">{goal.progress}%</span>
-                            {renderProgressBar(goal.progress)}
-                          </div>
-                          
-                          <div className="flex justify-between mt-4 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <i className="ri-user-line"></i>
-                              <span>{goal.owner}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-calendar-line"></i>
-                              <span>Due: {new Date(goal.dueDate).toLocaleDateString()}</span>
-                            </div>
-                          </div>
-                        </AnimatedCard>
-                      ))}
-                    </div>
-                  )
-                },
-                {
-                  value: "company",
-                  label: "Company",
-                  content: (
-                    <div className="mt-4 space-y-4">
-                      {goals.filter(g => g.type === "company").map((goal, index) => (
-                        <AnimatedCard 
-                          key={goal.id}
-                          className="p-4"
-                          fadeInDelay={index * 0.1}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium">{goal.title}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">{goal.description}</p>
-                            </div>
-                            {getStatusBadge(goal.status)}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 mt-3">
-                            <span className="text-sm font-medium">{goal.progress}%</span>
-                            {renderProgressBar(goal.progress)}
-                          </div>
-                          
-                          <div className="flex justify-between mt-4 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <i className="ri-user-line"></i>
-                              <span>{goal.owner}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-calendar-line"></i>
-                              <span>Due: {new Date(goal.dueDate).toLocaleDateString()}</span>
-                            </div>
-                          </div>
-                        </AnimatedCard>
-                      ))}
-                    </div>
-                  )
-                }
-              ]}
-              variant="underline"
-            />
+            <div className="space-y-4">
+              {goals.map(goal => (
+                <AnimatedCard key={goal.id} className="p-4 hover:border-primary transition-colors duration-300">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-medium">{goal.title}</h3>
+                    {getStatusBadge(goal.status)}
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">{goal.description}</p>
+                  
+                  <div className="flex justify-between items-center text-sm mb-2">
+                    <span>Progress: {goal.progress}%</span>
+                    <span className="text-muted-foreground">Due: {new Date(goal.dueDate).toLocaleDateString()}</span>
+                  </div>
+                  
+                  {renderProgressBar(goal.progress)}
+                  
+                  <div className="flex justify-between items-center mt-4">
+                    <span className="text-sm text-muted-foreground">Owner: {goal.owner}</span>
+                    <Badge variant="outline" className="capitalize">{goal.type}</Badge>
+                  </div>
+                </AnimatedCard>
+              ))}
+            </div>
           </motion.div>
         );
         
@@ -738,305 +577,58 @@ export default function Dashboard() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-900">Performance Reviews</h2>
               <AnimatedButton size="sm" className="flex items-center gap-1.5">
-                <i className="ri-add-line"></i>
-                <span>New Review</span>
+                + Start Review
               </AnimatedButton>
             </div>
             
-            <AnimatedTabs 
-              items={[
-                {
-                  value: "all",
-                  label: "All Reviews",
-                  content: (
-                    <div className="mt-4 space-y-4">
-                      {reviews.map((review, index) => (
-                        <AnimatedCard 
-                          key={review.id}
-                          className="p-4"
-                          fadeInDelay={index * 0.1}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium">{review.subject}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Reviewee: <span className="font-medium">{review.reviewee}</span>
-                              </p>
-                            </div>
-                            {getStatusBadge(review.status)}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 mt-3">
-                            <span className="text-sm font-medium">{review.progress}%</span>
-                            {renderProgressBar(review.progress)}
-                          </div>
-                          
-                          <div className="flex justify-between mt-4 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <i className="ri-user-line"></i>
-                              <span>Reviewer: {review.reviewer}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-calendar-line"></i>
-                              <span>Due: {new Date(review.dueDate).toLocaleDateString()}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-file-list-line"></i>
-                              <span className="capitalize">
-                                {review.type.replace('_', ' ')}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-4 flex gap-2">
-                            <AnimatedButton 
-                              size="sm" 
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              View Details
-                            </AnimatedButton>
-                            {review.status !== "completed" && (
-                              <AnimatedButton 
-                                size="sm"
-                                className="text-xs"
-                              >
-                                {review.status === "scheduled" ? "Start Review" : "Continue"}
-                              </AnimatedButton>
-                            )}
-                          </div>
-                        </AnimatedCard>
-                      ))}
-                    </div>
-                  )
-                },
-                {
-                  value: "in_progress",
-                  label: "In Progress",
-                  content: (
-                    <div className="mt-4 space-y-4">
-                      {reviews.filter(r => r.status === "in_progress").map((review, index) => (
-                        <AnimatedCard 
-                          key={review.id}
-                          className="p-4"
-                          fadeInDelay={index * 0.1}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium">{review.subject}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Reviewee: <span className="font-medium">{review.reviewee}</span>
-                              </p>
-                            </div>
-                            {getStatusBadge(review.status)}
-                          </div>
-                          
-                          <div className="flex items-center gap-2 mt-3">
-                            <span className="text-sm font-medium">{review.progress}%</span>
-                            {renderProgressBar(review.progress)}
-                          </div>
-                          
-                          <div className="mt-4 flex gap-2">
-                            <AnimatedButton 
-                              size="sm" 
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              View Details
-                            </AnimatedButton>
-                            <AnimatedButton 
-                              size="sm"
-                              className="text-xs"
-                            >
-                              Continue
-                            </AnimatedButton>
-                          </div>
-                        </AnimatedCard>
-                      ))}
-                    </div>
-                  )
-                },
-                {
-                  value: "scheduled",
-                  label: "Scheduled",
-                  content: (
-                    <div className="mt-4 space-y-4">
-                      {reviews.filter(r => r.status === "scheduled").map((review, index) => (
-                        <AnimatedCard 
-                          key={review.id}
-                          className="p-4"
-                          fadeInDelay={index * 0.1}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium">{review.subject}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Reviewee: <span className="font-medium">{review.reviewee}</span>
-                              </p>
-                            </div>
-                            {getStatusBadge(review.status)}
-                          </div>
-                          
-                          <div className="flex justify-between mt-4 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <i className="ri-user-line"></i>
-                              <span>Reviewer: {review.reviewer}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-calendar-line"></i>
-                              <span>Due: {new Date(review.dueDate).toLocaleDateString()}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-4 flex gap-2">
-                            <AnimatedButton 
-                              size="sm"
-                              className="text-xs"
-                            >
-                              Start Review
-                            </AnimatedButton>
-                          </div>
-                        </AnimatedCard>
-                      ))}
-                    </div>
-                  )
-                },
-                {
-                  value: "completed",
-                  label: "Completed",
-                  content: (
-                    <div className="mt-4 space-y-4">
-                      {reviews.filter(r => r.status === "completed").map((review, index) => (
-                        <AnimatedCard 
-                          key={review.id}
-                          className="p-4"
-                          fadeInDelay={index * 0.1}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium">{review.subject}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Reviewee: <span className="font-medium">{review.reviewee}</span>
-                              </p>
-                            </div>
-                            {getStatusBadge(review.status)}
-                          </div>
-                          
-                          <div className="flex justify-between mt-4 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <i className="ri-user-line"></i>
-                              <span>Reviewer: {review.reviewer}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <i className="ri-calendar-line"></i>
-                              <span>Completed: {new Date(review.dueDate).toLocaleDateString()}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-4 flex gap-2">
-                            <AnimatedButton 
-                              size="sm" 
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              View Report
-                            </AnimatedButton>
-                          </div>
-                        </AnimatedCard>
-                      ))}
-                    </div>
-                  )
-                }
-              ]}
-              variant="underline"
-            />
+            <div className="space-y-4">
+              {reviews.map(review => (
+                <AnimatedCard key={review.id} className="p-4 hover:border-primary transition-colors duration-300">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-medium">{review.subject}</h3>
+                    {getStatusBadge(review.status)}
+                  </div>
+                  
+                  <div className="flex justify-between items-center text-sm mb-3">
+                    <span>Reviewer: {review.reviewer}</span>
+                    <span>Reviewee: {review.reviewee}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center text-sm mb-2">
+                    <span>Progress: {review.progress}%</span>
+                    <span className="text-muted-foreground">Due: {new Date(review.dueDate).toLocaleDateString()}</span>
+                  </div>
+                  
+                  {renderProgressBar(review.progress)}
+                  
+                  <div className="flex justify-between items-center mt-4">
+                    <Badge variant="outline" className="capitalize">{review.type} Review</Badge>
+                    <Link href={`/reviews/${review.id}`} className="text-primary text-sm hover:underline">
+                      View Details
+                    </Link>
+                  </div>
+                </AnimatedCard>
+              ))}
+            </div>
           </motion.div>
         );
         
-      default: // Overview tab
+      default: // Overview Tab
         return (
-          <>
-            {/* Stats Cards Section with Staggered Animation */}
-            <StaggeredChildren 
-              className="pb-6" 
-              staggerDelay={0.1} 
-              direction="up"
-            >
-              <StatsCards 
-                stats={{
-                  teamMembers: dashboardData?.stats?.teamCount || 14,
-                  reviewsInProgress: dashboardData?.stats?.reviewsInProgress || 8,
-                  activeGoals: dashboardData?.stats?.activeGoalsCount || 23,
-                  upcomingOneOnOnes: dashboardData?.stats?.upcomingOneOnOnes?.length || 5
-                }}
-                differences={{
-                  teamMembers: "+2 since last month",
-                  reviewsInProgress: "65% completion rate",
-                  activeGoals: "4 due this week",
-                  upcomingOneOnOnes: "2 scheduled for today"
-                }}
-                isLoading={isLoading}
-              />
-            </StaggeredChildren>
-            
-            {/* Mobile-optimized Swipe Container for Small Screens */}
-            <div className="block lg:hidden mb-6">
-              <h2 className="text-md font-semibold mb-2 text-gray-800">Quick Insights</h2>
-              <div className="swipe-container flex overflow-x-auto gap-4 pb-4">
-                <AnimatedCard className="min-w-[280px] p-4 flex-shrink-0">
-                  <h3 className="text-sm font-semibold mb-2">Team Performance</h3>
-                  <div className="h-40 flex items-center justify-center bg-gray-50 rounded-md">
-                    <p className="text-sm text-muted-foreground">Performance chart...</p>
-                  </div>
-                </AnimatedCard>
-                
-                <AnimatedCard className="min-w-[280px] p-4 flex-shrink-0">
-                  <h3 className="text-sm font-semibold mb-2">Upcoming Reviews</h3>
-                  <div className="h-40 flex flex-col justify-center gap-2">
-                    <div className="flex justify-between items-center p-2 bg-secondary rounded-md">
-                      <span className="text-xs">Sarah Johnson</span>
-                      <span className="text-xs text-muted-foreground">May 24</span>
-                    </div>
-                    <div className="flex justify-between items-center p-2 bg-secondary rounded-md">
-                      <span className="text-xs">Mike Peters</span>
-                      <span className="text-xs text-muted-foreground">May 28</span>
-                    </div>
-                  </div>
-                </AnimatedCard>
-                
-                <AnimatedCard className="min-w-[280px] p-4 flex-shrink-0">
-                  <h3 className="text-sm font-semibold mb-2">Engagement Score</h3>
-                  <div className="h-40 flex items-center justify-center">
-                    <div className="relative h-24 w-24 flex items-center justify-center">
-                      <svg className="h-full w-full" viewBox="0 0 100 100">
-                        <circle 
-                          className="text-gray-200" 
-                          strokeWidth="10" 
-                          stroke="currentColor" 
-                          fill="transparent" 
-                          r="40" 
-                          cx="50" 
-                          cy="50" 
-                        />
-                        <circle 
-                          className="text-primary progress-ring" 
-                          strokeWidth="10" 
-                          strokeDasharray="251.2" 
-                          strokeDashoffset="50" 
-                          strokeLinecap="round" 
-                          stroke="currentColor" 
-                          fill="transparent" 
-                          r="40" 
-                          cx="50" 
-                          cy="50" 
-                        />
-                      </svg>
-                      <span className="absolute font-bold text-xl">80%</span>
-                    </div>
-                  </div>
-                </AnimatedCard>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-6"
+          >
+            {/* Edit Mode Hint */}
+            {isEditMode && (
+              <div className="bg-blue-50 border border-blue-200 text-blue-700 p-3 rounded-md mb-4 flex items-start">
+                <LightbulbIcon size={16} className="mr-1" /> 
+                <p>Drag widgets to reorder them or resize by dragging the corner handles</p>
               </div>
-            </div>
+            )}
             
             {/* Draggable Dashboard Grid - Desktop Layout */}
             <div className="hidden lg:block">
@@ -1070,13 +662,6 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              {isEditMode && (
-                <div className="flex items-center gap-2 text-sm bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-400 px-4 py-2 rounded mb-4 border border-amber-200 dark:border-amber-900">
-                  <LightbulbIcon size={16} className="mr-1" /> 
-                  <p>Drag widgets to reorder them or resize by dragging the corner handles</p>
-                </div>
-              )}
-              
               {isEditMode ? (
                 <DragDropContext onDragEnd={handleDragEnd}>
                   <Droppable droppableId="dashboard-widgets">
@@ -1094,6 +679,7 @@ export default function Dashboard() {
                           isDragDisabled={!isEditMode}
                         >
                           {(provided, snapshot) => {
+                            // Get widget state
                             const isMinimized = widgetStates[widget.id]?.isMinimized || false;
                             const isMaximized = widgetStates[widget.id]?.isMaximized || false;
                             
@@ -1105,24 +691,22 @@ export default function Dashboard() {
                                 className={cn(
                                   widget.colSpan || "",
                                   "transition-all duration-200",
-                                  snapshot.isDragging && "z-50",
-                                  isMaximized && "col-span-3 row-span-2 z-40",
-                                  isMinimized && "h-auto"
+                                  isMaximized && "col-span-6 row-span-2",
                                 )}
                                 style={{
+                                  ...provided.draggableProps.style,
                                   ...(isMaximized ? {
-                                    position: "absolute",
-                                    left: "1rem",
-                                    right: "1rem",
-                                    top: "5rem",
-                                    bottom: "1rem",
-                                    width: "calc(100% - 2rem)",
-                                    height: "calc(100% - 6rem)",
-                                    zIndex: 50
-                                  } : widgetSizes[widget.id] ? {
+                                    position: 'relative',
+                                    width: '100%',
+                                    height: 'auto',
+                                    zIndex: 50,
+                                  } : isMinimized ? {
+                                    height: '60px',
+                                    overflow: 'hidden'
+                                  } : {
                                     width: `${widgetSizes[widget.id].width}px`,
                                     height: `${widgetSizes[widget.id].height}px`
-                                  } : {})
+                                  })
                                 }}
                               >
                                 <motion.div 
@@ -1144,87 +728,47 @@ export default function Dashboard() {
                                 >
                                   <div 
                                     className={cn(
-                                      "p-3 border-b border-border bg-gradient-to-r from-white to-gray-50 flex items-center justify-between",
-                                      isMaximized && "bg-gradient-to-r from-blue-50 to-indigo-50",
+                                      "p-3 border-b border-border bg-gradient-to-r from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-between",
+                                      isMaximized && "bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700",
                                       isEditMode && "cursor-move"
                                     )}
                                     {...(isEditMode ? provided.dragHandleProps : {})}
                                   >
                                     <div className="flex items-center">
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
-                                        <circle cx="8" cy="6" r="1"/>
-                                        <circle cx="8" cy="12" r="1"/>
-                                        <circle cx="8" cy="18" r="1"/>
-                                        <circle cx="16" cy="6" r="1"/>
-                                        <circle cx="16" cy="12" r="1"/>
-                                        <circle cx="16" cy="18" r="1"/>
-                                      </svg>
                                       <span className="font-medium">{widget.title}</span>
                                     </div>
                                     
-                                    {/* Widget controls */}
-                                    <div className="flex items-center space-x-1">
-                                      <button 
-                                        className="p-1 hover:bg-gray-100 rounded-sm transition-colors"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          toggleMinimize(widget.id);
-                                        }}
-                                        title={isMinimized ? "Expand" : "Minimize"}
-                                      >
-                                        {isMinimized ? (
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                          </svg>
-                                        ) : (
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                          </svg>
-                                        )}
-                                      </button>
-                                      <button 
-                                        className="p-1 hover:bg-gray-100 rounded-sm transition-colors"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          toggleMaximize(widget.id);
-                                        }}
-                                        title={isMaximized ? "Restore" : "Maximize"}
-                                      >
-                                        {isMaximized ? (
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                                            <polyline points="4 14 10 14 10 20" />
-                                            <polyline points="20 10 14 10 14 4" />
-                                            <line x1="14" y1="10" x2="21" y2="3" />
-                                            <line x1="3" y1="21" x2="10" y2="14" />
-                                          </svg>
-                                        ) : (
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                                            <polyline points="15 3 21 3 21 9" />
-                                            <polyline points="9 21 3 21 3 15" />
-                                            <line x1="21" y1="3" x2="14" y2="10" />
-                                            <line x1="3" y1="21" x2="10" y2="14" />
-                                          </svg>
-                                        )}
-                                      </button>
+                                    <div className="flex space-x-1">
+                                      {isEditMode && (
+                                        <div className="flex space-x-1">
+                                          <button
+                                            onClick={() => toggleMinimize(widget.id)}
+                                            className="text-gray-500 hover:text-primary p-1 rounded"
+                                          >
+                                            {isMinimized ? <Grid size={14} /> : <Move size={14} />}
+                                          </button>
+                                          <button
+                                            onClick={() => toggleMaximize(widget.id)}
+                                            className="text-gray-500 hover:text-primary p-1 rounded"
+                                          >
+                                            {isMaximized ? <Grid size={14} /> : <Move size={14} />}
+                                          </button>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                   
-                                  {/* Widget content area */}
                                   {!isMinimized && (
                                     <div className="p-4 h-full overflow-auto flex-1 relative">
                                       <div className="h-full relative">
                                         {widget.component}
                                       </div>
                                       
-                                      {/* Resize handles - bottom right (only visible in edit mode) */}
                                       {isEditMode && (
-                                        <div 
-                                          className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize group"
+                                        <div
+                                          className="absolute bottom-0 right-0 w-4 h-4 bg-gray-200 hover:bg-primary cursor-se-resize rounded-tl-md"
                                           onMouseDown={(e) => handleResizeStart(e, widget.id)}
-                                        >
-                                          <div className="absolute bottom-0 right-0 w-0 h-0 border-b-8 border-r-8 border-primary/30 group-hover:border-primary transition-colors"></div>
-                                        </div>
+                                        />
                                       )}
                                     </div>
                                   )}
@@ -1283,84 +827,78 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
-          </>
+          </motion.div>
         );
     }
   };
-
+  
+  // Statistics data
+  const statsData = dashboardData?.stats || {
+    teamCount: 14,
+    reviewsInProgress: 8,
+    goalsCount: 23,
+    upcomingOneOnOnes: 5
+  };
+  
   return (
-    <PageTransition direction="up">
+    <>
       <Helmet>
-        <title>Dashboard | Proxa People Management</title>
-        <meta name="description" content="Proxa dashboard showing team performance, upcoming reviews, goals, and engagement metrics." />
+        <title>Dashboard | Proxa People</title>
       </Helmet>
       
-      {/* Page Title with Animation */}
-      <motion.div 
-        className="mb-6"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ 
-          duration: 0.4, 
-          ease: [0.22, 1, 0.36, 1],
-          delay: 0.2
-        }}
-      >
-        <h1 className="text-3xl font-bold text-primary">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Welcome back, Ashley! Here's an overview of your team's progress.</p>
-      </motion.div>
-      
-      {/* Quick Actions Row - Clean and Minimal */}
-      <div className="mb-6 mt-4">
-        <div className="flex flex-wrap gap-2">
-          <NewReviewDialog />
-          <ScheduleMeetingDialog />
-          <NewSurveyDialog />
+      <PageTransition>
+        <div className="container px-4 py-4 md:px-6 lg:px-8 max-w-screen-2xl mx-auto">
+          <StaggeredChildren>
+            <div className="mb-8">
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">Dashboard</h1>
+              <p className="text-muted-foreground">Welcome to your personalized dashboard</p>
+            </div>
+            
+            {/* Dashboard Tabs */}
+            <div className="border-b mb-6">
+              <div className="flex overflow-x-auto no-scrollbar">
+                <button
+                  className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'overview' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
+                  onClick={() => handleTabChange('overview')}
+                >
+                  Overview
+                </button>
+                <button
+                  className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'team' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
+                  onClick={() => handleTabChange('team')}
+                >
+                  Team
+                </button>
+                <button
+                  className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'goals' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
+                  onClick={() => handleTabChange('goals')}
+                >
+                  Goals
+                </button>
+                <button
+                  className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'reviews' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
+                  onClick={() => handleTabChange('reviews')}
+                >
+                  Reviews
+                </button>
+              </div>
+            </div>
+            
+            {/* Dynamic Tab Content with Animation */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {renderTabContent()}
+              </motion.div>
+            </AnimatePresence>
+          </StaggeredChildren>
         </div>
-      </div>
-      
-      {/* Dashboard Tabs - Clean Design */}
-      <div className="mb-6 border-b border-border">
-        <div className="flex overflow-x-auto scrollbar-hide">
-          <button 
-            className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'overview' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
-            onClick={() => handleTabChange('overview')}
-          >
-            Overview
-          </button>
-          <button 
-            className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'team' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
-            onClick={() => handleTabChange('team')}
-          >
-            Team
-          </button>
-          <button 
-            className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'goals' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
-            onClick={() => handleTabChange('goals')}
-          >
-            Goals
-          </button>
-          <button 
-            className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'reviews' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
-            onClick={() => handleTabChange('reviews')}
-          >
-            Reviews
-          </button>
-        </div>
-      </div>
-      
-      {/* Dynamic Tab Content with Animation */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-        >
-          {renderTabContent()}
-        </motion.div>
-      </AnimatePresence>
-    </PageTransition>
+      </PageTransition>
+    </>
   );
 }
