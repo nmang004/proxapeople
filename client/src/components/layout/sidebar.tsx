@@ -40,7 +40,8 @@ const links: SidebarLink[] = [
   { href: "/one-on-one", label: "1:1 Meetings", icon: "ri-chat-1-line", category: "Performance" },
   { href: "/surveys", label: "Surveys", icon: "ri-survey-line", category: "Feedback" },
   { href: "/analytics", label: "Analytics", icon: "ri-bar-chart-box-line", category: "Insights" },
-  { href: "/settings", label: "Settings", icon: "ri-settings-line", category: "Admin" },
+  { href: "/profile", label: "Profile", icon: "ri-user-settings-line", category: "Settings" },
+  { href: "/settings", label: "Platform Settings", icon: "ri-settings-line", category: "Settings" },
 ];
 
 export function Sidebar() {
@@ -82,7 +83,7 @@ export function Sidebar() {
   }, {} as Record<string, SidebarLink[]>);
 
   // Order categories
-  const categoryOrder = ["Overview", "People", "Performance", "Feedback", "Insights", "Admin", "Other"];
+  const categoryOrder = ["Overview", "People", "Performance", "Feedback", "Insights", "Settings", "Other"];
   const sortedCategories = Object.keys(linksByCategory).sort(
     (a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b)
   );

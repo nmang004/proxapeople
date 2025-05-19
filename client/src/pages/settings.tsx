@@ -217,7 +217,7 @@ type SecurityFormValues = z.infer<typeof securityFormSchema>;
 type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState("company");
+  const [activeTab, setActiveTab] = useState("security");
   
   // File input ref for profile image upload
   const profileImageInputRef = useRef<HTMLInputElement>(null);
@@ -502,31 +502,23 @@ export default function Settings() {
   return (
     <>
       <Helmet>
-        <title>Settings | Proxa People Management</title>
-        <meta name="description" content="Configure your Proxa account settings, integrations, and notifications preferences." />
+        <title>Platform Settings | Proxa People Management</title>
+        <meta name="description" content="Configure system settings, integrations, and platform preferences." />
       </Helmet>
       
       {/* Page Title */}
       <div className="mb-6">
-        <h1 className="text-2xl font-heading font-semibold text-neutral-800">Settings</h1>
-        <p className="text-neutral-500 mt-1">Configure your Proxa account and organization preferences</p>
+        <h1 className="text-2xl font-heading font-semibold text-neutral-800">Platform Settings</h1>
+        <p className="text-neutral-500 mt-1">Configure system settings and platform preferences</p>
       </div>
       
       <Card className="shadow-sm">
         <CardHeader className="pb-0">
-          <CardTitle>Platform Settings</CardTitle>
+          <CardTitle>System Configuration</CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6 flex flex-wrap w-full bg-gray-100 p-1.5 rounded-lg">
-              <TabsTrigger value="company" className="flex items-center gap-2 flex-1 justify-center py-2.5">
-                <Globe className="h-5 w-5" />
-                <span>Company</span>
-              </TabsTrigger>
-              <TabsTrigger value="account" className="flex items-center gap-2 flex-1 justify-center py-2.5">
-                <User className="h-5 w-5" />
-                <span>My Profile</span>
-              </TabsTrigger>
               <TabsTrigger value="security" className="flex items-center gap-2 flex-1 justify-center py-2.5">
                 <Lock className="h-5 w-5" />
                 <span>Security</span>
