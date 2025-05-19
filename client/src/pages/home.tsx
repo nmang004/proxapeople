@@ -714,10 +714,10 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="absolute -top-6 -left-6 bg-primary rounded-lg shadow-lg p-3 z-20"
+                  className="absolute -top-4 left-4 bg-primary rounded-lg shadow-lg p-2.5 z-20"
                 >
                   <div className="flex items-center gap-2">
-                    <BarChart3 size={18} className="text-white" />
+                    <BarChart3 size={16} className="text-white" />
                     <span className="text-sm font-medium text-white">Automated insights</span>
                   </div>
                 </motion.div>
@@ -727,7 +727,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.4 }}
-                  className="absolute -bottom-6 -right-6 bg-white rounded-lg shadow-lg p-3 z-20 border"
+                  className="absolute -bottom-4 right-4 bg-white rounded-lg shadow-lg p-2.5 z-20 border"
                 >
                   <div className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full inline-block mb-1">
                     78% faster

@@ -223,6 +223,33 @@ export function EmployeeForm({
         throw new Error('Failed to add employee');
       }
       
+      const savedUser = await response.json();
+      
+      // If a team is selected, add the user to the team
+      if (data.teamId) {
+        try {
+          const teamMemberResponse = await fetch('/api/team-members', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              teamId: data.teamId,
+              userId: savedUser.id
+            })
+          });
+          
+          if (!teamMemberResponse.ok) {
+            console.warn('Failed to add user to team, but user was created');
+          } else {
+            // Also invalidate teams data
+            queryClient.invalidateQueries({ queryKey: ['/api/teams'] });
+          }
+        } catch (teamError) {
+          console.error("Error adding user to team:", teamError);
+        }
+      }
+      
       // Invalidate users query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['/api/users'] });
       queryClient.invalidateQueries({ queryKey: ['/api/departments'] });
