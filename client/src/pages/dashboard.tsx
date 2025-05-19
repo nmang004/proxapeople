@@ -22,6 +22,8 @@ import { ScheduleMeetingDialog } from "@/components/dialogs/schedule-meeting-dia
 import { NewSurveyDialog } from "@/components/dialogs/new-survey-dialog";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Edit, Check, Move, X, LightbulbIcon, Grid } from "lucide-react";
 
 // Team member interface
 interface TeamMember {

@@ -64,13 +64,10 @@ export function TeamGoals() {
 
   return (
     <Card className="shadow-sm">
-      <CardHeader className="pb-0">
-        <div className="flex items-center justify-between mb-4">
-          <CardTitle className="text-lg font-heading font-medium text-neutral-800">Team Goals</CardTitle>
-          <Link href="/goals" className="text-primary text-sm font-medium hover:underline">View All</Link>
-        </div>
-      </CardHeader>
       <CardContent>
+        <div className="flex items-center justify-between mb-4">
+          <Link href="/goals" className="text-primary text-sm font-medium hover:underline ml-auto">View All</Link>
+        </div>
         {isLoading ? (
           <div className="py-4 text-center text-neutral-500">Loading goals...</div>
         ) : error ? (

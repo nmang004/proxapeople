@@ -52,9 +52,8 @@ export function TeamPerformance() {
 
   return (
     <Card className="shadow-sm">
-      <CardHeader className="pb-0">
+      <CardContent>
         <div className="flex items-center justify-between mb-6">
-          <CardTitle className="text-lg font-heading font-medium text-neutral-800">Team Performance</CardTitle>
           <div className="flex space-x-2">
             <Button
               variant="outline"
@@ -80,8 +79,7 @@ export function TeamPerformance() {
             </Button>
           </div>
         </div>
-      </CardHeader>
-      <CardContent>
+        
         {isLoading ? (
           <div className="flex justify-center items-center h-48">
             <p className="text-neutral-500">Loading performance data...</p>
