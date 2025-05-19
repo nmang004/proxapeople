@@ -194,49 +194,22 @@ interface Widget {
 export default function Dashboard() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-
-  // Define the initial widget order for the dashboard
-  const [widgets, setWidgets] = useState<Widget[]>([
-    { 
-      id: "stats", 
-      title: "Statistics", 
-      component: <StatsCards />,
-      colSpan: "col-span-3" 
-    },
-    { 
-      id: "team-performance", 
-      title: "Team Performance", 
-      component: <TeamPerformance />,
-      colSpan: "col-span-2" 
-    },
-    { 
-      id: "team-goals", 
-      title: "Team Goals", 
-      component: <TeamGoals /> 
-    },
-    { 
-      id: "upcoming-reviews", 
-      title: "Upcoming Reviews", 
-      component: <UpcomingReviews />,
-      colSpan: "col-span-2" 
-    },
-    { 
-      id: "one-on-one-meetings", 
-      title: "Upcoming 1:1s", 
-      component: <OneOnOneMeetings /> 
-    },
-    { 
-      id: "engagement-score", 
-      title: "Team Engagement", 
-      component: <EngagementScore /> 
-    }
-  ]);
   
   // Simulating data fetch for dashboard stats
   const { data: dashboardData, isLoading } = useQuery({
     queryKey: ['/api/dashboard'],
     staleTime: 60000,
   });
+  
+  // Define the widget types/positions
+  const [widgetOrder, setWidgetOrder] = useState<WidgetId[]>([
+    "stats",
+    "team-performance",
+    "team-goals",
+    "upcoming-reviews",
+    "one-on-one-meetings",
+    "engagement-score"
+  ]);
   
   useEffect(() => {
     // Slightly delay the animation to ensure smooth transitions
@@ -860,59 +833,77 @@ export default function Dashboard() {
               </div>
             </div>
             
-            {/* Main Dashboard Content - Desktop Layout */}
-            <div className="hidden lg:grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {/* Left Column - Team Performance & Upcoming Reviews */}
-              <div className="lg:col-span-2 space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ 
-                    opacity: isLoaded ? 1 : 0, 
-                    y: isLoaded ? 0 : 20 
-                  }}
-                  transition={{ 
-                    duration: 0.5,
-                    ease: [0.22, 1, 0.36, 1],
-                    delay: 0.3
-                  }}
-                >
-                  <TeamPerformance />
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ 
-                    opacity: isLoaded ? 1 : 0, 
-                    y: isLoaded ? 0 : 20 
-                  }}
-                  transition={{ 
-                    duration: 0.5,
-                    ease: [0.22, 1, 0.36, 1],
-                    delay: 0.4
-                  }}
-                >
-                  <UpcomingReviews />
-                </motion.div>
+            {/* Draggable Dashboard Grid - Desktop Layout */}
+            <div className="hidden lg:block">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-medium">My Dashboard</h2>
+                <div className="text-sm text-muted-foreground">
+                  <span className="mr-1">💡</span> Drag and drop widgets to customize your dashboard
+                </div>
               </div>
               
-              {/* Right Column - Team Goals & 1:1 Meetings */}
-              <motion.div 
-                className="space-y-6"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ 
-                  opacity: isLoaded ? 1 : 0, 
-                  x: isLoaded ? 0 : 20 
-                }}
-                transition={{ 
-                  duration: 0.5,
-                  ease: [0.22, 1, 0.36, 1],
-                  delay: 0.5
-                }}
-              >
-                <TeamGoals />
-                <OneOnOneMeetings />
-                <EngagementScore />
-              </motion.div>
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="dashboard-widgets" direction="horizontal">
+                  {(provided) => (
+                    <div 
+                      className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {widgets.map((widget, index) => (
+                        <Draggable key={widget.id} draggableId={widget.id} index={index}>
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={cn(
+                                widget.colSpan || "",
+                                "transition-all duration-200",
+                                snapshot.isDragging && "z-50"
+                              )}
+                            >
+                              <motion.div 
+                                className="bg-white border border-border rounded-lg overflow-hidden"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ 
+                                  opacity: isLoaded ? 1 : 0, 
+                                  y: isLoaded ? 0 : 20,
+                                  scale: snapshot.isDragging ? 1.02 : 1,
+                                  boxShadow: snapshot.isDragging ? "0 10px 25px -5px rgba(0, 0, 0, 0.1)" : "none"
+                                }}
+                                transition={{ 
+                                  duration: 0.5,
+                                  ease: [0.22, 1, 0.36, 1],
+                                  delay: index * 0.1 + 0.3
+                                }}
+                              >
+                                <div 
+                                  className="p-3 border-b border-border bg-gray-50 flex items-center cursor-move"
+                                  {...provided.dragHandleProps}
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
+                                    <circle cx="8" cy="6" r="1"/>
+                                    <circle cx="8" cy="12" r="1"/>
+                                    <circle cx="8" cy="18" r="1"/>
+                                    <circle cx="16" cy="6" r="1"/>
+                                    <circle cx="16" cy="12" r="1"/>
+                                    <circle cx="16" cy="18" r="1"/>
+                                  </svg>
+                                  <span className="font-medium">{widget.title}</span>
+                                </div>
+                                <div>
+                                  {widget.component}
+                                </div>
+                              </motion.div>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </div>
           </>
         );
