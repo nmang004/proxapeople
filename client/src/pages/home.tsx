@@ -156,9 +156,9 @@ export default function HomePage() {
                   alt="Proxa dashboard" 
                   className="w-full h-auto rounded-xl"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent flex flex-col justify-end p-6">
-                  <div className="bg-white/95 backdrop-blur-sm rounded-lg p-4 max-w-[80%] shadow-lg">
-                    <div className="flex items-center gap-1 mb-2">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent flex flex-col justify-end p-3 md:p-6">
+                  <div className="bg-white/95 backdrop-blur-sm rounded-lg p-3 md:p-4 max-w-[90%] md:max-w-[80%] shadow-lg">
+                    <div className="flex items-center gap-1 mb-1 md:mb-2">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <motion.div 
                           key={i}
@@ -166,11 +166,11 @@ export default function HomePage() {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.3, delay: 0.7 + (i * 0.1) }}
                         >
-                          <Star size={16} className="text-amber-500 fill-amber-500" />
+                          <Star size={14} className="text-amber-500 fill-amber-500" />
                         </motion.div>
                       ))}
                     </div>
-                    <p className="text-sm font-medium text-neutral-800">"Proxa transformed how we manage performance reviews and goals across our organization."</p>
+                    <p className="text-xs md:text-sm font-medium text-neutral-800">"Proxa transformed how we manage performance reviews and goals."</p>
                     <p className="text-xs text-neutral-500 mt-1">Sarah T. — HR Director</p>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, x: 60 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7, delay: 0.3, type: "spring", stiffness: 50 }}
-                className="absolute -bottom-6 -right-6 md:-bottom-10 md:-right-10 z-20 w-36 md:w-48 h-auto rounded-xl shadow-xl overflow-hidden border-4 border-white"
+                className="absolute bottom-0 right-0 md:-bottom-6 md:-right-6 z-20 w-28 md:w-40 h-auto rounded-xl shadow-xl overflow-hidden border-4 border-white"
               >
                 <img 
                   src={MobileScreenshotPath} 
@@ -195,7 +195,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
-                className="absolute top-[10%] -right-4 md:-right-8 bg-white rounded-lg shadow-lg p-2 md:p-3 z-30 border"
+                className="absolute top-[5%] right-0 md:-right-4 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
                 <div className="flex items-center gap-2">
                   <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
@@ -210,7 +210,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
-                className="absolute top-[40%] -left-4 md:-left-8 bg-white rounded-lg shadow-lg p-2 md:p-3 z-30 border"
+                className="absolute top-[40%] left-0 md:-left-4 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
                 <div className="flex items-center gap-2">
                   <div className="h-6 w-6 md:h-7 md:w-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
@@ -225,13 +225,13 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.9 }}
-                className="absolute bottom-[30%] -left-6 md:-left-12 bg-white rounded-lg shadow-lg p-3 z-30 border"
+                className="absolute bottom-[30%] left-0 md:-left-8 bg-white rounded-lg shadow-lg p-2 z-30 border hidden md:block"
               >
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-primary">
-                    <Sparkles size={16} />
+                  <div className="h-7 w-7 rounded-full bg-purple-100 flex items-center justify-center text-primary">
+                    <Sparkles size={14} />
                   </div>
-                  <span className="text-sm font-medium">Team Engagement 87%</span>
+                  <span className="text-xs md:text-sm font-medium">Team Engagement 87%</span>
                 </div>
               </motion.div>
             </div>
