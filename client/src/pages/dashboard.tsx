@@ -715,7 +715,21 @@ export default function Dashboard() {
               staggerDelay={0.1} 
               direction="up"
             >
-              <StatsCards />
+              <StatsCards 
+                stats={{
+                  teamMembers: dashboardData?.stats?.teamCount || 14,
+                  reviewsInProgress: dashboardData?.stats?.reviewsInProgress || 8,
+                  activeGoals: dashboardData?.stats?.activeGoalsCount || 23,
+                  upcomingOneOnOnes: dashboardData?.stats?.upcomingOneOnOnes?.length || 5
+                }}
+                differences={{
+                  teamMembers: "+2 since last month",
+                  reviewsInProgress: "65% completion rate",
+                  activeGoals: "4 due this week",
+                  upcomingOneOnOnes: "2 scheduled for today"
+                }}
+                isLoading={isLoading}
+              />
             </StaggeredChildren>
             
             {/* Mobile-optimized Swipe Container for Small Screens */}
@@ -854,21 +868,17 @@ export default function Dashboard() {
           delay: 0.2
         }}
       >
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <span className="gradient-text">Dashboard</span>
-          <span className="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-        </h1>
+        <h1 className="text-3xl font-bold text-primary">Dashboard</h1>
         <p className="text-muted-foreground mt-1">Welcome back, Ashley! Here's an overview of your team's progress.</p>
       </motion.div>
       
-      {/* Quick Actions Row - Mobile Optimized */}
-      <div className="mb-6 -mt-2 overflow-x-auto scrollbar-hide py-2">
-        <div className="flex gap-2 min-w-max">
+      {/* Quick Actions Row - Clean and Minimal */}
+      <div className="mb-6 mt-4">
+        <div className="flex flex-wrap gap-2">
           <AnimatedButton 
             variant="outline" 
             size="sm"
-            glowEffect
-            className="touch-button flex items-center gap-1.5"
+            className="flex items-center gap-1.5"
           >
             <i className="ri-add-line"></i>
             <span>New Review</span>
@@ -877,7 +887,7 @@ export default function Dashboard() {
           <AnimatedButton 
             variant="outline" 
             size="sm"
-            className="touch-button flex items-center gap-1.5"
+            className="flex items-center gap-1.5"
           >
             <i className="ri-calendar-line"></i>
             <span>Schedule 1:1</span>
@@ -886,7 +896,7 @@ export default function Dashboard() {
           <AnimatedButton 
             variant="outline" 
             size="sm"
-            className="touch-button flex items-center gap-1.5"
+            className="flex items-center gap-1.5"
           >
             <i className="ri-survey-line"></i>
             <span>New Survey</span>
@@ -895,7 +905,7 @@ export default function Dashboard() {
           <AnimatedButton 
             variant="outline" 
             size="sm"
-            className="touch-button flex items-center gap-1.5"
+            className="flex items-center gap-1.5"
           >
             <i className="ri-file-list-line"></i>
             <span>Export</span>
@@ -903,29 +913,29 @@ export default function Dashboard() {
         </div>
       </div>
       
-      {/* Dashboard Tabs - Mobile Friendly */}
+      {/* Dashboard Tabs - Clean Design */}
       <div className="mb-6 border-b border-border">
         <div className="flex overflow-x-auto scrollbar-hide">
           <button 
-            className={`px-4 py-2 text-sm font-medium tab-underline ${activeTab === 'overview' ? 'active text-primary' : 'text-muted-foreground'}`}
+            className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'overview' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
             onClick={() => handleTabChange('overview')}
           >
             Overview
           </button>
           <button 
-            className={`px-4 py-2 text-sm font-medium tab-underline ${activeTab === 'team' ? 'active text-primary' : 'text-muted-foreground'}`}
+            className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'team' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
             onClick={() => handleTabChange('team')}
           >
             Team
           </button>
           <button 
-            className={`px-4 py-2 text-sm font-medium tab-underline ${activeTab === 'goals' ? 'active text-primary' : 'text-muted-foreground'}`}
+            className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'goals' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
             onClick={() => handleTabChange('goals')}
           >
             Goals
           </button>
           <button 
-            className={`px-4 py-2 text-sm font-medium tab-underline ${activeTab === 'reviews' ? 'active text-primary' : 'text-muted-foreground'}`}
+            className={`px-6 py-2.5 text-sm font-medium ${activeTab === 'reviews' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground'}`}
             onClick={() => handleTabChange('reviews')}
           >
             Reviews
