@@ -51,6 +51,8 @@ export function ScheduleMeetingDialog() {
     resolver: zodResolver(meetingFormSchema),
     defaultValues: {
       title: "",
+      employeeId: "",
+      location: "Virtual",
       agenda: "",
       duration: "30",
     },
