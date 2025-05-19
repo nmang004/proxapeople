@@ -17,6 +17,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { NewReviewDialog } from "@/components/dialogs/new-review-dialog";
+import { ScheduleMeetingDialog } from "@/components/dialogs/schedule-meeting-dialog";
+import { NewSurveyDialog } from "@/components/dialogs/new-survey-dialog";
 
 // Team member interface
 interface TeamMember {
@@ -875,38 +878,9 @@ export default function Dashboard() {
       {/* Quick Actions Row - Clean and Minimal */}
       <div className="mb-6 mt-4">
         <div className="flex flex-wrap gap-2">
-          <Link href="/reviews/new">
-            <AnimatedButton 
-              variant="outline" 
-              size="sm"
-              className="flex items-center gap-1.5"
-            >
-              <i className="ri-add-line"></i>
-              <span>New Review</span>
-            </AnimatedButton>
-          </Link>
-          
-          <Link href="/one-on-one/new">
-            <AnimatedButton 
-              variant="outline" 
-              size="sm"
-              className="flex items-center gap-1.5"
-            >
-              <i className="ri-calendar-line"></i>
-              <span>Schedule 1:1</span>
-            </AnimatedButton>
-          </Link>
-          
-          <Link href="/surveys/new">
-            <AnimatedButton 
-              variant="outline" 
-              size="sm"
-              className="flex items-center gap-1.5"
-            >
-              <i className="ri-survey-line"></i>
-              <span>New Survey</span>
-            </AnimatedButton>
-          </Link>
+          <NewReviewDialog />
+          <ScheduleMeetingDialog />
+          <NewSurveyDialog />
         </div>
       </div>
       
