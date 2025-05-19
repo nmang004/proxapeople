@@ -82,6 +82,8 @@ export function EmployeeForm({
 }: EmployeeFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showNewDepartmentForm, setShowNewDepartmentForm] = useState(false);
+  const [isCreatingDepartment, setIsCreatingDepartment] = useState(false);
   const [departmentsList, setDepartmentsList] = useState<string[]>(departments);
   const [teamsList, setTeamsList] = useState<{id: number, name: string}[]>([]);
   
@@ -128,7 +130,14 @@ export function EmployeeForm({
     }
   };
   
-  // Department functionality removed
+  // Create a separate form for new department
+  const departmentForm = useForm<DepartmentFormValues>({
+    resolver: zodResolver(departmentSchema),
+    defaultValues: {
+      name: "",
+      managerId: null
+    }
+  });
   
   const defaultValues: Partial<UserFormValues> = {
     email: "",
@@ -150,7 +159,46 @@ export function EmployeeForm({
     defaultValues,
   });
 
-  // Department creation functionality removed
+  const createDepartment = async (data: DepartmentFormValues) => {
+    setIsCreatingDepartment(true);
+    
+    try {
+      const response = await fetch('/api/departments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create department');
+      }
+      
+      const newDepartment = await response.json();
+      
+      // Update departments list
+      setDepartmentsList(prev => [...prev, newDepartment.name]);
+      
+      // Set the new department in the employee form
+      form.setValue('department', newDepartment.name);
+      
+      toast({
+        title: "Success",
+        description: `Department "${newDepartment.name}" created successfully`,
+      });
+      
+      setShowNewDepartmentForm(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create department. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreatingDepartment(false);
+    }
+  };
 
   const onSubmit = async (data: UserFormValues) => {
     setIsSubmitting(true);
