@@ -14,6 +14,24 @@ interface PerformanceData {
   }[];
 }
 
+// Mock performance data for visual presentation
+const mockPerformanceData = {
+  quarterly: [
+    { quarter: "Q1", overallScore: 7.2, growthScore: 6.8 },
+    { quarter: "Q2", overallScore: 7.8, growthScore: 7.2 },
+    { quarter: "Q3", overallScore: 8.5, growthScore: 8.2 },
+    { quarter: "Q4", overallScore: 9.1, growthScore: 8.8 }
+  ],
+  monthly: [
+    { month: "Jan", overallScore: 7.0, growthScore: 6.5 },
+    { month: "Feb", overallScore: 7.3, growthScore: 6.8 },
+    { month: "Mar", overallScore: 7.5, growthScore: 7.0 },
+    { month: "Apr", overallScore: 7.6, growthScore: 7.2 },
+    { month: "May", overallScore: 7.9, growthScore: 7.5 },
+    { month: "Jun", overallScore: 8.2, growthScore: 7.8 }
+  ]
+};
+
 export function TeamPerformance() {
   const [timeRange, setTimeRange] = useState<TimeRange>('quarterly');
   
@@ -22,7 +40,8 @@ export function TeamPerformance() {
     select: (data) => ({ teamPerformance: data.teamPerformance || { quarterly: [] } }),
   });
 
-  const performanceData = data?.teamPerformance.quarterly || [];
+  // Use mock data for visual presentation until the API provides real data
+  const performanceData = mockPerformanceData.quarterly;
 
   return (
     <Card className="shadow-sm">

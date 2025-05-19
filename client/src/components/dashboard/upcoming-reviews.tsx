@@ -18,11 +18,54 @@ interface Review {
   employee: Employee;
 }
 
+// Sample review data for the dashboard
+const sampleReviews: Review[] = [
+  {
+    id: 1,
+    type: "Quarterly Review",
+    dueDate: "2025-06-15",
+    status: "self_review",
+    employee: {
+      id: 1,
+      name: "Sarah Johnson",
+      jobTitle: "Product Designer",
+      profileImage: "https://i.pravatar.cc/150?img=1"
+    }
+  },
+  {
+    id: 2,
+    type: "Annual Review",
+    dueDate: "2025-05-30",
+    status: "in_progress",
+    employee: {
+      id: 2,
+      name: "Michael Chen",
+      jobTitle: "Frontend Developer",
+      profileImage: "https://i.pravatar.cc/150?img=3"
+    }
+  },
+  {
+    id: 3,
+    type: "Peer Review",
+    dueDate: "2025-06-05",
+    status: "not_started",
+    employee: {
+      id: 3,
+      name: "David Miller",
+      jobTitle: "UX Researcher",
+      profileImage: "https://i.pravatar.cc/150?img=4"
+    }
+  }
+];
+
 export function UpcomingReviews() {
-  const { data: reviews, isLoading, error } = useQuery<Review[]>({
+  const { data: apiReviews, isLoading, error } = useQuery<Review[]>({
     queryKey: ['/api/dashboard'],
     select: (data) => data.upcomingReviews || [],
   });
+  
+  // Use sample data for visual representation
+  const reviews = apiReviews?.length ? apiReviews : sampleReviews;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
