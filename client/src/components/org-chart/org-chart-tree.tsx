@@ -1,0 +1,464 @@
+import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ChevronDown, 
+  ChevronRight, 
+  Mail, 
+  Phone, 
+  MapPin,
+  Briefcase
+} from "lucide-react";
+import { 
+  Avatar, 
+  AvatarFallback, 
+  AvatarImage 
+} from "@/components/ui/avatar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { User, Department } from "@shared/schema";
+
+// Extended types for hierarchy
+interface ExtendedUser extends User {
+  children?: ExtendedUser[];
+  isExpanded?: boolean;
+  level?: number;
+  parentId?: number | null;
+}
+
+interface OrgChartTreeProps {
+  users: User[];
+  departments: Department[];
+  layout: "vertical" | "horizontal";
+}
+
+// Helper to build hierarchical structure
+const buildHierarchy = (users: User[]): ExtendedUser[] => {
+  // For now, use sample data for demonstration
+  // In a real implementation, this would process actual user data
+  
+  // Create a map of users by ID for easy lookup
+  const usersMap: Record<number, ExtendedUser> = {};
+  
+  // Sample data structure for the org chart
+  return [
+    {
+      id: 1,
+      firstName: "Sarah",
+      lastName: "Johnson",
+      email: "sarah.johnson@proxapeople.com",
+      title: "Chief Executive Officer",
+      departmentId: 1,
+      profileImageUrl: "https://i.pravatar.cc/150?img=1",
+      children: [
+        {
+          id: 2,
+          firstName: "Michael",
+          lastName: "Chen",
+          email: "michael.chen@proxapeople.com",
+          title: "Chief Technology Officer",
+          departmentId: 2,
+          profileImageUrl: "https://i.pravatar.cc/150?img=2",
+          children: [
+            {
+              id: 5,
+              firstName: "Emily",
+              lastName: "Wilson",
+              email: "emily.wilson@proxapeople.com",
+              title: "Engineering Director",
+              departmentId: 2,
+              profileImageUrl: "https://i.pravatar.cc/150?img=5",
+              children: [
+                {
+                  id: 9,
+                  firstName: "David",
+                  lastName: "Martinez",
+                  email: "david.martinez@proxapeople.com",
+                  title: "Senior Software Engineer",
+                  departmentId: 2,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=9",
+                  children: []
+                },
+                {
+                  id: 10,
+                  firstName: "Lisa",
+                  lastName: "Wong",
+                  email: "lisa.wong@proxapeople.com",
+                  title: "Software Engineer",
+                  departmentId: 2,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=10",
+                  children: []
+                },
+                {
+                  id: 11,
+                  firstName: "James",
+                  lastName: "Taylor",
+                  email: "james.taylor@proxapeople.com",
+                  title: "Software Engineer",
+                  departmentId: 2,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=11",
+                  children: []
+                }
+              ]
+            },
+            {
+              id: 6,
+              firstName: "Robert",
+              lastName: "Garcia",
+              email: "robert.garcia@proxapeople.com",
+              title: "Product Director",
+              departmentId: 3,
+              profileImageUrl: "https://i.pravatar.cc/150?img=6",
+              children: [
+                {
+                  id: 12,
+                  firstName: "Sophia",
+                  lastName: "Patel",
+                  email: "sophia.patel@proxapeople.com",
+                  title: "Product Manager",
+                  departmentId: 3,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=12",
+                  children: []
+                },
+                {
+                  id: 13,
+                  firstName: "Daniel",
+                  lastName: "Kim",
+                  email: "daniel.kim@proxapeople.com",
+                  title: "UX Designer",
+                  departmentId: 3,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=13",
+                  children: []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 3,
+          firstName: "Jessica",
+          lastName: "Thompson",
+          email: "jessica.thompson@proxapeople.com",
+          title: "Chief Marketing Officer",
+          departmentId: 4,
+          profileImageUrl: "https://i.pravatar.cc/150?img=3",
+          children: [
+            {
+              id: 7,
+              firstName: "Alex",
+              lastName: "Rodriguez",
+              email: "alex.rodriguez@proxapeople.com",
+              title: "Marketing Director",
+              departmentId: 4,
+              profileImageUrl: "https://i.pravatar.cc/150?img=7",
+              children: [
+                {
+                  id: 14,
+                  firstName: "Olivia",
+                  lastName: "Davis",
+                  email: "olivia.davis@proxapeople.com",
+                  title: "Social Media Manager",
+                  departmentId: 4,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=14",
+                  children: []
+                },
+                {
+                  id: 15,
+                  firstName: "Ryan",
+                  lastName: "Smith",
+                  email: "ryan.smith@proxapeople.com",
+                  title: "Content Creator",
+                  departmentId: 4,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=15",
+                  children: []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 4,
+          firstName: "Thomas",
+          lastName: "Williams",
+          email: "thomas.williams@proxapeople.com",
+          title: "Chief Financial Officer",
+          departmentId: 5,
+          profileImageUrl: "https://i.pravatar.cc/150?img=4",
+          children: [
+            {
+              id: 8,
+              firstName: "Natalie",
+              lastName: "Brown",
+              email: "natalie.brown@proxapeople.com",
+              title: "Finance Director",
+              departmentId: 5,
+              profileImageUrl: "https://i.pravatar.cc/150?img=8",
+              children: [
+                {
+                  id: 16,
+                  firstName: "William",
+                  lastName: "Lee",
+                  email: "william.lee@proxapeople.com",
+                  title: "Financial Analyst",
+                  departmentId: 5,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=16",
+                  children: []
+                },
+                {
+                  id: 17,
+                  firstName: "Emma",
+                  lastName: "Clark",
+                  email: "emma.clark@proxapeople.com",
+                  title: "Accountant",
+                  departmentId: 5,
+                  profileImageUrl: "https://i.pravatar.cc/150?img=17",
+                  children: []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ];
+};
+
+const TreeNode: React.FC<{
+  node: ExtendedUser;
+  departments: Department[];
+  layout: "vertical" | "horizontal";
+  onToggle: (id: number) => void;
+  expanded: boolean;
+  level: number;
+}> = ({ node, departments, layout, onToggle, expanded, level }) => {
+  const hasChildren = node.children && node.children.length > 0;
+  const department = departments.find(d => d.id === node.departmentId);
+
+  const getInitials = (firstName?: string, lastName?: string) => {
+    return `${firstName?.[0] || ''}${lastName?.[0] || ''}`;
+  };
+
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.3,
+        delay: level * 0.1
+      }
+    }
+  };
+
+  // Connector positions change based on layout
+  const connectorClass = layout === "vertical" 
+    ? "absolute top-full left-1/2 w-[2px] -ml-[1px] bg-border" 
+    : "absolute left-full top-1/2 h-[2px] -mt-[1px] bg-border";
+
+  const nodeContainerClass = layout === "vertical"
+    ? "flex flex-col items-center justify-start gap-8 relative"
+    : "flex flex-row items-start justify-start gap-8 relative";
+
+  const childrenContainerClass = layout === "vertical"
+    ? "flex flex-row items-start justify-center gap-6 pt-8"
+    : "flex flex-col items-start justify-center gap-6 pl-8";
+
+  return (
+    <div className={nodeContainerClass}>
+      <motion.div
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative"
+      >
+        <Card className="w-60 shadow-md hover:shadow-lg transition-shadow duration-300">
+          <CardContent className="p-4">
+            <div className="flex flex-col items-center text-center">
+              <div className="relative mb-2">
+                <Avatar className="h-20 w-20 border-2 border-primary/10">
+                  <AvatarImage src={node.profileImageUrl} alt={`${node.firstName} ${node.lastName}`} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-lg">
+                    {getInitials(node.firstName, node.lastName)}
+                  </AvatarFallback>
+                </Avatar>
+                
+                {department && (
+                  <Badge 
+                    variant="secondary" 
+                    className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-xs"
+                  >
+                    {department.name}
+                  </Badge>
+                )}
+              </div>
+              
+              <h3 className="font-semibold text-base mt-1">{node.firstName} {node.lastName}</h3>
+              <p className="text-sm text-muted-foreground">{node.title}</p>
+              
+              <div className="flex flex-row gap-2 mt-3">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Mail className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{node.email}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Phone className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>+1 (555) 123-4567</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Briefcase className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>View profile</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                {hasChildren && (
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8"
+                    onClick={() => onToggle(node.id)}
+                  >
+                    {expanded ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Connector lines to children */}
+        {hasChildren && expanded && (
+          <>
+            {/* Vertical line down from parent (for vertical layout) or horizontal line to the right (for horizontal) */}
+            <div 
+              className={connectorClass}
+              style={layout === "vertical" ? { height: "2rem" } : { width: "2rem" }}
+            />
+          </>
+        )}
+      </motion.div>
+      
+      {/* Children */}
+      <AnimatePresence>
+        {hasChildren && expanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className={childrenContainerClass}
+          >
+            {node.children?.map(child => (
+              <div key={child.id} className="relative">
+                {/* Horizontal connector line (for vertical layout) or vertical line (for horizontal) */}
+                {layout === "vertical" && (
+                  <div className="absolute top-0 left-1/2 w-[2px] -ml-[1px] bg-border h-8 -mt-8" />
+                )}
+                {layout === "horizontal" && (
+                  <div className="absolute left-0 top-1/2 h-[2px] -ml-8 bg-border w-8" />
+                )}
+                
+                <TreeNode
+                  node={child}
+                  departments={departments}
+                  layout={layout}
+                  onToggle={onToggle}
+                  expanded={!!child.isExpanded}
+                  level={level + 1}
+                />
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default function OrgChartTree({ users, departments, layout }: OrgChartTreeProps) {
+  // Instead of processing real user data, we're using our sample hierarchy
+  const hierarchy = useMemo(() => buildHierarchy(users), [users]);
+  
+  // State to track expanded nodes
+  const [expandedNodes, setExpandedNodes] = useState<Record<number, boolean>>({
+    1: true, // Start with root expanded
+    2: true, // Also expand first level
+    3: true,
+    4: true
+  });
+  
+  // Toggle node expansion
+  const toggleNode = (id: number) => {
+    setExpandedNodes(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+  
+  // Process hierarchy to include expansion state
+  const processedHierarchy = useMemo(() => {
+    const processNode = (node: ExtendedUser): ExtendedUser => {
+      return {
+        ...node,
+        isExpanded: !!expandedNodes[node.id],
+        children: node.children?.map(processNode)
+      };
+    };
+    
+    return hierarchy.map(processNode);
+  }, [hierarchy, expandedNodes]);
+
+  return (
+    <div className="w-full h-full flex items-center justify-center py-8">
+      {processedHierarchy.map(rootNode => (
+        <TreeNode
+          key={rootNode.id}
+          node={rootNode}
+          departments={departments}
+          layout={layout}
+          onToggle={toggleNode}
+          expanded={!!rootNode.isExpanded}
+          level={0}
+        />
+      ))}
+    </div>
+  );
+}

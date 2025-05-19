@@ -11,6 +11,7 @@ import Analytics from "@/pages/analytics";
 import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
 import HomePage from "@/pages/home";
+import OrgChart from "@/pages/org-chart";
 import MainLayout from "@/components/layout/main-layout";
 import PageTransition from "@/components/ui/page-transition";
 
@@ -112,6 +113,16 @@ function App() {
           <AnimatePresence mode="wait">
             <PageTransition>
               <Profile />
+            </PageTransition>
+          </AnimatePresence>
+        </MainLayout>
+      </Route>
+      
+      <Route path="/org-chart">
+        <MainLayout>
+          <AnimatePresence mode="wait">
+            <PageTransition>
+              <OrgChart />
             </PageTransition>
           </AnimatePresence>
         </MainLayout>
