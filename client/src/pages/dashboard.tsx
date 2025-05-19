@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { TeamPerformance } from "@/components/dashboard/team-performance";
@@ -193,6 +193,18 @@ interface Widget {
   isMinimized?: boolean; // To track if widget is minimized
   isMaximized?: boolean; // To track if widget is maximized
   originalSize?: { width: string; height: string }; // To store original size when maximizing
+  width?: number; // Width in pixels
+  height?: number; // Height in pixels
+  defaultWidth?: number; // Default width
+  defaultHeight?: number; // Default height
+}
+
+// Interface for widget sizes
+interface WidgetSizeState {
+  [key: string]: {
+    width: number;
+    height: number;
+  }
 }
 
 export default function Dashboard() {
@@ -200,6 +212,9 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
   const [widgetStates, setWidgetStates] = useState<{[key: string]: {isMinimized: boolean, isMaximized: boolean}}>({});
+  const [widgetSizes, setWidgetSizes] = useState<WidgetSizeState>({});
+  const [resizingWidget, setResizingWidget] = useState<string | null>(null);
+  const [initialResize, setInitialResize] = useState<{x: number, y: number, width: number, height: number} | null>(null);
   
   // Simulating data fetch for dashboard stats
   const { data: dashboardData, isLoading } = useQuery({
@@ -227,34 +242,46 @@ export default function Dashboard() {
         }}
         isLoading={isLoading}
       />,
-      colSpan: "col-span-3"
+      colSpan: "col-span-3",
+      defaultWidth: 800,
+      defaultHeight: 250
     },
     { 
       id: "team-performance", 
       title: "Team Performance", 
       component: <TeamPerformance />,
-      colSpan: "col-span-2"
+      colSpan: "col-span-2",
+      defaultWidth: 600,
+      defaultHeight: 380
     },
     { 
       id: "team-goals", 
       title: "Team Goals", 
-      component: <TeamGoals />
+      component: <TeamGoals />,
+      defaultWidth: 380,
+      defaultHeight: 400
     },
     { 
       id: "upcoming-reviews", 
       title: "Upcoming Reviews", 
       component: <UpcomingReviews />,
-      colSpan: "col-span-2"
+      colSpan: "col-span-2",
+      defaultWidth: 600, 
+      defaultHeight: 350
     },
     { 
       id: "one-on-one-meetings", 
       title: "Upcoming 1:1s", 
-      component: <OneOnOneMeetings />
+      component: <OneOnOneMeetings />,
+      defaultWidth: 380,
+      defaultHeight: 350
     },
     { 
       id: "engagement-score", 
       title: "Team Engagement", 
-      component: <EngagementScore />
+      component: <EngagementScore />,
+      defaultWidth: 380,
+      defaultHeight: 300
     }
   ]);
   
@@ -272,15 +299,85 @@ export default function Dashboard() {
     setActiveTab(tab);
   };
   
-  // Initialize widget states
+  // Initialize widget states and sizes
   useEffect(() => {
+    // Initialize widget states (minimize/maximize)
     const states = widgets.reduce((acc, widget) => {
       acc[widget.id] = { isMinimized: false, isMaximized: false };
       return acc;
     }, {} as {[key: string]: {isMinimized: boolean, isMaximized: boolean}});
     
     setWidgetStates(states);
+    
+    // Initialize widget sizes
+    const sizes = widgets.reduce((acc, widget) => {
+      acc[widget.id] = { 
+        width: widget.defaultWidth || 350, 
+        height: widget.defaultHeight || 300 
+      };
+      return acc;
+    }, {} as WidgetSizeState);
+    
+    setWidgetSizes(sizes);
   }, []);
+  
+  // Event handlers for resize functionality
+  const handleResizeStart = useCallback((e: React.MouseEvent, widgetId: string) => {
+    e.preventDefault();
+    
+    const widget = document.getElementById(`widget-${widgetId}`);
+    if (!widget) return;
+    
+    const rect = widget.getBoundingClientRect();
+    
+    setResizingWidget(widgetId);
+    setInitialResize({
+      x: e.clientX,
+      y: e.clientY,
+      width: rect.width,
+      height: rect.height
+    });
+    
+    // Add event listeners for resize
+    document.addEventListener('mousemove', handleResize);
+    document.addEventListener('mouseup', handleResizeEnd);
+  }, []);
+  
+  const handleResize = useCallback((e: MouseEvent) => {
+    if (!resizingWidget || !initialResize) return;
+    
+    // Calculate new dimensions
+    const deltaX = e.clientX - initialResize.x;
+    const deltaY = e.clientY - initialResize.y;
+    
+    const newWidth = Math.max(200, initialResize.width + deltaX);  // Minimum width
+    const newHeight = Math.max(150, initialResize.height + deltaY); // Minimum height
+    
+    // Update the widget size
+    setWidgetSizes(prev => ({
+      ...prev,
+      [resizingWidget]: {
+        width: newWidth,
+        height: newHeight
+      }
+    }));
+  }, [initialResize, resizingWidget]);
+  
+  const handleResizeEnd = useCallback(() => {
+    setResizingWidget(null);
+    setInitialResize(null);
+    
+    // Remove event listeners
+    document.removeEventListener('mousemove', handleResize);
+    document.removeEventListener('mouseup', handleResizeEnd);
+    
+    // Show success toast
+    toast({
+      title: "Widget resized",
+      description: "Widget size has been updated.",
+      variant: "default",
+    });
+  }, [toast, handleResize]);
 
   // Handle minimizing and maximizing widgets
   const toggleMinimize = (widgetId: string) => {
@@ -963,6 +1060,7 @@ export default function Dashboard() {
                               <div
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
+                                id={`widget-${widget.id}`}
                                 className={cn(
                                   widget.colSpan || "",
                                   "transition-all duration-200",
@@ -980,6 +1078,9 @@ export default function Dashboard() {
                                     width: "calc(100% - 2rem)",
                                     height: "calc(100% - 6rem)",
                                     zIndex: 50
+                                  } : widgetSizes[widget.id] ? {
+                                    width: `${widgetSizes[widget.id].width}px`,
+                                    height: `${widgetSizes[widget.id].height}px`
                                   } : {})
                                 }}
                               >
@@ -1075,7 +1176,10 @@ export default function Dashboard() {
                                       </div>
                                       
                                       {/* Resize handles - bottom right */}
-                                      <div className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize group">
+                                      <div 
+                                        className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize group"
+                                        onMouseDown={(e) => handleResizeStart(e, widget.id)}
+                                      >
                                         <div className="absolute bottom-0 right-0 w-0 h-0 border-b-8 border-r-8 border-gray-300 group-hover:border-primary transition-colors"></div>
                                       </div>
                                     </div>
