@@ -87,6 +87,29 @@ export interface IStorage {
   getAverageEngagementScore(): Promise<number>;
   getTeamPerformance(): Promise<any>;
   getTeamEngagement(): Promise<any>;
+  
+  // Resource methods
+  createResource(resource: InsertResource): Promise<Resource>;
+  getResource(id: number): Promise<Resource | undefined>;
+  getResourceByName(name: string): Promise<Resource | undefined>;
+  getAllResources(): Promise<Resource[]>;
+  
+  // Permission methods
+  createPermission(permission: InsertPermission): Promise<Permission>;
+  getPermission(id: number): Promise<Permission | undefined>;
+  getResourcePermissions(resourceId: number): Promise<Permission[]>;
+  getAllPermissions(): Promise<Permission[]>;
+  
+  // Role permission methods
+  assignPermissionToRole(rolePermission: InsertRolePermission): Promise<RolePermission>;
+  getRolePermissions(role: string): Promise<Permission[]>;
+  removeRolePermission(rolePermissionId: number): Promise<void>;
+  
+  // User permission methods
+  assignPermissionToUser(userPermission: InsertUserPermission): Promise<UserPermission>;
+  getUserPermissions(userId: number): Promise<UserPermission[]>;
+  removeUserPermission(userPermissionId: number): Promise<void>;
+  checkUserPermission(userId: number, resourceName: string, action: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -108,6 +131,141 @@ export class DatabaseStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     return db.select().from(users);
+  }
+  
+  // Resource methods
+  async createResource(resourceData: InsertResource): Promise<Resource> {
+    const [resource] = await db.insert(resources).values(resourceData).returning();
+    return resource;
+  }
+  
+  async getResource(id: number): Promise<Resource | undefined> {
+    const [resource] = await db.select().from(resources).where(eq(resources.id, id));
+    return resource;
+  }
+  
+  async getResourceByName(name: string): Promise<Resource | undefined> {
+    const [resource] = await db.select().from(resources).where(eq(resources.name, name));
+    return resource;
+  }
+  
+  async getAllResources(): Promise<Resource[]> {
+    return db.select().from(resources);
+  }
+  
+  // Permission methods
+  async createPermission(permissionData: InsertPermission): Promise<Permission> {
+    const [permission] = await db.insert(permissions).values(permissionData).returning();
+    return permission;
+  }
+  
+  async getPermission(id: number): Promise<Permission | undefined> {
+    const [permission] = await db.select().from(permissions).where(eq(permissions.id, id));
+    return permission;
+  }
+  
+  async getResourcePermissions(resourceId: number): Promise<Permission[]> {
+    return db.select().from(permissions).where(eq(permissions.resourceId, resourceId));
+  }
+  
+  async getAllPermissions(): Promise<Permission[]> {
+    return db.select().from(permissions);
+  }
+  
+  // Role permission methods
+  async assignPermissionToRole(rolePermissionData: InsertRolePermission): Promise<RolePermission> {
+    const [rolePermission] = await db.insert(rolePermissions).values(rolePermissionData).returning();
+    return rolePermission;
+  }
+  
+  async getRolePermissions(role: string): Promise<Permission[]> {
+    const permissionsList = await db
+      .select({
+        permission: permissions
+      })
+      .from(rolePermissions)
+      .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
+      .where(eq(rolePermissions.role, role));
+    
+    return permissionsList.map(p => p.permission);
+  }
+  
+  async removeRolePermission(rolePermissionId: number): Promise<void> {
+    await db.delete(rolePermissions).where(eq(rolePermissions.id, rolePermissionId));
+  }
+  
+  // User permission methods
+  async assignPermissionToUser(userPermissionData: InsertUserPermission): Promise<UserPermission> {
+    const [userPermission] = await db.insert(userPermissions).values(userPermissionData).returning();
+    return userPermission;
+  }
+  
+  async getUserPermissions(userId: number): Promise<UserPermission[]> {
+    return db.select().from(userPermissions).where(eq(userPermissions.userId, userId));
+  }
+  
+  async removeUserPermission(userPermissionId: number): Promise<void> {
+    await db.delete(userPermissions).where(eq(userPermissions.id, userPermissionId));
+  }
+  
+  async checkUserPermission(userId: number, resourceName: string, action: string): Promise<boolean> {
+    // 1. Get the user to check their role
+    const [user] = await db.select().from(users).where(eq(users.id, userId));
+    
+    if (!user) {
+      return false;
+    }
+    
+    // 2. Find the resource
+    const [resource] = await db.select().from(resources).where(eq(resources.name, resourceName));
+    
+    if (!resource) {
+      return false;
+    }
+    
+    // 3. Find the specific permission for this resource and action
+    const [permission] = await db.select().from(permissions).where(
+      and(
+        eq(permissions.resourceId, resource.id),
+        eq(permissions.action, action)
+      )
+    );
+    
+    if (!permission) {
+      return false;
+    }
+    
+    // 4. Check if user has this permission through their role
+    const roleBasedPermissions = await db.select().from(rolePermissions).where(
+      and(
+        eq(rolePermissions.role, user.role),
+        eq(rolePermissions.permissionId, permission.id)
+      )
+    );
+    
+    if (roleBasedPermissions.length > 0) {
+      return true;
+    }
+    
+    // 5. Check for specific user permissions (can override role permissions)
+    const [userSpecificPermission] = await db.select().from(userPermissions).where(
+      and(
+        eq(userPermissions.userId, userId),
+        eq(userPermissions.permissionId, permission.id),
+        eq(userPermissions.granted, true)
+      )
+    );
+    
+    // If user has the specific permission and it hasn't expired
+    if (userSpecificPermission) {
+      if (userSpecificPermission.expiresAt && userSpecificPermission.expiresAt < new Date()) {
+        return false;
+      }
+      return true;
+    }
+    
+    // No permission found
+    return false;
   }
 
   // Department methods
