@@ -90,7 +90,7 @@ export default function HomePage() {
                   <span className="text-primary">drives success</span>
                 </h1>
                 <p className="mb-6 md:mb-8 text-lg md:text-xl text-neutral-600 max-w-lg">
-                  Proxa empowers your team with intelligent performance management, data-driven insights, and frictionless collaboration tools.
+                  Proxa People empowers your team with intelligent performance management, data-driven insights, and frictionless collaboration tools.
                 </p>
               </motion.div>
               
@@ -269,7 +269,7 @@ export default function HomePage() {
             <span className="inline-block px-4 py-2 rounded-full bg-purple-100 text-primary text-sm font-medium mb-4">
               AI-Powered Insights
             </span>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">Proxa AI Assistant</h2>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">Proxa People AI Assistant</h2>
             <p className="text-lg text-neutral-600">
               Our AI-powered tool helps managers and HR teams work more efficiently with automated insights, recommendations, and personalized action plans.
             </p>
@@ -493,7 +493,7 @@ export default function HomePage() {
                 More productive managers, higher performing teams
               </h2>
               <p className="text-lg text-neutral-600 mb-8">
-                Proxa helps managers become more effective by providing the tools and insights they need to lead high-performing teams.
+                Proxa People helps managers become more effective by providing the tools and insights they need to lead high-performing teams.
               </p>
               
               <div className="space-y-4">
@@ -975,7 +975,7 @@ export default function HomePage() {
           
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-neutral-500">
-              &copy; {new Date().getFullYear()} Proxa, Inc. All rights reserved.
+              &copy; {new Date().getFullYear()} Proxa People, Inc. All rights reserved.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-sm text-neutral-500 hover:text-primary">
