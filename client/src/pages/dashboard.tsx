@@ -21,6 +21,7 @@ import { NewReviewDialog } from "@/components/dialogs/new-review-dialog";
 import { ScheduleMeetingDialog } from "@/components/dialogs/schedule-meeting-dialog";
 import { NewSurveyDialog } from "@/components/dialogs/new-survey-dialog";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useToast } from "@/hooks/use-toast";
 
 // Team member interface
 interface TeamMember {
@@ -194,6 +195,7 @@ interface Widget {
 export default function Dashboard() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const { toast } = useToast();
   
   // Simulating data fetch for dashboard stats
   const { data: dashboardData, isLoading } = useQuery({
@@ -201,14 +203,55 @@ export default function Dashboard() {
     staleTime: 60000,
   });
   
-  // Define the widget types/positions
-  const [widgetOrder, setWidgetOrder] = useState<WidgetId[]>([
-    "stats",
-    "team-performance",
-    "team-goals",
-    "upcoming-reviews",
-    "one-on-one-meetings",
-    "engagement-score"
+  // Define widget configuration
+  const [widgets, setWidgets] = useState<Widget[]>([
+    { 
+      id: "stats", 
+      title: "Statistics", 
+      component: <StatsCards 
+        stats={{
+          teamMembers: 14,
+          reviewsInProgress: 8,
+          activeGoals: 23,
+          upcomingOneOnOnes: 5
+        }}
+        differences={{
+          teamMembers: "+2 since last month",
+          reviewsInProgress: "65% completion rate",
+          activeGoals: "4 due this week",
+          upcomingOneOnOnes: "2 scheduled for today"
+        }}
+        isLoading={isLoading}
+      />,
+      colSpan: "col-span-3" 
+    },
+    { 
+      id: "team-performance", 
+      title: "Team Performance", 
+      component: <TeamPerformance />,
+      colSpan: "col-span-2" 
+    },
+    { 
+      id: "team-goals", 
+      title: "Team Goals", 
+      component: <TeamGoals /> 
+    },
+    { 
+      id: "upcoming-reviews", 
+      title: "Upcoming Reviews", 
+      component: <UpcomingReviews />,
+      colSpan: "col-span-2" 
+    },
+    { 
+      id: "one-on-one-meetings", 
+      title: "Upcoming 1:1s", 
+      component: <OneOnOneMeetings /> 
+    },
+    { 
+      id: "engagement-score", 
+      title: "Team Engagement", 
+      component: <EngagementScore /> 
+    }
   ]);
   
   useEffect(() => {
@@ -234,6 +277,13 @@ export default function Dashboard() {
     items.splice(result.destination.index, 0, reorderedItem);
     
     setWidgets(items);
+    
+    // Show success message on widget reorder
+    toast({
+      title: "Dashboard updated",
+      description: "Your widget layout has been saved.",
+      variant: "default",
+    });
   };
   
   // Get status badge style
@@ -843,7 +893,7 @@ export default function Dashboard() {
               </div>
               
               <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="dashboard-widgets" direction="horizontal">
+                <Droppable droppableId="dashboard-widgets">
                   {(provided) => (
                     <div 
                       className="grid grid-cols-1 lg:grid-cols-3 gap-6"
@@ -851,7 +901,11 @@ export default function Dashboard() {
                       ref={provided.innerRef}
                     >
                       {widgets.map((widget, index) => (
-                        <Draggable key={widget.id} draggableId={widget.id} index={index}>
+                        <Draggable 
+                          key={widget.id} 
+                          draggableId={widget.id} 
+                          index={index}
+                        >
                           {(provided, snapshot) => (
                             <div
                               ref={provided.innerRef}
@@ -891,7 +945,7 @@ export default function Dashboard() {
                                   </svg>
                                   <span className="font-medium">{widget.title}</span>
                                 </div>
-                                <div>
+                                <div className="p-4">
                                   {widget.component}
                                 </div>
                               </motion.div>
