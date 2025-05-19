@@ -81,16 +81,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </AnimatePresence>
       
       {/* Mobile Sidebar - Enhanced */}
-      <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-        <SheetContent 
+      <CustomSheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+        <CustomSheetContent 
           side="right" 
           className="p-0 w-[280px] sm:w-[320px] border-l-0 focus:outline-none"
+          hideCloseButton={true}
         >
           <div className="relative h-full">
             <Sidebar />
           </div>
-        </SheetContent>
-      </Sheet>
+        </CustomSheetContent>
+      </CustomSheet>
       
       {/* Main Content - Animated */}
       <motion.div 
