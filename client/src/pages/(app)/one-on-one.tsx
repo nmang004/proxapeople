@@ -18,8 +18,7 @@ import { Button } from "@/components/ui/button";
 import { MeetingDetailView } from "@/components/meetings/meeting-detail-view";
 import { MeetingList } from "@/components/meetings/meeting-list";
 import { CreateMeetingForm } from "@/components/forms/create-meeting-form";
-import type { User } from "@shared/schema";
-import type { OneOnOneMeeting } from "@/shared/types/types";
+import type { User, OneOnOneMeeting } from "@shared/schema";
 
 export default function OneOnOne() {
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -39,36 +38,36 @@ export default function OneOnOne() {
 
   // Metrics calculations (in a real app, these would come from the API)
   const upcomingMeetingsCount = meetings?.filter(m => 
-    m.status === "scheduled" && new Date(m.date) > new Date()
+    m.status === "scheduled" && new Date(m.scheduledAt) > new Date()
   )?.length || 0;
   
   const completionRate = meetings && meetings.length > 0 ? 
     Math.round((meetings.filter(m => m.status === "completed").length / meetings.length) * 100) : 0;
   
+  // For now, treating agendaItems as action items count
   const pendingActionItems = meetings?.reduce((count, meeting) => {
-    return count + (meeting.actionItems?.filter(item => item.status !== "completed").length || 0);
+    // If agendaItems is an array, count its length, otherwise 0
+    return count + (Array.isArray(meeting.agendaItems) ? meeting.agendaItems.length : 0);
   }, 0) || 0;
   
   const dueThisWeek = meetings?.reduce((count, meeting) => {
+    // Simplified - count meetings with agenda items scheduled for this week
     const nextWeek = new Date();
     nextWeek.setDate(nextWeek.getDate() + 7);
     
-    return count + (meeting.actionItems?.filter(item => {
-      return item.status !== "completed" && 
-             item.dueDate && 
-             new Date(item.dueDate) <= nextWeek;
-    }).length || 0);
+    return count + (Array.isArray(meeting.agendaItems) && 
+                   new Date(meeting.scheduledAt) <= nextWeek ? meeting.agendaItems.length : 0);
   }, 0) || 0;
   
   // Filter meetings based on active tab
   const filteredMeetings = meetings?.filter(meeting => {
     if (activeTab === "upcoming") {
-      return meeting.status === "scheduled" && new Date(meeting.date) >= new Date();
+      return meeting.status === "scheduled" && new Date(meeting.scheduledAt) >= new Date();
     } else if (activeTab === "past") {
       return meeting.status === "completed" || 
-             (meeting.status === "scheduled" && new Date(meeting.date) < new Date());
+             (meeting.status === "scheduled" && new Date(meeting.scheduledAt) < new Date());
     } else if (activeTab === "action") {
-      return meeting.actionItems && meeting.actionItems.length > 0;
+      return meeting.agendaItems && Array.isArray(meeting.agendaItems) && meeting.agendaItems.length > 0;
     }
     return true;
   }) || [];

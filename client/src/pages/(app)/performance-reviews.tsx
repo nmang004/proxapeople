@@ -34,8 +34,8 @@ import { Helmet } from 'react-helmet';
 import { ReviewForm } from "@/components/forms/review-form";
 import { PerformanceReview, reviewStatusEnum } from "@shared/schema";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { ReviewCard } from "@/components/reviews/review-card";
-import { ReviewDetail } from "@/components/reviews/review-detail";
+import { ReviewCard } from "@/features/performance/components/review-card";
+import { ReviewDetail } from "@/features/performance/components/review-detail";
 import { PlusCircle, Filter } from "lucide-react";
 
 type ReviewStatus = typeof reviewStatusEnum.enumValues[number];

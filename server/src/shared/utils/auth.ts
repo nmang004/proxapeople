@@ -40,25 +40,27 @@ export function generateTokens(user: Pick<User, 'id' | 'email' | 'role'>): AuthT
     role: user.role,
   };
 
-  const accessToken = jwt.sign(
-    payload, 
-    config.JWT_SECRET, 
-    {
-      expiresIn: config.JWT_EXPIRES_IN || '1h',
-      issuer: 'proxapeople-api',
-      ...(config.AUTH0_AUDIENCE && { audience: config.AUTH0_AUDIENCE }),
-    }
-  );
+  const accessTokenOptions: jwt.SignOptions = {
+    expiresIn: (config.JWT_EXPIRES_IN || '1h') as string,
+    issuer: 'proxapeople-api',
+  };
+  
+  if (config.AUTH0_AUDIENCE) {
+    accessTokenOptions.audience = config.AUTH0_AUDIENCE;
+  }
+  
+  const accessToken = jwt.sign(payload, config.JWT_SECRET, accessTokenOptions);
 
-  const refreshToken = jwt.sign(
-    { userId: user.id },
-    config.JWT_SECRET,
-    {
-      expiresIn: config.JWT_REFRESH_EXPIRES_IN || '7d',
-      issuer: 'proxapeople-api',
-      ...(config.AUTH0_AUDIENCE && { audience: config.AUTH0_AUDIENCE }),
-    }
-  );
+  const refreshTokenOptions: jwt.SignOptions = {
+    expiresIn: (config.JWT_REFRESH_EXPIRES_IN || '7d') as string,
+    issuer: 'proxapeople-api',
+  };
+  
+  if (config.AUTH0_AUDIENCE) {
+    refreshTokenOptions.audience = config.AUTH0_AUDIENCE;
+  }
+  
+  const refreshToken = jwt.sign({ userId: user.id }, config.JWT_SECRET, refreshTokenOptions);
 
   return { accessToken, refreshToken };
 }

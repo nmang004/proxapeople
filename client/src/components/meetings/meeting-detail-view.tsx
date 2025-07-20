@@ -3,11 +3,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { OneOnOneMeeting } from "@shared/schema";
 
-interface MeetingDetailViewProps {
-  meeting: OneOnOneMeeting;
+export interface MeetingDetailViewProps {
+  meetingId: number;
+  onClose: () => void;
 }
 
-export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
+export function MeetingDetailView({ meetingId, onClose }: MeetingDetailViewProps) {
+  // Mock meeting data for now
+  const meeting: OneOnOneMeeting = {
+    id: meetingId,
+    managerId: 1,
+    employeeId: 2,
+    scheduledAt: new Date(),
+    duration: 60,
+    status: 'scheduled',
+    location: null,
+    agendaItems: null,
+    notes: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
   return (
     <Card>
       <CardHeader>
@@ -46,6 +61,9 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             </div>
           )}
 
+          <button onClick={onClose} className="mt-4 px-4 py-2 bg-gray-200 rounded">
+            Close
+          </button>
         </div>
       </CardContent>
     </Card>

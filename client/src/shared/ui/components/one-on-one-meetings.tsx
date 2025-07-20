@@ -2,56 +2,58 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import type { OneOnOneMeeting } from "@/shared/types/types";
+import type { OneOnOneMeeting } from "@shared/schema";
 
 // Sample 1:1 meeting data
 const sampleMeetings: OneOnOneMeeting[] = [
   {
     id: 1,
     managerId: 1,
-    participantId: 2,
-    date: "2025-05-21T10:00:00Z",
+    employeeId: 2,
+    scheduledAt: new Date("2025-05-21T10:00:00Z"),
     duration: 30,
     status: "scheduled",
     location: "Google Meet",
-    agenda: "Discuss current project progress, Review goals for next sprint, Address any blockers",
-    createdAt: "2025-01-01T00:00:00Z",
-    updatedAt: "2025-01-01T00:00:00Z"
+    agendaItems: ["Discuss current project progress", "Review goals for next sprint", "Address any blockers"],
+    notes: null,
+    createdAt: new Date("2025-01-01T00:00:00Z"),
+    updatedAt: new Date("2025-01-01T00:00:00Z")
   },
   {
     id: 2,
     managerId: 1,
-    participantId: 1,
-    date: "2025-05-23T14:30:00Z",
+    employeeId: 1,
+    scheduledAt: new Date("2025-05-23T14:30:00Z"),
     duration: 45,
     status: "scheduled",
     location: "Conference Room B",
-    agenda: "Review last month's goals, Set objectives for next month, Career development discussion",
-    createdAt: "2025-01-01T00:00:00Z",
-    updatedAt: "2025-01-01T00:00:00Z"
+    agendaItems: ["Review last month's goals", "Set objectives for next month", "Career development discussion"],
+    notes: null,
+    createdAt: new Date("2025-01-01T00:00:00Z"),
+    updatedAt: new Date("2025-01-01T00:00:00Z")
   },
   {
     id: 3,
     managerId: 1,
-    participantId: 4,
-    date: "2025-05-24T11:00:00Z",
+    employeeId: 4,
+    scheduledAt: new Date("2025-05-24T11:00:00Z"),
     duration: 30,
     status: "scheduled",
     location: "Zoom",
-    agenda: "Review Q2 objectives, Align on product roadmap priorities",
-    createdAt: "2025-01-01T00:00:00Z",
-    updatedAt: "2025-01-01T00:00:00Z"
+    agendaItems: ["Review Q2 objectives", "Align on product roadmap priorities"],
+    notes: null,
+    createdAt: new Date("2025-01-01T00:00:00Z"),
+    updatedAt: new Date("2025-01-01T00:00:00Z")
   }
 ];
 
 export function OneOnOneMeetings() {
-  const { data: apiMeetings, isLoading, error } = useQuery<{ upcomingOneOnOnes: OneOnOneMeeting[] }>({
-    queryKey: ['/api/dashboard'],
-    select: (data) => data.upcomingOneOnOnes || [],
+  const { data: apiMeetings, isLoading, error } = useQuery<OneOnOneMeeting[]>({
+    queryKey: ['/api/one-on-ones'],
   });
   
   // Use sample data for visual representation
-  const meetings = apiMeetings?.length ? apiMeetings : sampleMeetings;
+  const meetings = (apiMeetings && apiMeetings.length > 0) ? apiMeetings : sampleMeetings;
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -88,18 +90,18 @@ export function OneOnOneMeetings() {
               <div key={meeting.id} className="flex p-3 border border-neutral-200 rounded-lg hover:border-primary transition-colors duration-200">
                 <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-primary mr-3 flex-shrink-0">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={`https://i.pravatar.cc/150?img=${meeting.participantId}`} alt={`Participant ${meeting.participantId}`} />
+                    <AvatarImage src={`https://i.pravatar.cc/150?img=${meeting.employeeId}`} alt={`Employee ${meeting.employeeId}`} />
                     <AvatarFallback>
-                      {`P${meeting.participantId}`}
+                      {`E${meeting.employeeId}`}
                     </AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-neutral-800">1:1 with Participant {meeting.participantId}</h3>
-                  <p className="text-xs text-neutral-500 mt-1">{formatDateTime(meeting.date)}</p>
+                  <h3 className="text-sm font-medium text-neutral-800">1:1 with Employee {meeting.employeeId}</h3>
+                  <p className="text-xs text-neutral-500 mt-1">{formatDateTime(meeting.scheduledAt.toISOString())}</p>
                   <div className="flex items-center mt-2">
                     <span className="px-2 py-0.5 text-xs rounded-full bg-secondary text-primary">
-                      {meeting.agenda ? 'Has Agenda' : 'No Agenda'}
+                      {(meeting.agendaItems && Array.isArray(meeting.agendaItems) && meeting.agendaItems.length > 0) ? 'Has Agenda' : 'No Agenda'}
                     </span>
                     <span className="ml-2 text-xs text-neutral-500">{meeting.location || 'No location set'}</span>
                   </div>

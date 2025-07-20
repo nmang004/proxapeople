@@ -198,7 +198,7 @@ export class ApiClient {
         skipAuth: true,
       });
 
-      const { accessToken, refreshToken: newRefreshToken } = response.data;
+      const { accessToken, refreshToken: newRefreshToken } = response.data as { accessToken: string; refreshToken: string };
       
       storage.set(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
       if (newRefreshToken) {
@@ -248,7 +248,7 @@ export class ApiClient {
     }
 
     // Apply request interceptors
-    let interceptedConfig = { ...config, headers: requestHeaders };
+    let interceptedConfig: RequestConfig = { ...config, headers: requestHeaders };
     for (const interceptor of this.requestInterceptors) {
       interceptedConfig = await interceptor(interceptedConfig, url);
     }

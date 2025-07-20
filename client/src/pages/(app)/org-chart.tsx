@@ -46,12 +46,12 @@ export default function OrgChart() {
   }, [showSidebar]);
 
   // Fetch users and departments data
-  const { data: users, isLoading: usersLoading } = useQuery({
+  const { data: users, isLoading: usersLoading } = useQuery<User[]>({
     queryKey: ["/api/users"],
     retry: false,
   });
 
-  const { data: departments, isLoading: departmentsLoading } = useQuery({
+  const { data: departments, isLoading: departmentsLoading } = useQuery<Department[]>({
     queryKey: ["/api/departments"],
     retry: false,
   });
@@ -64,12 +64,12 @@ export default function OrgChart() {
       (user.firstName && user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (user.lastName && user.lastName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (user.title && user.title.toLowerCase().includes(searchTerm.toLowerCase()));
+      (user.jobTitle && user.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    const matchesDepartment = filterDepartment === "all" || user.departmentId === parseInt(filterDepartment);
+    const matchesDepartment = filterDepartment === "all" || user.department === filterDepartment;
     
     return matchesSearch && matchesDepartment;
-  });
+  }) || [];
 
   // Handle zoom in/out
   const handleZoomIn = () => {

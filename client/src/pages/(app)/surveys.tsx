@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import type { Survey } from "@shared/schema";
+import type { Survey, SurveyTemplate } from "@shared/schema";
 import { Helmet } from 'react-helmet';
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -31,7 +31,7 @@ export default function Surveys() {
     queryKey: ['/api/surveys'],
   });
   
-  const { data: templates } = useQuery({
+  const { data: templates } = useQuery<SurveyTemplate[]>({
     queryKey: ['/api/survey-templates'],
   });
 

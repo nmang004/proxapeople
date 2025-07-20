@@ -152,7 +152,7 @@ export const permissionCheckResponseSchema = z.object({
 });
 
 // Bulk operation schemas
-export const bulkUpdateSchema = <T extends z.ZodTypeAny>(updateSchema: T) =>
+export const bulkUpdateSchema = <T extends z.ZodObject<any>>(updateSchema: T) =>
   z.object({
     ids: z.array(z.number()),
     updates: updateSchema.partial(),
