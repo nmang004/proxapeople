@@ -40,8 +40,8 @@ export const createTestUser = (overrides = {}) => ({
   passwordHash: '$2b$10$hashedpassword',
   role: 'user',
   department: 'Engineering',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: '2025-07-20T14:50:38.226Z',
+  updatedAt: '2025-07-20T14:50:38.226Z',
   ...overrides,
 });
 
