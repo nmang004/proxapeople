@@ -1,5 +1,6 @@
 // Re-export goals endpoints
-export { goals } from '../../../shared/api/endpoints';
+import { goals } from '../../../shared/api/endpoints';
+import type { Goal } from '../../../shared/api/types';
 
 // Re-export goals-specific hooks
 export {
@@ -79,3 +80,6 @@ export const goalsApi = {
     return 'Goal';
   },
 };
+
+// Export the imported endpoints
+export { goals };

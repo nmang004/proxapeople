@@ -1,5 +1,5 @@
-// Re-export user endpoints (employees are users)
-export { users } from '../../../shared/api/endpoints';
+// Import user endpoints (employees are users)
+import { users } from '../../../shared/api/endpoints';
 
 // Re-export user-specific hooks
 export {
@@ -96,3 +96,6 @@ export const employeesApi = {
     return false;
   },
 };
+
+// Re-export user endpoints
+export { users };

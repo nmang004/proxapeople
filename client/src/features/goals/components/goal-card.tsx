@@ -65,11 +65,7 @@ export function GoalCard({ goal, onClick, assignee }: GoalCardProps) {
             <div className="space-y-1">
               <h3 className="font-medium text-neutral-900 line-clamp-1">{goal.title}</h3>
               <p className="text-sm text-neutral-500">
-                {assignee ? assignee.name : "Unassigned"} • 
-                {goal.category === 'okr' ? " OKR" : 
-                 goal.category === 'personal' ? " Personal" : 
-                 goal.category === 'team' ? " Team" : 
-                 " Goal"}
+                {assignee ? assignee.name : "Unassigned"} • Goal
               </p>
             </div>
           </div>

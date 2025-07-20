@@ -54,12 +54,12 @@ export function NewSurveyDialog() {
       title: "",
       description: "",
       anonymous: false,
-      questions: [{ text: "", type: "rating", required: true }],
+      questions: [{ text: "", type: "rating" as const, required: true }],
     },
   });
 
   const addQuestion = () => {
-    const newQuestions = [...questions, { text: "", type: "rating", required: true }];
+    const newQuestions = [...questions, { text: "", type: "rating" as const, required: true }];
     setQuestions(newQuestions);
     form.setValue("questions", newQuestions);
   };
@@ -96,10 +96,7 @@ export function NewSurveyDialog() {
     };
 
     // Submit to API
-    apiRequest("/api/surveys", {
-      method: "POST",
-      body: JSON.stringify(surveyData),
-    })
+    apiRequest("POST", "/api/surveys", surveyData)
       .then(() => {
         toast({
           title: "Survey created",

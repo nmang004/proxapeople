@@ -149,10 +149,7 @@ export function GoalForm({
     };
     
     try {
-      await apiRequest('/api/goals', {
-        method: 'POST',
-        body: JSON.stringify(goalData)
-      });
+      await apiRequest('POST', '/api/goals', goalData);
       
       // Invalidate goals query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });

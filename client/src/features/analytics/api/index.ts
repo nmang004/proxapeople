@@ -1,5 +1,5 @@
-// Re-export analytics endpoints
-export { analytics } from '../../../shared/api/endpoints';
+// Import analytics endpoints
+import { analytics } from '../../../shared/api/endpoints';
 
 // Re-export analytics-specific hooks
 export {
@@ -161,3 +161,6 @@ export const analyticsApi = {
     }));
   },
 };
+
+// Re-export analytics endpoints
+export { analytics };

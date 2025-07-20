@@ -48,10 +48,7 @@ export function NewReviewDialog() {
     };
 
     // Submit to API
-    apiRequest("/api/reviews", {
-      method: "POST",
-      body: JSON.stringify(reviewData),
-    })
+    apiRequest("POST", "/api/reviews", reviewData)
       .then(() => {
         toast({
           title: "Review created",

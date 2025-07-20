@@ -1,5 +1,5 @@
-// Re-export surveys endpoints
-export { surveys } from '../../../shared/api/endpoints';
+// Import surveys endpoints
+import { surveys } from '../../../shared/api/endpoints';
 
 // Re-export surveys-specific hooks (note: need to add these to hooks.ts)
 // export {
@@ -301,3 +301,6 @@ export const surveysApi = {
     }
   },
 };
+
+// Re-export surveys endpoints
+export { surveys };

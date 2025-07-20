@@ -1,5 +1,5 @@
-// Re-export auth endpoints and hooks for this feature
-export { auth } from '../../../shared/api/endpoints';
+// Import auth endpoints
+import { auth } from '../../../shared/api/endpoints';
 
 // Re-export auth-specific hooks
 export {
@@ -46,3 +46,6 @@ export const authApi = {
     return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
   },
 };
+
+// Re-export auth endpoints
+export { auth };

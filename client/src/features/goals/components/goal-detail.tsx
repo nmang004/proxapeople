@@ -55,20 +55,18 @@ export function GoalDetail({
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [progress, setProgress] = useState(goal.progress || 0);
-  const [notes, setNotes] = useState(goal.notes || "");
+  const [notes, setNotes] = useState(goal.description || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const getStatusBadge = () => {
     switch (goal.status) {
-      case 'active':
-        return <Badge variant="outline" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200">Active</Badge>;
+      case 'in_progress':
+        return <Badge variant="outline" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200">In Progress</Badge>;
       case 'completed':
         return <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200">Completed</Badge>;
-      case 'at_risk':
-        return <Badge variant="outline" className="bg-amber-50 text-amber-700 hover:bg-amber-50 border-amber-200">At Risk</Badge>;
-      case 'behind':
-        return <Badge variant="outline" className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200">Behind</Badge>;
+      case 'not_started':
+        return <Badge variant="outline" className="bg-neutral-50 text-neutral-700 hover:bg-neutral-50 border-neutral-200">Not Started</Badge>;
       default:
         return <Badge variant="outline" className="bg-neutral-50 text-neutral-700 hover:bg-neutral-50 border-neutral-200">Draft</Badge>;
     }
@@ -101,10 +99,7 @@ export function GoalDetail({
         notes
       };
       
-      await apiRequest(`/api/goals/${goal.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(updatedGoal)
-      });
+      await apiRequest('PATCH', `/api/goals/${goal.id}`, updatedGoal);
       
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       toast({
@@ -125,7 +120,7 @@ export function GoalDetail({
   };
 
   // Set of key results for OKR display
-  const keyResults = goal.keyResults || [
+  const keyResults = [
     { id: 1, title: "Increase user engagement by 25%", progress: 65, status: "active" },
     { id: 2, title: "Reduce bounce rate by 15%", progress: 40, status: "behind" },
     { id: 3, title: "Improve conversion rate to 5%", progress: 80, status: "active" },
@@ -164,10 +159,7 @@ export function GoalDetail({
                 <Flag size={14} /> Category
               </span>
               <span>
-                {goal.category === 'okr' ? 'OKR' : 
-                 goal.category === 'personal' ? 'Personal Goal' : 
-                 goal.category === 'team' ? 'Team Goal' : 
-                 'Project Goal'}
+                Project Goal
               </span>
             </div>
             <div className="flex flex-col">
@@ -318,7 +310,6 @@ export function GoalDetail({
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
             <TabsList className="mb-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              {goal.category === 'okr' && <TabsTrigger value="keyResults">Key Results</TabsTrigger>}
               <TabsTrigger value="alignment">Alignment</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
@@ -341,7 +332,7 @@ export function GoalDetail({
               )}
             </TabsContent>
             
-            {goal.category === 'okr' && (
+            {false && (
               <TabsContent value="keyResults" className="space-y-4">
                 <div>
                   <h3 className="text-sm font-medium mb-3">Key Results</h3>

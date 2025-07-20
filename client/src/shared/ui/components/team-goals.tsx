@@ -21,8 +21,8 @@ const sampleTeamGoals: Goal[] = [
     teamId: 1,
     departmentId: null,
     isCompanyGoal: false,
-    createdAt: "2025-01-01T00:00:00Z",
-    updatedAt: "2025-01-01T00:00:00Z"
+    createdAt: new Date("2025-01-01T00:00:00Z"),
+    updatedAt: new Date("2025-01-01T00:00:00Z")
   },
   {
     id: 2,
@@ -38,8 +38,8 @@ const sampleTeamGoals: Goal[] = [
     currentValue: null,
     targetValue: null,
     isCompanyGoal: false,
-    createdAt: "2025-01-01T00:00:00Z",
-    updatedAt: "2025-01-01T00:00:00Z"
+    createdAt: new Date("2025-01-01T00:00:00Z"),
+    updatedAt: new Date("2025-01-01T00:00:00Z")
   },
   {
     id: 3,
@@ -55,8 +55,8 @@ const sampleTeamGoals: Goal[] = [
     teamId: 3,
     departmentId: null,
     isCompanyGoal: false,
-    createdAt: "2025-01-01T00:00:00Z",
-    updatedAt: "2025-01-01T00:00:00Z"
+    createdAt: new Date("2025-01-01T00:00:00Z"),
+    updatedAt: new Date("2025-01-01T00:00:00Z")
   },
   {
     id: 4,
@@ -72,8 +72,8 @@ const sampleTeamGoals: Goal[] = [
     currentValue: null,
     targetValue: null,
     isCompanyGoal: true,
-    createdAt: "2025-01-01T00:00:00Z",
-    updatedAt: "2025-01-01T00:00:00Z"
+    createdAt: new Date("2025-01-01T00:00:00Z"),
+    updatedAt: new Date("2025-01-01T00:00:00Z")
   }
 ];
 

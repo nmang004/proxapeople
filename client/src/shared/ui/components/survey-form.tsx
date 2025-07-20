@@ -160,10 +160,10 @@ export default function SurveyForm({ open, onClose, initialData, templates = [] 
       // Create the survey
       if (initialData) {
         // Update existing survey
-        await apiRequest(`/api/surveys/${initialData.id}`, "PATCH", data);
+        await apiRequest("PATCH", `/api/surveys/${initialData.id}`, data);
       } else {
         // Create new survey
-        await apiRequest("/api/surveys", "POST", data);
+        await apiRequest("POST", "/api/surveys", data);
       }
 
       // Invalidate the surveys query to refresh the list

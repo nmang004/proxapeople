@@ -45,7 +45,7 @@ const sampleMeetings: OneOnOneMeeting[] = [
 ];
 
 export function OneOnOneMeetings() {
-  const { data: apiMeetings, isLoading, error } = useQuery<OneOnOneMeeting[]>({
+  const { data: apiMeetings, isLoading, error } = useQuery<{ upcomingOneOnOnes: OneOnOneMeeting[] }>({
     queryKey: ['/api/dashboard'],
     select: (data) => data.upcomingOneOnOnes || [],
   });

@@ -124,10 +124,7 @@ export function ReviewDetail({
         goals
       };
       
-      await apiRequest(`/api/reviews/${review.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(updatedReview)
-      });
+      await apiRequest('PATCH', `/api/reviews/${review.id}`, updatedReview);
       
       queryClient.invalidateQueries({ queryKey: ['/api/reviews'] });
       toast({

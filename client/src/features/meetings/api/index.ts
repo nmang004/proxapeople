@@ -1,5 +1,6 @@
 // Re-export meetings endpoints
-export { meetings } from '../../../shared/api/endpoints';
+import { meetings } from '../../../shared/api/endpoints';
+import type { OneOnOneMeeting } from '../../../shared/api/types';
 
 // Re-export meetings-specific hooks
 export {
@@ -126,3 +127,6 @@ export const meetingsApi = {
     'Next steps and action items',
   ],
 };
+
+// Export the imported endpoints
+export { meetings };

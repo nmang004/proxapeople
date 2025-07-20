@@ -1,5 +1,6 @@
 // Re-export reviews endpoints
-export { reviews } from '../../../shared/api/endpoints';
+import { reviews } from '../../../shared/api/endpoints';
+import type { PerformanceReview } from '../../../shared/api/types';
 
 // Re-export reviews-specific hooks (note: need to add these to hooks.ts)
 // export {
@@ -183,3 +184,6 @@ export const performanceApi = {
     }
   },
 };
+
+// Export the imported endpoints
+export { reviews };

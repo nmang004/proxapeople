@@ -1,6 +1,7 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { usePermissions } from '@/contexts/permissions-context';
 import { useAuthStore } from '@/app/store/auth';
+import { useAuth } from '../hooks/useAuth';
 
 interface PermissionGuardProps {
   resource: string;
