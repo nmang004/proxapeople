@@ -151,3 +151,4 @@ vite.config.ts.*
 
 # Sensitive configuration files
 SUPABASE_ENV.md
+Auth0_Secrets.md

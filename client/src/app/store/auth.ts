@@ -1,14 +1,13 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { api } from '../../shared/api';
-import { ApiError } from '../../shared/api/client';
 
-// Re-export types from the new API layer
-export type { 
-  User, 
-  LoginRequest as LoginData,
-  RegisterRequest as RegisterData 
-} from '../../shared/api/types';
+// Define types locally to avoid circular dependencies
+class ApiError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
 
 // Zustand doesn't persist User properly from the API types, so redefine locally
 interface User {
@@ -101,7 +100,9 @@ const storage = {
 export const useAuthStore = create<AuthStore>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set, get) => {
+        console.log("🔑 AuthStore: Creating store with initial state");
+        return {
     // Initial state
     user: null,
     tokens: null,
@@ -127,8 +128,14 @@ export const useAuthStore = create<AuthStore>()(
         setLoading(true);
         setError(null);
         
-        const response = await api.auth.login.execute({ email, password });
-        const { user, accessToken, refreshToken } = response;
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        if (!response.ok) throw new ApiError('Login failed');
+        const data = await response.json();
+        const { user, accessToken, refreshToken } = data;
         
         const tokens = { accessToken, refreshToken };
         
@@ -163,8 +170,14 @@ export const useAuthStore = create<AuthStore>()(
         setLoading(true);
         setError(null);
         
-        const response = await api.auth.register.execute(userData);
-        const { user, accessToken, refreshToken } = response;
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userData)
+        });
+        if (!response.ok) throw new ApiError('Registration failed');
+        const data = await response.json();
+        const { user, accessToken, refreshToken } = data;
         
         const tokens = { accessToken, refreshToken };
         
@@ -197,7 +210,7 @@ export const useAuthStore = create<AuthStore>()(
       
       try {
         setLoading(true);
-        await api.auth.logout.execute();
+        await fetch('/api/auth/logout', { method: 'POST' });
       } catch {
         // Ignore logout API errors, still clear local state
       } finally {
@@ -221,10 +234,16 @@ export const useAuthStore = create<AuthStore>()(
       const { setError, logout } = get();
 
       try {
-        const response = await api.auth.refresh.execute({ refreshToken });
+        const response = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken })
+        });
+        if (!response.ok) throw new ApiError('Token refresh failed');
+        const data = await response.json();
         const newTokens = {
-          accessToken: response.accessToken,
-          refreshToken: response.refreshToken,
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
         };
         
         // Update storage
@@ -249,6 +268,7 @@ export const useAuthStore = create<AuthStore>()(
     initializeAuth: async () => {
       const { setLoading, setError, refreshToken: refreshTokens } = get();
       
+      console.log("🔑 AuthStore: Starting initializeAuth");
       try {
         setLoading(true);
         setError(null);
@@ -257,15 +277,25 @@ export const useAuthStore = create<AuthStore>()(
         const refreshToken = storage.get(STORAGE_KEYS.REFRESH_TOKEN);
         const userStr = storage.get(STORAGE_KEYS.USER);
 
+        console.log("🔑 AuthStore: Found tokens in storage", {
+          hasAccessToken: !!accessToken,
+          hasRefreshToken: !!refreshToken,
+          hasUser: !!userStr
+        });
+
         if (accessToken && refreshToken && userStr) {
           const user = JSON.parse(userStr);
           const tokens = { accessToken, refreshToken };
           
           // Verify token is still valid by fetching profile
           try {
-            const profileResponse = await api.auth.me.execute();
+            const profileResponse = await fetch('/api/auth/me', {
+              headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            if (!profileResponse.ok) throw new ApiError('Profile fetch failed');
+            const profileData = await profileResponse.json();
             set({
-              user: profileResponse.user,
+              user: profileData.user,
               tokens,
               isAuthenticated: true,
               isLoading: false,
@@ -291,6 +321,7 @@ export const useAuthStore = create<AuthStore>()(
             }
           }
         } else {
+          console.log("🔑 AuthStore: No tokens found, user not authenticated");
           set({
             user: null,
             tokens: null,
@@ -314,7 +345,8 @@ export const useAuthStore = create<AuthStore>()(
         });
       }
     },
-  }),
+    };
+  },
       {
         name: 'proxapeople-auth',
         partialize: (state) => {

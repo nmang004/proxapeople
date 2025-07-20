@@ -1,5 +1,4 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
 import { useAuthStore } from '@/app/store/auth';
 import { usePermissionsStore } from '@/app/store/permissions';
 import { Loader2 } from 'lucide-react';
@@ -9,19 +8,30 @@ interface RouteGuardProps {
   requireAuth?: boolean;
   requiredRoles?: string[];
   fallbackUrl?: string;
+  onNavigate?: (url: string) => void;
 }
 
 export function RouteGuard({
   children,
   requireAuth = true,
   requiredRoles = [],
-  fallbackUrl = '/auth',
+  fallbackUrl = '/login',
+  onNavigate = () => {},
 }: RouteGuardProps) {
   const { isAuthenticated, isLoading, user } = useAuthStore();
-  const [, setLocation] = useLocation();
+  
+  console.log("🔐 RouteGuard: Starting with", {
+    requireAuth,
+    isAuthenticated,
+    isLoading,
+    user: user ? `${user.firstName} ${user.lastName}` : 'null',
+    fallbackUrl,
+    requiredRoles
+  });
 
   // Show loading spinner while checking authentication status
   if (isLoading) {
+    console.log("🔐 RouteGuard: Showing loading spinner");
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -34,7 +44,8 @@ export function RouteGuard({
 
   // Check authentication requirement
   if (requireAuth && !isAuthenticated) {
-    setLocation(fallbackUrl);
+    console.log("🔐 RouteGuard: User not authenticated, redirecting to", fallbackUrl);
+    onNavigate(fallbackUrl);
     return null;
   }
 
@@ -59,6 +70,7 @@ export function RouteGuard({
     }
   }
 
+  console.log("🔐 RouteGuard: All checks passed, rendering children");
   return <>{children}</>;
 }
 
@@ -87,9 +99,9 @@ export function ManagerRoute({ children }: { children: ReactNode }) {
   );
 }
 
-export function ProtectedRoute({ children }: { children: ReactNode }) {
+export function ProtectedRoute({ children, onNavigate }: { children: ReactNode; onNavigate?: (url: string) => void }) {
   return (
-    <RouteGuard requireAuth={true}>
+    <RouteGuard requireAuth={true} onNavigate={onNavigate}>
       {children}
     </RouteGuard>
   );
@@ -105,7 +117,6 @@ interface PermissionRouteProps {
 export function PermissionRoute({ children, resource, action }: PermissionRouteProps) {
   const { isAuthenticated, isLoading, user } = useAuthStore();
   const { hasPermission, checkPermission } = usePermissionsStore();
-  const [, setLocation] = useLocation();
   const [permissionChecked, setPermissionChecked] = useState(false);
   const [hasRequiredPermission, setHasRequiredPermission] = useState(false);
 
@@ -146,7 +157,8 @@ export function PermissionRoute({ children, resource, action }: PermissionRouteP
 
   // Check authentication requirement
   if (!isAuthenticated) {
-    setLocation('/auth');
+    console.log("Permission route redirecting to login");
+    window.location.href = '/login';
     return null;
   }
 

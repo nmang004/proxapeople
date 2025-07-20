@@ -50,14 +50,10 @@ export interface AsyncActions {
   clearError: () => void;
 }
 
-// Export store hooks for direct use
-export { useAuthStore } from './auth';
-export { useUserStore } from './user';
-export { useUIStore } from './ui';
-export { usePermissionsStore } from './permissions';
-
-// Export convenience hooks
-export * from './hooks';
+// Note: Individual stores should be imported directly to avoid circular dependencies
+// e.g., import { useAuthStore } from '@/app/store/auth'
+// 
+// Store utilities and types are exported here for shared use
 
 // Store initialization
 export const initializeStores = () => {

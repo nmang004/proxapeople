@@ -14,7 +14,7 @@ export const helmetConfig = helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
       imgSrc: ["'self'", "data:", "https:"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"], // TODO: Remove unsafe-inline after debugging
       connectSrc: ["'self'", config.AUTH0_DOMAIN],
       frameSrc: ["'none'"],
       objectSrc: ["'none'"],

@@ -1,4 +1,42 @@
-import { createStore, BaseState, AsyncActions } from './index';
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
+// Store configuration utilities (copied from index.ts to avoid circular dependency)
+const createStore = <T>(
+  storeName: string,
+  storeCreator: (
+    set: (partial: T | Partial<T> | ((state: T) => T | Partial<T>), replace?: boolean | undefined) => void,
+    get: () => T,
+    api: any
+  ) => T,
+  options: {
+    persist?: boolean;
+    devtools?: boolean;
+  } = {}
+) => {
+  const { persist: enablePersist = false, devtools: enableDevtools = true } = options;
+
+  let store = storeCreator;
+
+  // Add devtools if enabled and in development
+  if (enableDevtools && process.env.NODE_ENV === 'development') {
+    store = devtools(store, { name: `ProxaPeople ${storeName}` });
+  }
+
+  return create(store);
+};
+
+// Common store types
+interface BaseState {
+  isLoading: boolean;
+  error: string | null;
+}
+
+interface AsyncActions {
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  clearError: () => void;
+}
 
 export interface Permission {
   id: number;

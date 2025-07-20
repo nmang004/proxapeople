@@ -231,6 +231,8 @@ const CTASection = () => (
 
 // Main HomePage Component
 export default function HomePage() {
+  console.log("🏠 HomePage: Component rendering");
+  
   return (
     <>
       <Helmet>
