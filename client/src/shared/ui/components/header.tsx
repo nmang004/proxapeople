@@ -12,12 +12,14 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/app/store/auth0-store";
 
 interface HeaderProps {
   onOpenMobileSidebar: () => void;
 }
 
 export function Header({ onOpenMobileSidebar }: HeaderProps) {
+  const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [notifications, setNotifications] = useState([
@@ -141,10 +143,14 @@ export function Header({ onOpenMobileSidebar }: HeaderProps) {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Avatar className="h-8 w-8 border-2 border-transparent hover:border-primary/50 transition-all duration-200">
-                    <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=32&h=32" alt="Profile photo" />
-                    <AvatarFallback>AJ</AvatarFallback>
+                    <AvatarImage src={user?.profileImage || ""} alt="Profile photo" />
+                    <AvatarFallback>
+                      {user?.firstName?.[0]}{user?.lastName?.[0]}
+                    </AvatarFallback>
                   </Avatar>
-                  <span className="ml-2 hidden md:block font-medium">Ashley Johnson</span>
+                  <span className="ml-2 hidden md:block font-medium">
+                    {user?.firstName} {user?.lastName}
+                  </span>
                   <motion.i 
                     className="ri-arrow-down-s-line ml-1 hidden md:block"
                     animate={{ rotate: isSearchFocused ? 180 : 0 }}
@@ -154,8 +160,8 @@ export function Header({ onOpenMobileSidebar }: HeaderProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <div className="px-2 py-1.5 mb-2">
-                  <p className="text-sm font-medium">Ashley Johnson</p>
-                  <p className="text-xs text-muted-foreground">ashley.johnson@proxa.example.com</p>
+                  <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email}</p>
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex items-center cursor-pointer hover:bg-secondary/50 transition-all duration-150">
@@ -167,7 +173,10 @@ export function Header({ onOpenMobileSidebar }: HeaderProps) {
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center cursor-pointer hover:bg-secondary/50 transition-all duration-150">
+                <DropdownMenuItem 
+                  className="flex items-center cursor-pointer hover:bg-secondary/50 transition-all duration-150"
+                  onClick={logout}
+                >
                   <i className="ri-logout-box-line mr-2 text-primary/70"></i>
                   <span>Logout</span>
                 </DropdownMenuItem>
