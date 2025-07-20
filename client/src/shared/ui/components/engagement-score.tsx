@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { Separator } from "@/components/ui/separator";
+import { useTeamEngagement } from "@/shared/api/hooks";
 import type { EngagementData } from "@/shared/types/types";
 
 // Sample engagement data for better visual representation
@@ -17,18 +17,10 @@ const sampleEngagementData: EngagementData = {
 };
 
 export function EngagementScore() {
-  const { data, isLoading, error } = useQuery<{ teamEngagement: EngagementData }>({
-    queryKey: ['/api/dashboard'],
-    select: (data) => ({ 
-      teamEngagement: data.teamEngagement || { 
-        overall: 0, 
-        categories: [] 
-      } 
-    }),
-  });
+  const { data, isLoading, error } = useTeamEngagement();
 
   // Use sample data for visual representation
-  const engagementData = data?.teamEngagement?.overall ? data.teamEngagement : sampleEngagementData;
+  const engagementData = data?.overall ? data : sampleEngagementData;
   const score = engagementData.overall;
   const scorePercentage = (score / 10) * 100;
 

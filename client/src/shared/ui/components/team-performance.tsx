@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-// Removed card imports as we're handling this at the dashboard level
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTeamPerformance } from "@/shared/api/hooks";
 
 type TimeRange = 'monthly' | 'quarterly';
 
@@ -40,10 +39,7 @@ const mockPerformanceData = {
 export function TeamPerformance() {
   const [timeRange, setTimeRange] = useState<TimeRange>('quarterly');
   
-  const { data, isLoading, error } = useQuery<{ teamPerformance: PerformanceData }>({
-    queryKey: ['/api/dashboard'],
-    select: (data) => ({ teamPerformance: data.teamPerformance || { quarterly: [] } }),
-  });
+  const { data, isLoading, error } = useTeamPerformance();
 
   // Use mock data for visual presentation until the API provides real data
   const performanceData = timeRange === 'quarterly' 

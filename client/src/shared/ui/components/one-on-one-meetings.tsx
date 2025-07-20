@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
+import { useUpcomingOneOnOnes } from "@/shared/api/hooks";
 import type { OneOnOneMeeting } from "@shared/schema";
 
 // Sample 1:1 meeting data
@@ -48,9 +48,7 @@ const sampleMeetings: OneOnOneMeeting[] = [
 ];
 
 export function OneOnOneMeetings() {
-  const { data: apiMeetings, isLoading, error } = useQuery<OneOnOneMeeting[]>({
-    queryKey: ['/api/one-on-ones'],
-  });
+  const { data: apiMeetings, isLoading, error } = useUpcomingOneOnOnes();
   
   // Use sample data for visual representation
   const meetings = (apiMeetings && apiMeetings.length > 0) ? apiMeetings : sampleMeetings;

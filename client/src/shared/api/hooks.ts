@@ -420,6 +420,31 @@ export const useDashboardStats = createQueryHook(
   () => api.analytics.dashboardStats.execute().then(res => res.stats)
 );
 
+export const useDashboardData = createQueryHook(
+  queryKeys.analytics.dashboard,
+  () => api.analytics.dashboardData.execute()
+);
+
+export const useTeamEngagement = createQueryHook(
+  queryKeys.analytics.dashboard,
+  () => api.analytics.dashboardData.execute().then(res => res.teamEngagement)
+);
+
+export const useTeamPerformance = createQueryHook(
+  queryKeys.analytics.dashboard,
+  () => api.analytics.dashboardData.execute().then(res => res.teamPerformance)
+);
+
+export const useUpcomingReviews = createQueryHook(
+  queryKeys.analytics.dashboard,
+  () => api.analytics.dashboardData.execute().then(res => res.upcomingReviews)
+);
+
+export const useUpcomingOneOnOnes = createQueryHook(
+  queryKeys.analytics.dashboard,
+  () => api.analytics.dashboardData.execute().then(res => res.upcomingOneOnOnes)
+);
+
 export const useTeamMetrics = createQueryHook(
   queryKeys.analytics.team,
   (teamId?: number) => api.analytics.teamMetrics.execute(teamId).then(res => res.metrics)

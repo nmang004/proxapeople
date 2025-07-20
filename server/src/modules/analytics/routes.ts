@@ -6,11 +6,11 @@ const router = express.Router();
 const analyticsService = new AnalyticsService();
 const analyticsController = new AnalyticsController(analyticsService);
 
-// Analytics routes
-router.get('/', analyticsController.getAllAnalytics);
-router.post('/', analyticsController.createAnalytics);
+// Dashboard data route (when mounted at /dashboard)
+router.get('/', analyticsController.getDashboard);
 
-// Dashboard data route
-router.get('/dashboard', analyticsController.getDashboard);
+// Analytics routes (when mounted at /analytics)
+router.get('/analytics', analyticsController.getAllAnalytics);
+router.post('/analytics', analyticsController.createAnalytics);
 
 export default router;

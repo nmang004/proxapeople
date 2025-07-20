@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUpcomingReviews } from "@/shared/api/hooks";
 import type { ReviewStatus } from "@/shared/types/types";
 
 interface Employee {
@@ -59,10 +59,7 @@ const sampleReviews: Review[] = [
 ];
 
 export function UpcomingReviews() {
-  const { data: apiReviews, isLoading, error } = useQuery<Review[]>({
-    queryKey: ['/api/dashboard'],
-    select: (data: any) => data?.upcomingReviews || [],
-  });
+  const { data: apiReviews, isLoading, error } = useUpcomingReviews();
   
   // Use sample data for visual representation
   const reviews = apiReviews?.length ? apiReviews : sampleReviews;

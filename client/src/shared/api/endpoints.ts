@@ -463,12 +463,42 @@ export const permissions = {
 export const analytics = {
   dashboardStats: {
     execute: async (): Promise<{ stats: Record<string, unknown> }> => {
-      const response = await apiClient.get('/analytics/dashboard', {
+      const response = await apiClient.get('/dashboard', {
         validateResponse: apiResponseSchema(z.object({
           stats: z.record(z.unknown()),
         })),
       });
       return response.data as { stats: Record<string, unknown> };
+    },
+  },
+  
+  dashboardData: {
+    execute: async (): Promise<{
+      stats: Record<string, unknown>;
+      upcomingReviews: unknown[];
+      teamGoals: unknown[];
+      upcomingOneOnOnes: unknown[];
+      teamPerformance: unknown;
+      teamEngagement: unknown;
+    }> => {
+      const response = await apiClient.get('/dashboard', {
+        validateResponse: apiResponseSchema(z.object({
+          stats: z.record(z.unknown()),
+          upcomingReviews: z.array(z.unknown()),
+          teamGoals: z.array(z.unknown()),
+          upcomingOneOnOnes: z.array(z.unknown()),
+          teamPerformance: z.unknown(),
+          teamEngagement: z.unknown(),
+        })),
+      });
+      return response.data as {
+        stats: Record<string, unknown>;
+        upcomingReviews: unknown[];
+        teamGoals: unknown[];
+        upcomingOneOnOnes: unknown[];
+        teamPerformance: unknown;
+        teamEngagement: unknown;
+      };
     },
   },
 
