@@ -60,13 +60,10 @@ export function ReviewDetail({
   const [activeTab, setActiveTab] = useState("summary");
   const [isEditing, setIsEditing] = useState(false);
   const [feedback, setFeedback] = useState(review.feedback || "");
-  const [strengths, setStrengths] = useState(review.strengths || "");
-  const [growthAreas, setGrowthAreas] = useState(review.growthAreas || "");
-  const [goals, setGoals] = useState(review.goals || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const getStatusBadgeClass = (status: typeof reviewStatusEnum.enum | undefined) => {
+  const getStatusBadgeClass = (status: "not_started" | "self_review" | "peer_review" | "manager_review" | "completed" | undefined) => {
     if (!status) return "status-badge status-badge-info";
     
     switch (status) {
@@ -118,10 +115,7 @@ export function ReviewDetail({
     try {
       const updatedReview = {
         ...review,
-        feedback,
-        strengths,
-        growthAreas,
-        goals
+        feedback
       };
       
       await apiRequest('PATCH', `/api/reviews/${review.id}`, updatedReview);
@@ -173,7 +167,7 @@ export function ReviewDetail({
                  review.status === 'manager_review' ? 'Manager Review' :
                  review.status === 'completed' ? 'Completed' : 'Unknown'}
               </div>
-              <span className="text-sm">{getReviewTypeName(review.type)}</span>
+              <span className="text-sm">{getReviewTypeName(review.reviewType)}</span>
             </div>
           </div>
           
@@ -191,7 +185,7 @@ export function ReviewDetail({
               <div className="text-neutral-500 mb-1">Review Cycle</div>
               <div>Q4 2023</div>
             </div>
-            {review.overallScore !== null && review.overallScore !== undefined && (
+            {review.rating !== null && review.rating !== undefined && (
               <div>
                 <div className="text-neutral-500 mb-1">Overall Rating</div>
                 <div className="flex items-center">
@@ -199,12 +193,12 @@ export function ReviewDetail({
                     <Star 
                       key={i} 
                       size={16} 
-                      className={i < (review.overallScore || 0) 
+                      className={i < (review.rating || 0) 
                         ? "text-yellow-500 fill-yellow-500" 
                         : "text-neutral-300"} 
                     />
                   ))}
-                  <span className="ml-2">{review.overallScore} / 5</span>
+                  <span className="ml-2">{review.rating} / 5</span>
                 </div>
               </div>
             )}
@@ -215,17 +209,14 @@ export function ReviewDetail({
             <TabsList className="mb-4 w-full justify-start">
               <TabsTrigger value="summary">Summary</TabsTrigger>
               <TabsTrigger value="feedback">Feedback</TabsTrigger>
-              <TabsTrigger value="strengths">Strengths</TabsTrigger>
-              <TabsTrigger value="growth">Growth Areas</TabsTrigger>
-              <TabsTrigger value="goals">Goals</TabsTrigger>
             </TabsList>
             
             <TabsContent value="summary" className="mt-0 space-y-4">
               <div>
                 <h4 className="font-medium mb-2">Overall Performance</h4>
-                {review.overallScore !== null && review.overallScore !== undefined && (
+                {review.rating !== null && review.rating !== undefined && (
                   <div className="mb-2">
-                    <Progress value={review.overallScore * 20} className="mb-1" />
+                    <Progress value={review.rating * 20} className="mb-1" />
                     <div className="flex justify-between text-xs text-neutral-500">
                       <span>Needs Improvement</span>
                       <span>Outstanding</span>
@@ -238,19 +229,8 @@ export function ReviewDetail({
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-medium mb-2">Key Strengths</h4>
-                  <p className="text-neutral-700">
-                    {review.strengths || "No key strengths identified yet."}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">Growth Areas</h4>
-                  <p className="text-neutral-700">
-                    {review.growthAreas || "No growth areas identified yet."}
-                  </p>
-                </div>
+              <div className="text-sm text-neutral-500 mt-4">
+                <p>Additional details can be found in the feedback section above.</p>
               </div>
             </TabsContent>
             
@@ -283,92 +263,6 @@ export function ReviewDetail({
               )}
             </TabsContent>
             
-            <TabsContent value="strengths" className="mt-0">
-              <div className="flex justify-between items-center mb-3">
-                <h4 className="font-medium">Key Strengths</h4>
-                {!isEditing && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <Edit size={14} className="mr-1" />
-                    Edit
-                  </Button>
-                )}
-              </div>
-              
-              {isEditing ? (
-                <Textarea 
-                  value={strengths} 
-                  onChange={(e) => setStrengths(e.target.value)}
-                  placeholder="Enter strengths..."
-                  className="min-h-[200px]"
-                />
-              ) : (
-                <div className="min-h-[100px] p-3 border rounded-md bg-neutral-50">
-                  {review.strengths || "No strengths identified yet."}
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="growth" className="mt-0">
-              <div className="flex justify-between items-center mb-3">
-                <h4 className="font-medium">Growth Areas</h4>
-                {!isEditing && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <Edit size={14} className="mr-1" />
-                    Edit
-                  </Button>
-                )}
-              </div>
-              
-              {isEditing ? (
-                <Textarea 
-                  value={growthAreas} 
-                  onChange={(e) => setGrowthAreas(e.target.value)}
-                  placeholder="Enter growth areas..."
-                  className="min-h-[200px]"
-                />
-              ) : (
-                <div className="min-h-[100px] p-3 border rounded-md bg-neutral-50">
-                  {review.growthAreas || "No growth areas identified yet."}
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="goals" className="mt-0">
-              <div className="flex justify-between items-center mb-3">
-                <h4 className="font-medium">Goals & Action Items</h4>
-                {!isEditing && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <Edit size={14} className="mr-1" />
-                    Edit
-                  </Button>
-                )}
-              </div>
-              
-              {isEditing ? (
-                <Textarea 
-                  value={goals} 
-                  onChange={(e) => setGoals(e.target.value)}
-                  placeholder="Enter goals and action items..."
-                  className="min-h-[200px]"
-                />
-              ) : (
-                <div className="min-h-[100px] p-3 border rounded-md bg-neutral-50">
-                  {review.goals || "No goals or action items set yet."}
-                </div>
-              )}
-            </TabsContent>
           </Tabs>
         </div>
         
@@ -379,9 +273,6 @@ export function ReviewDetail({
                 variant="outline" 
                 onClick={() => {
                   setFeedback(review.feedback || "");
-                  setStrengths(review.strengths || "");
-                  setGrowthAreas(review.growthAreas || "");
-                  setGoals(review.goals || "");
                   setIsEditing(false);
                 }}
                 disabled={isSubmitting}
