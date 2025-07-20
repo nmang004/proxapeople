@@ -19,9 +19,12 @@ export function ProxaLogo({ className, variant = "full", size = "md" }: ProxaLog
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <img 
-        src="/logo.png" 
+        src="/logo.webp" 
         alt="ProxaPeople" 
         className={cn(getSizeClasses(), "object-contain")}
+        onError={(e) => {
+          console.warn("Logo failed to load from /logo.webp");
+        }}
       />
       {variant === "full" && (
         <span className="font-bold text-lg text-primary">ProxaPeople</span>
