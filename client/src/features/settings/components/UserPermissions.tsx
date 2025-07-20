@@ -13,6 +13,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { 
   Dialog, 
   DialogContent, 
@@ -58,13 +59,13 @@ const userPermissionFormSchema = z.object({
 });
 
 export function UserPermissions() {
-  const { data: permissions, isLoading: isLoadingPermissions } = usePermissions();
-  const { data: resources } = useResources();
+  const { data: permissions = [], isLoading: isLoadingPermissions } = usePermissions();
+  const { data: resources = [] } = useResources();
   const assignPermissionToUser = useAssignPermissionToUser();
   const removeUserPermission = useRemoveUserPermission();
 
   const [userId, setUserId] = useState<number | null>(null);
-  const { data: userPermissions, isLoading: isLoadingUserPermissions } = useUserPermissions(userId || 0);
+  const { data: userPermissions = [], isLoading: isLoadingUserPermissions } = useUserPermissions(userId || 0);
   
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
 
@@ -115,8 +116,8 @@ export function UserPermissions() {
 
   // Get resource name by ID
   const getResourceName = (resourceId: number) => {
-    if (!resources) return "Unknown";
-    const resource = resources.find((r: any) => r.id === resourceId);
+    if ((resources as any[]).length === 0) return "Unknown";
+    const resource = (resources as any[]).find((r: any) => r.id === resourceId);
     return resource ? resource.displayName : "Unknown";
   };
 
@@ -188,8 +189,8 @@ export function UserPermissions() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {permissions && permissions.map((permission: any) => {
-                                const resource = resources?.find((r: any) => r.id === permission.resourceId);
+                              {(permissions as any[]).map((permission: any) => {
+                                const resource = (resources as any[]).find((r: any) => r.id === permission.resourceId);
                                 return (
                                   <SelectItem 
                                     key={permission.id} 
@@ -315,7 +316,7 @@ export function UserPermissions() {
           </Alert>
         ) : isLoadingUserPermissions ? (
           <div className="py-6 text-center text-muted-foreground">Loading user permissions...</div>
-        ) : !userPermissions || userPermissions.length === 0 ? (
+        ) : (userPermissions as any[]).length === 0 ? (
           <Alert>
             <AlertTitle>No custom permissions</AlertTitle>
             <AlertDescription>
@@ -334,9 +335,9 @@ export function UserPermissions() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {userPermissions.map((permission: any) => {
+              {(userPermissions as any[]).map((permission: any) => {
                 // Find the permission details
-                const permissionDetails = permissions?.find((p: any) => p.id === permission.permissionId);
+                const permissionDetails = (permissions as any[]).find((p: any) => p.id === permission.permissionId);
                 
                 return (
                   <TableRow key={permission.id}>

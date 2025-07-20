@@ -72,7 +72,7 @@ type KeyResultValues = z.infer<typeof keyResultSchema>;
 interface GoalFormProps {
   open: boolean;
   onClose: () => void;
-  initialData?: Partial<GoalFormValues>;
+  initialData?: Partial<GoalFormValues & { id: number }>;
   assignees?: { id: number; name: string }[];
   teams?: { id: number; name: string }[];
   departments?: { id: number; name: string }[];
@@ -233,7 +233,7 @@ export function GoalForm({
                         <Select 
                           onValueChange={(value) => {
                             field.onChange(value);
-                            setGoalType(value);
+                            setGoalType(value as "project" | "okr" | "personal" | "team");
                           }}
                           defaultValue={field.value}
                         >

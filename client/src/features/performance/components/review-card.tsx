@@ -21,7 +21,7 @@ export function ReviewCard({
   employeeImage,
   reviewerName = "Reviewer Name"
 }: ReviewCardProps) {
-  const getStatusBadgeClass = (status: typeof reviewStatusEnum.enum | undefined) => {
+  const getStatusBadgeClass = (status: "not_started" | "self_review" | "peer_review" | "manager_review" | "completed" | undefined) => {
     if (!status) return "status-badge status-badge-info";
     
     switch (status) {
@@ -93,7 +93,7 @@ export function ReviewCard({
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div>
               <div className="text-neutral-500">Review Type</div>
-              <div>{getReviewTypeName(review.type)}</div>
+              <div>{getReviewTypeName(review.reviewType)}</div>
             </div>
             <div>
               <div className="text-neutral-500">Due Date</div>
@@ -103,10 +103,10 @@ export function ReviewCard({
               <div className="text-neutral-500">Reviewer</div>
               <div className="line-clamp-1">{reviewerName}</div>
             </div>
-            {review.overallScore !== null && (
+            {review.rating !== null && (
               <div>
-                <div className="text-neutral-500">Overall Score</div>
-                <div>{review.overallScore} / 5</div>
+                <div className="text-neutral-500">Rating</div>
+                <div>{review.rating} / 5</div>
               </div>
             )}
           </div>

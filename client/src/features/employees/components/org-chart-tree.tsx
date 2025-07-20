@@ -240,7 +240,7 @@ const TreeNode: React.FC<{
   level: number;
 }> = ({ node, departments, layout, onToggle, expanded, level }) => {
   const hasChildren = node.children && node.children.length > 0;
-  const department = departments.find(d => d.id === node.departmentId);
+  const department = departments.find(d => d.name === node.department);
 
   const getInitials = (firstName?: string, lastName?: string) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`;

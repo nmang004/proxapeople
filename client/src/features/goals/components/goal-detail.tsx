@@ -164,12 +164,11 @@ export function GoalDetail({
             </div>
             <div className="flex flex-col">
               <span className="text-neutral-500 flex items-center gap-1 mb-1">
-                <BarChart3 size={14} /> Priority
+                <BarChart3 size={14} /> Status
               </span>
               <span>
-                {goal.priority === 'high' ? 'High' :
-                 goal.priority === 'medium' ? 'Medium' :
-                 goal.priority === 'low' ? 'Low' : 'Not set'}
+                {goal.status === 'completed' ? 'Completed' :
+                 goal.status === 'in_progress' ? 'In Progress' : 'Not Started'}
               </span>
             </div>
           </div>
@@ -228,7 +227,6 @@ export function GoalDetail({
                     size="sm"
                     onClick={() => {
                       setProgress(goal.progress || 0);
-                      setNotes(goal.notes || "");
                       setIsEditing(false);
                     }}
                   >

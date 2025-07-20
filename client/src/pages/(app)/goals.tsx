@@ -78,51 +78,56 @@ export default function Goals() {
     { id: 4, name: "Operations" },
   ];
   
-  // Sample goal data
-  const sampleGoals = [
+  // Sample goal data matching the database schema
+  const sampleGoals: Goal[] = [
     {
       id: 1,
       title: "Increase user engagement by 25%",
       description: "Implement features and enhancements to increase overall user engagement metrics across the platform",
-      status: "active",
+      status: "in_progress",
       category: "okr",
+      priority: "high",
       progress: 65,
       startDate: "2023-10-01",
       dueDate: "2023-12-31",
-      assigneeId: 1,
-      priority: "high",
+      userId: 1,
       notes: "Weekly engagement metrics show positive trend after release of new social features",
-      keyResults: [
-        { id: 1, title: "Increase daily active users by 20%", progress: 75, status: "active" },
-        { id: 2, title: "Improve session duration by 15%", progress: 60, status: "active" },
-        { id: 3, title: "Boost user-generated content by 30%", progress: 45, status: "behind" }
-      ]
+      isCompanyGoal: true,
+      createdAt: new Date("2023-10-01"),
+      updatedAt: new Date("2023-11-15")
     },
     {
       id: 2,
       title: "Redesign user dashboard",
       description: "Create a more intuitive and user-friendly dashboard that improves UX and reduces bounce rates",
-      status: "at_risk",
+      status: "in_progress",
       category: "project",
+      priority: "medium",
       progress: 40,
       startDate: "2023-09-15",
       dueDate: "2023-11-15",
-      assigneeId: 2,
-      priority: "medium",
-      notes: "Experiencing some delays in finalizing user research. May need to adjust timeline."
+      userId: 2,
+      notes: "Experiencing some delays in finalizing user research. May need to adjust timeline.",
+      isCompanyGoal: false,
+      createdAt: new Date("2023-09-15"),
+      updatedAt: new Date("2023-11-10")
     },
     {
       id: 3,
       title: "Launch mobile app v2.0",
       description: "Release the next version of our mobile app with enhanced performance and new features",
-      status: "active",
+      status: "in_progress",
       category: "team",
+      priority: "high",
       progress: 80,
       startDate: "2023-08-01",
       dueDate: "2023-12-15",
       teamId: 3,
-      priority: "high",
-      notes: "Development on track, QA testing starting next week"
+      userId: 3,
+      notes: "Development on track, QA testing starting next week",
+      isCompanyGoal: false,
+      createdAt: new Date("2023-08-01"),
+      updatedAt: new Date("2023-11-12")
     },
     {
       id: 4,
@@ -130,38 +135,44 @@ export default function Goals() {
       description: "Finish product management certification to enhance skills and knowledge",
       status: "completed",
       category: "personal",
+      priority: "medium",
       progress: 100,
       startDate: "2023-07-15",
       dueDate: "2023-10-31",
-      assigneeId: 1,
-      priority: "medium",
-      notes: "All modules completed and final exam passed with 92%"
+      userId: 1,
+      notes: "All modules completed and final exam passed with 92%",
+      isCompanyGoal: false,
+      createdAt: new Date("2023-07-15"),
+      updatedAt: new Date("2023-10-31")
     },
     {
       id: 5,
       title: "Reduce page load time by 30%",
       description: "Optimize website performance to improve user experience and SEO rankings",
-      status: "behind",
+      status: "in_progress",
       category: "project",
+      priority: "high",
       progress: 35,
       startDate: "2023-09-01",
       dueDate: "2023-11-01",
-      assigneeId: 3,
-      priority: "high",
-      notes: "Initial optimizations complete but facing challenges with third-party scripts"
+      userId: 3,
+      notes: "Initial optimizations complete but facing challenges with third-party scripts",
+      isCompanyGoal: false,
+      createdAt: new Date("2023-09-01"),
+      updatedAt: new Date("2023-10-25")
     }
   ];
   
   const goalsToShow = goals?.length ? goals : sampleGoals;
   
-  const handleViewGoal = (goal: Partial<Goal>) => {
+  const handleViewGoal = (goal: Goal) => {
     setSelectedGoal(goal);
     setIsDetailOpen(true);
   };
   
   const filteredGoals = goalsToShow.filter(goal => {
     // Filter by tab
-    if (activeTab === "my_goals" && goal.assigneeId !== 1) return false; // Assuming current user ID is 1
+    if (activeTab === "my_goals" && goal.userId !== 1) return false; // Assuming current user ID is 1
     if (activeTab === "team_goals" && goal.category !== "team") return false;
     if (activeTab === "okrs" && goal.category !== "okr") return false;
     
@@ -369,7 +380,7 @@ export default function Goals() {
                       key={goal.id}
                       goal={goal}
                       onClick={() => handleViewGoal(goal)}
-                      assignee={getAssigneeForGoal(goal.assigneeId)}
+                      assignee={getAssigneeForGoal(goal.userId)}
                     />
                   ))}
                 </div>

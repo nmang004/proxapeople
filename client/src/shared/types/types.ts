@@ -75,6 +75,8 @@ export interface ReviewCycle {
 
 // Goal related types
 export type GoalStatus = "not_started" | "in_progress" | "completed";
+export type GoalCategory = "okr" | "personal" | "team" | "project";
+export type GoalPriority = "low" | "medium" | "high";
 
 export interface Goal {
   id: number;
@@ -84,14 +86,17 @@ export interface Goal {
   teamId?: number;
   departmentId?: number;
   status: GoalStatus;
+  category: GoalCategory;
+  priority: GoalPriority;
   progress: number;
   startDate: string;
   dueDate: string;
   currentValue?: string;
   targetValue?: string;
+  notes?: string;
   isCompanyGoal: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }
 
 // One-on-one meeting related types
@@ -99,13 +104,10 @@ export type MeetingStatus = "scheduled" | "completed" | "cancelled";
 export type ActionItemStatus = "not_started" | "in_progress" | "completed";
 
 export interface MeetingActionItem {
-  id: number;
   description: string;
-  assigneeId: number;
+  assignee: string;
   dueDate?: string;
   status: ActionItemStatus;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface MeetingNotes {

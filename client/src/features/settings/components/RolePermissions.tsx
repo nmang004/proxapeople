@@ -50,13 +50,13 @@ const rolePermissionFormSchema = z.object({
 });
 
 export function RolePermissions() {
-  const { data: permissions, isLoading: isLoadingPermissions } = usePermissions();
-  const { data: resources } = useResources();
+  const { data: permissions = [], isLoading: isLoadingPermissions } = usePermissions();
+  const { data: resources = [] } = useResources();
   const assignPermissionToRole = useAssignPermissionToRole();
   const removeRolePermission = useRemoveRolePermission();
 
   const [selectedRole, setSelectedRole] = useState<string>("admin");
-  const { data: rolePermissions, isLoading: isLoadingRolePermissions } = useRolePermissions(selectedRole);
+  const { data: rolePermissions = [], isLoading: isLoadingRolePermissions } = useRolePermissions(selectedRole);
   
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
 
@@ -94,8 +94,8 @@ export function RolePermissions() {
 
   // Get resource name by ID
   const getResourceName = (resourceId: number) => {
-    if (!resources) return "Unknown";
-    const resource = resources.find((r: any) => r.id === resourceId);
+    if ((resources as any[]).length === 0) return "Unknown";
+    const resource = (resources as any[]).find((r: any) => r.id === resourceId);
     return resource ? resource.displayName : "Unknown";
   };
 
@@ -192,8 +192,8 @@ export function RolePermissions() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {permissions && permissions.map((permission: any) => {
-                              const resource = resources?.find((r: any) => r.id === permission.resourceId);
+                            {(permissions as any[]).map((permission: any) => {
+                              const resource = (resources as any[]).find((r: any) => r.id === permission.resourceId);
                               return (
                                 <SelectItem 
                                   key={permission.id} 
@@ -240,7 +240,7 @@ export function RolePermissions() {
       <CardContent>
         {isLoadingRolePermissions ? (
           <div className="py-6 text-center text-muted-foreground">Loading role permissions...</div>
-        ) : !rolePermissions || rolePermissions.length === 0 ? (
+        ) : (rolePermissions as any[]).length === 0 ? (
           <Alert>
             <AlertTitle>No permissions assigned</AlertTitle>
             <AlertDescription>
@@ -258,7 +258,7 @@ export function RolePermissions() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rolePermissions.map((permission: any) => (
+              {(rolePermissions as any[]).map((permission: any) => (
                 <TableRow key={permission.id}>
                   <TableCell>{getResourceName(permission.resourceId)}</TableCell>
                   <TableCell>

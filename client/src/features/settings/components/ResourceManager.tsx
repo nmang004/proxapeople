@@ -58,12 +58,12 @@ const permissionFormSchema = z.object({
 });
 
 export function ResourceManager() {
-  const { data: resources, isLoading: isLoadingResources } = useResources();
+  const { data: resources = [], isLoading: isLoadingResources } = useResources();
   const createResource = useCreateResource();
   const createPermission = useCreatePermission();
 
   const [selectedResourceId, setSelectedResourceId] = useState<number | null>(null);
-  const { data: resourcePermissions } = useResourcePermissions(selectedResourceId || 0);
+  const { data: resourcePermissions = [] } = useResourcePermissions(selectedResourceId || 0);
 
   const [isNewResourceDialogOpen, setIsNewResourceDialogOpen] = useState(false);
   const [isNewPermissionDialogOpen, setIsNewPermissionDialogOpen] = useState(false);
@@ -224,7 +224,7 @@ export function ResourceManager() {
         <CardContent>
           {isLoadingResources ? (
             <div className="py-6 text-center text-muted-foreground">Loading resources...</div>
-          ) : !resources || resources.length === 0 ? (
+          ) : (resources as any[]).length === 0 ? (
             <div className="py-6 text-center text-muted-foreground">No resources defined yet</div>
           ) : (
             <Table>
@@ -236,7 +236,7 @@ export function ResourceManager() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {resources.map((resource: Resource) => (
+                {(resources as any[]).map((resource: Resource) => (
                   <TableRow 
                     key={resource.id}
                     className={selectedResourceId === resource.id ? "bg-muted/50" : ""}
@@ -346,9 +346,7 @@ export function ResourceManager() {
             <div className="py-6 text-center text-muted-foreground">
               Select a resource from the left to view its permissions
             </div>
-          ) : !resourcePermissions ? (
-            <div className="py-6 text-center text-muted-foreground">Loading permissions...</div>
-          ) : resourcePermissions.length === 0 ? (
+          ) : (resourcePermissions as any[]).length === 0 ? (
             <div className="py-6 text-center text-muted-foreground">No permissions defined for this resource</div>
           ) : (
             <Table>
@@ -359,7 +357,7 @@ export function ResourceManager() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {resourcePermissions.map((permission: Permission) => (
+                {(resourcePermissions as any[]).map((permission: Permission) => (
                   <TableRow key={permission.id}>
                     <TableCell>
                       <Badge variant="outline" className={getActionColor(permission.action)}>

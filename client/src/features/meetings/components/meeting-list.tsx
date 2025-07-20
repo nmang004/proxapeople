@@ -247,7 +247,7 @@ export function MeetingList({ meetings, teamMembers, isLoading, onSelectMeeting 
                   <div className="flex flex-col sm:flex-row sm:items-center p-4 gap-4">
                     <Avatar className="h-12 w-12 rounded-full shrink-0 border-2 border-primary/10">
                       <AvatarImage 
-                        src={teamMembers?.find(u => u.id === meeting.participantId)?.profileImageUrl || ""} 
+                        src={teamMembers?.find(u => u.id === meeting.participantId)?.profileImage || ""} 
                         alt={getAttendeeName(meeting.participantId)} 
                       />
                       <AvatarFallback>
@@ -334,7 +334,7 @@ export function MeetingList({ meetings, teamMembers, isLoading, onSelectMeeting 
                 <div className="flex items-center mb-3">
                   <Avatar className="h-10 w-10 rounded-full mr-3 border border-primary/10">
                     <AvatarImage 
-                      src={teamMembers?.find(u => u.id === meeting.participantId)?.profileImageUrl || ""} 
+                      src={teamMembers?.find(u => u.id === meeting.participantId)?.profileImage || ""} 
                       alt={getAttendeeName(meeting.participantId)} 
                     />
                     <AvatarFallback>

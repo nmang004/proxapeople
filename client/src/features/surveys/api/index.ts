@@ -1,5 +1,16 @@
-// Import surveys endpoints
-import { surveys } from '../../../shared/api/endpoints';
+// TODO: Add surveys endpoints when implemented
+
+// Temporary Survey type to fix TypeScript errors
+interface Survey {
+  id: number;
+  name: string;
+  description?: string;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // Re-export surveys-specific hooks (note: need to add these to hooks.ts)
 // export {
@@ -38,9 +49,6 @@ export interface SurveyAnswer {
 
 // Export a convenience object for surveys API
 export const surveysApi = {
-  // Endpoints
-  ...surveys,
-  
   // Helper functions specific to surveys feature
   getStatusLabel: (survey: Survey): string => {
     const now = new Date();
@@ -302,5 +310,4 @@ export const surveysApi = {
   },
 };
 
-// Re-export surveys endpoints
-export { surveys };
+// TODO: Add surveys endpoints when implemented

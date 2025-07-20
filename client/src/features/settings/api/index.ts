@@ -1,5 +1,4 @@
-// Re-export permissions endpoints
-export { permissions } from '../../../shared/api/endpoints';
+// TODO: Add permissions endpoints when they are implemented
 
 // Re-export permissions-specific hooks
 export {
@@ -23,9 +22,6 @@ export type PermissionAction = 'view' | 'create' | 'update' | 'delete' | 'approv
 
 // Export a convenience object for settings/permissions API
 export const settingsApi = {
-  // Endpoints
-  ...permissions,
-  
   // Helper functions specific to settings/permissions feature
   getActionLabel: (action: PermissionAction): string => {
     switch (action) {

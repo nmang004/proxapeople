@@ -8,10 +8,11 @@ import { Toaster } from "@/shared/ui/components/toaster";
 
 console.log("🏁 main.tsx: Starting application render");
 
+console.log("🏁 main.tsx: About to render App component");
+
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      {console.log("🏁 main.tsx: About to render App component")}
       <App />
       <Toaster />
     </TooltipProvider>

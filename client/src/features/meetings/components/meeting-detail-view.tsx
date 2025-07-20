@@ -167,7 +167,7 @@ export function MeetingDetailView({ meetingId, onClose }: MeetingDetailViewProps
       <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
         <Avatar className="w-16 h-16 border-4 border-primary/10">
           <AvatarImage 
-            src={teamMembers?.find(u => u.id === meeting.participantId)?.profileImageUrl || ""} 
+            src={teamMembers?.find(u => u.id === meeting.participantId)?.profileImage || ""} 
             alt={getAttendeeName(meeting.participantId)} 
           />
           <AvatarFallback className="text-lg">
@@ -293,7 +293,7 @@ export function MeetingDetailView({ meetingId, onClose }: MeetingDetailViewProps
             className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary py-2 px-4"
           >
             Action Items
-            {meeting.actionItems?.length > 0 && (
+            {meeting.actionItems && meeting.actionItems.length > 0 && (
               <span className="ml-2 bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
                 {meeting.actionItems.length}
               </span>
@@ -331,7 +331,7 @@ export function MeetingDetailView({ meetingId, onClose }: MeetingDetailViewProps
                   
                   <div className="flex items-start">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                      <i className={`${getLocationIcon(meeting.location)} text-primary`}></i>
+                      <i className={`${getLocationIcon(meeting.location || "")} text-primary`}></i>
                     </div>
                     <div>
                       <p className="text-sm font-medium">Location</p>
@@ -475,7 +475,7 @@ export function MeetingDetailView({ meetingId, onClose }: MeetingDetailViewProps
               <div className="space-y-3">
                 {meeting.actionItems.map((item, index) => (
                   <motion.div
-                    key={item.id}
+                    key={index}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
@@ -499,9 +499,9 @@ export function MeetingDetailView({ meetingId, onClose }: MeetingDetailViewProps
                                 )}
                                 onClick={() => {
                                   if (item.status === "completed") {
-                                    handleStatusChange(item.id, "not_started");
+                                    handleStatusChange(index, "not_started");
                                   } else {
-                                    handleStatusChange(item.id, "completed");
+                                    handleStatusChange(index, "completed");
                                   }
                                 }}
                                 role="button"
@@ -523,7 +523,7 @@ export function MeetingDetailView({ meetingId, onClose }: MeetingDetailViewProps
                             <div className="mt-2 ml-7 flex items-center gap-4 text-xs text-muted-foreground">
                               <div className="flex items-center gap-1">
                                 <i className="ri-user-line"></i>
-                                <span>{getAttendeeName(item.assigneeId)}</span>
+                                <span>{item.assignee}</span>
                               </div>
                               {item.dueDate && (
                                 <div className="flex items-center gap-1">
@@ -536,7 +536,7 @@ export function MeetingDetailView({ meetingId, onClose }: MeetingDetailViewProps
                           
                           <select
                             value={item.status}
-                            onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                            onChange={(e) => handleStatusChange(index, e.target.value)}
                             className="text-xs rounded-full bg-transparent border py-1 px-2"
                           >
                             <option value="not_started">Not Started</option>
