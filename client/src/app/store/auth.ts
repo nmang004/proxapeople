@@ -129,55 +129,18 @@ export const useAuthStore = create<AuthStore>()(
         setLoading(true);
         setError(null);
         
-        // Create demo user based on type
-        const demoUsers = {
-          admin: {
-            id: 1,
-            email: 'admin@demo.com',
-            firstName: 'Admin',
-            lastName: 'Demo',
-            role: 'admin' as const,
-            jobTitle: 'System Administrator',
-            department: 'IT',
-            profileImage: null
-          },
-          hr: {
-            id: 2,
-            email: 'hr@demo.com',
-            firstName: 'HR',
-            lastName: 'Demo',
-            role: 'hr' as const,
-            jobTitle: 'HR Manager',
-            department: 'Human Resources',
-            profileImage: null
-          },
-          manager: {
-            id: 3,
-            email: 'manager@demo.com',
-            firstName: 'Manager',
-            lastName: 'Demo',
-            role: 'manager' as const,
-            jobTitle: 'Department Manager',
-            department: 'Operations',
-            profileImage: null
-          },
-          employee: {
-            id: 4,
-            email: 'employee@demo.com',
-            firstName: 'Employee',
-            lastName: 'Demo',
-            role: 'employee' as const,
-            jobTitle: 'Software Engineer',
-            department: 'Engineering',
-            profileImage: null
-          }
-        };
+        // Call demo endpoint to get real JWT tokens
+        const response = await fetch('/api/auth/demo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userType })
+        });
         
-        const user = demoUsers[userType];
-        const tokens = {
-          accessToken: 'demo_access_token_' + userType,
-          refreshToken: 'demo_refresh_token_' + userType
-        };
+        if (!response.ok) throw new ApiError('Demo login failed');
+        const data = await response.json();
+        const { user, accessToken, refreshToken } = data;
+        
+        const tokens = { accessToken, refreshToken };
         
         // Store authentication state
         storage.set(STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken);

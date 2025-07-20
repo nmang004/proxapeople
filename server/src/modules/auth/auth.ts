@@ -121,6 +121,96 @@ router.post('/register', async (req: Request, res: Response) => {
 });
 
 /**
+ * POST /auth/demo
+ * Demo login - generates real JWT tokens for demo users
+ */
+router.post('/demo', async (req: Request, res: Response) => {
+  try {
+    const { userType = 'admin' } = req.body;
+    
+    // Define demo users
+    const demoUsers = {
+      admin: {
+        id: 1,
+        email: 'admin@demo.com',
+        firstName: 'Admin',
+        lastName: 'Demo',
+        role: 'admin' as const,
+        jobTitle: 'System Administrator',
+        department: 'IT',
+        profileImage: null,
+        hireDate: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        password: '', // Not used for demo
+      },
+      hr: {
+        id: 2,
+        email: 'hr@demo.com',
+        firstName: 'HR',
+        lastName: 'Demo',
+        role: 'hr' as const,
+        jobTitle: 'HR Manager',
+        department: 'Human Resources',
+        profileImage: null,
+        hireDate: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        password: '',
+      },
+      manager: {
+        id: 3,
+        email: 'manager@demo.com',
+        firstName: 'Manager',
+        lastName: 'Demo',
+        role: 'manager' as const,
+        jobTitle: 'Department Manager',
+        department: 'Operations',
+        profileImage: null,
+        hireDate: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        password: '',
+      },
+      employee: {
+        id: 4,
+        email: 'employee@demo.com',
+        firstName: 'Employee',
+        lastName: 'Demo',
+        role: 'employee' as const,
+        jobTitle: 'Software Engineer',
+        department: 'Engineering',
+        profileImage: null,
+        hireDate: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        password: '',
+      }
+    };
+    
+    const user = demoUsers[userType as keyof typeof demoUsers] || demoUsers.admin;
+    
+    // Generate real JWT tokens
+    const tokens = generateTokens(user);
+    
+    // Return user data (excluding password) and tokens
+    const { password: _, ...userResponse } = user;
+    
+    res.json({
+      message: 'Demo login successful',
+      user: userResponse,
+      ...tokens,
+    });
+  } catch (error) {
+    console.error('Demo login error:', error);
+    res.status(500).json({
+      error: 'Demo login failed',
+      message: 'An error occurred during demo login',
+    });
+  }
+});
+
+/**
  * POST /auth/login
  * Login user with email and password
  */

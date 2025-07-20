@@ -121,13 +121,84 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Demo users cache
+  private demoUsers: Record<number, User> = {
+    1: {
+      id: 1,
+      email: 'admin@demo.com',
+      firstName: 'Admin',
+      lastName: 'Demo',
+      role: 'admin',
+      jobTitle: 'System Administrator',
+      department: 'IT',
+      profileImage: null,
+      hireDate: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash', // Not used for demo auth
+    },
+    2: {
+      id: 2,
+      email: 'hr@demo.com',
+      firstName: 'HR',
+      lastName: 'Demo',
+      role: 'hr',
+      jobTitle: 'HR Manager',
+      department: 'Human Resources',
+      profileImage: null,
+      hireDate: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    3: {
+      id: 3,
+      email: 'manager@demo.com',
+      firstName: 'Manager',
+      lastName: 'Demo',
+      role: 'manager',
+      jobTitle: 'Department Manager',
+      department: 'Operations',
+      profileImage: null,
+      hireDate: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    4: {
+      id: 4,
+      email: 'employee@demo.com',
+      firstName: 'Employee',
+      lastName: 'Demo',
+      role: 'employee',
+      jobTitle: 'Software Engineer',
+      department: 'Engineering',
+      profileImage: null,
+      hireDate: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    }
+  };
+
   // User methods
   async getUser(id: number): Promise<User | undefined> {
+    // Check if it's a demo user
+    if (id >= 1 && id <= 4 && this.demoUsers[id]) {
+      return this.demoUsers[id];
+    }
+    
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
+    // Check demo users first
+    const demoUser = Object.values(this.demoUsers).find(u => u.email === email);
+    if (demoUser) {
+      return demoUser;
+    }
+    
     const [user] = await db.select().from(users).where(eq(users.email, email));
     return user;
   }
