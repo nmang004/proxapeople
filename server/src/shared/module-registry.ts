@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import { BaseModule, ModuleConfig } from './types/module';
 
 // Module imports
-import authRoutes from '../modules/auth/auth';
+import auth0Routes from '../modules/auth/auth0';
 import permissionRoutes from '../modules/permissions';
 import userRoutes from '../modules/users';
 import departmentRoutes from '../modules/departments';
@@ -26,8 +26,8 @@ export class ModuleRegistry {
   }
 
   private registerModules() {
-    // Auth module (public routes with special rate limiting)
-    this.register('auth', authRoutes, {
+    // Auth0 module (Auth0 protected routes)
+    this.register('auth', auth0Routes, {
       prefix: '/auth',
       middleware: []
     });
