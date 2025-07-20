@@ -7,6 +7,8 @@ export const userRoleEnum = pgEnum('user_role', ['admin', 'manager', 'employee',
 export const reviewStatusEnum = pgEnum('review_status', ['not_started', 'self_review', 'peer_review', 'manager_review', 'completed']);
 export const reviewTypeEnum = pgEnum('review_type', ['quarterly', 'annual', 'peer', 'self']);
 export const goalStatusEnum = pgEnum('goal_status', ['not_started', 'in_progress', 'completed']);
+export const goalCategoryEnum = pgEnum('goal_category', ['okr', 'personal', 'team', 'project']);
+export const goalPriorityEnum = pgEnum('goal_priority', ['low', 'medium', 'high']);
 export const meetingStatusEnum = pgEnum('meeting_status', ['scheduled', 'completed', 'canceled']);
 export const permissionTypeEnum = pgEnum('permission_type', [
   'view', 
@@ -100,11 +102,14 @@ export const goals = pgTable("goals", {
   teamId: integer("team_id").references(() => teams.id),
   departmentId: integer("department_id").references(() => departments.id),
   status: goalStatusEnum("status").notNull().default('not_started'),
+  category: goalCategoryEnum("category").notNull().default('project'),
+  priority: goalPriorityEnum("priority").notNull().default('medium'),
   progress: integer("progress").notNull().default(0),
   startDate: date("start_date").notNull(),
   dueDate: date("due_date").notNull(),
   currentValue: text("current_value"),
   targetValue: text("target_value"),
+  notes: text("notes"),
   isCompanyGoal: boolean("is_company_goal").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
