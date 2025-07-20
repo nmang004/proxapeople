@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { ResetPasswordForm } from '@/components/auth/reset-password-form';
+import { ResetPasswordForm } from '@/features/auth/components/reset-password-form';
 
 export default function ResetPasswordPage() {
   const [location] = useLocation();

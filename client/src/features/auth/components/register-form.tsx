@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth, type RegisterData } from '@/contexts/auth-context';
+import { useAuthStore, type RegisterData } from '@/app/store/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,7 +22,7 @@ interface PasswordValidation {
 }
 
 export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) {
-  const { register, isLoading } = useAuth();
+  const { register, isLoading } = useAuthStore();
   const [formData, setFormData] = useState<RegisterData>({
     email: '',
     password: '',

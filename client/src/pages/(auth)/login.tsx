@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { useAuth } from '@/contexts/auth-context';
-import { LoginForm } from '@/components/auth/login-form';
-import { RegisterForm } from '@/components/auth/register-form';
-import { ForgotPasswordForm } from '@/components/auth/forgot-password-form';
+import { useAuthStore } from '@/app/store/auth';
+import { LoginForm } from '@/features/auth/components/login-form';
+import { RegisterForm } from '@/features/auth/components/register-form';
+import { ForgotPasswordForm } from '@/features/auth/components/forgot-password-form';
 import { Loader2 } from 'lucide-react';
 
 type AuthMode = 'login' | 'register' | 'forgot-password';
 
 export default function AuthPage() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthStore();
   const [mode, setMode] = useState<AuthMode>('login');
   const [, setLocation] = useLocation();
 

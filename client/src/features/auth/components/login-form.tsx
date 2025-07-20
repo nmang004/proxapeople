@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/auth-context';
+import { useAuthStore } from '@/app/store/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,7 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSuccess, onSwitchToRegister, onSwitchToForgotPassword }: LoginFormProps) {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading } = useAuthStore();
   const [formData, setFormData] = useState({
     email: '',
     password: '',

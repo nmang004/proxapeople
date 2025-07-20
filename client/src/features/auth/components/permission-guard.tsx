@@ -1,6 +1,6 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { usePermissions } from '@/contexts/permissions-context';
-import { useAuth } from '@/contexts/auth-context';
+import { useAuthStore } from '@/app/store/auth';
 
 interface PermissionGuardProps {
   resource: string;
@@ -21,7 +21,7 @@ export function PermissionGuard({
   serverCheck = false 
 }: PermissionGuardProps) {
   const { hasPermission, checkPermission, isLoading } = usePermissions();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthStore();
   const [hasServerPermission, setHasServerPermission] = useState<boolean | null>(null);
   const [isCheckingServer, setIsCheckingServer] = useState(false);
 
@@ -76,7 +76,7 @@ export function PermissionButton({
   size = 'default',
 }: PermissionButtonProps) {
   const { hasPermission } = usePermissions();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthStore();
 
   const allowed = isAuthenticated && hasPermission(resource, action);
 
@@ -119,7 +119,7 @@ export function ConditionalPermission({
   fallback = null,
 }: ConditionalPermissionProps) {
   const { hasPermission } = usePermissions();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthStore();
 
   if (!isAuthenticated) {
     return <>{fallback}</>;
