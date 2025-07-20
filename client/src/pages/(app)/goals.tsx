@@ -91,6 +91,10 @@ export default function Goals() {
       startDate: "2023-10-01",
       dueDate: "2023-12-31",
       userId: 1,
+      teamId: 1,
+      departmentId: 1,
+      currentValue: "15%",
+      targetValue: "25%",
       notes: "Weekly engagement metrics show positive trend after release of new social features",
       isCompanyGoal: true,
       createdAt: new Date("2023-10-01"),
@@ -107,6 +111,10 @@ export default function Goals() {
       startDate: "2023-09-15",
       dueDate: "2023-11-15",
       userId: 2,
+      teamId: 2,
+      departmentId: 1,
+      currentValue: "40%",
+      targetValue: "100%",
       notes: "Experiencing some delays in finalizing user research. May need to adjust timeline.",
       isCompanyGoal: false,
       createdAt: new Date("2023-09-15"),
@@ -124,6 +132,9 @@ export default function Goals() {
       dueDate: "2023-12-15",
       teamId: 3,
       userId: 3,
+      departmentId: 2,
+      currentValue: "80%",
+      targetValue: "100%",
       notes: "Development on track, QA testing starting next week",
       isCompanyGoal: false,
       createdAt: new Date("2023-08-01"),
@@ -140,6 +151,10 @@ export default function Goals() {
       startDate: "2023-07-15",
       dueDate: "2023-10-31",
       userId: 1,
+      teamId: 1,
+      departmentId: 1,
+      currentValue: "100%",
+      targetValue: "100%",
       notes: "All modules completed and final exam passed with 92%",
       isCompanyGoal: false,
       createdAt: new Date("2023-07-15"),
@@ -156,6 +171,10 @@ export default function Goals() {
       startDate: "2023-09-01",
       dueDate: "2023-11-01",
       userId: 3,
+      teamId: 3,
+      departmentId: 2,
+      currentValue: "35%",
+      targetValue: "100%",
       notes: "Initial optimizations complete but facing challenges with third-party scripts",
       isCompanyGoal: false,
       createdAt: new Date("2023-09-01"),
@@ -168,6 +187,13 @@ export default function Goals() {
   const handleViewGoal = (goal: Goal) => {
     setSelectedGoal(goal);
     setIsDetailOpen(true);
+  };
+
+  const handleViewGoalById = (goalId: number) => {
+    const goal = goalsToShow.find(g => g.id === goalId);
+    if (goal) {
+      handleViewGoal(goal);
+    }
   };
   
   const filteredGoals = goalsToShow.filter(goal => {
@@ -193,11 +219,11 @@ export default function Goals() {
   
   // Stats calculation
   const totalGoals = goalsToShow.length;
-  const activeGoals = goalsToShow.filter(g => g.status === "active").length;
+  const activeGoals = goalsToShow.filter(g => g.status === "in_progress").length;
   const completedGoals = goalsToShow.filter(g => g.status === "completed").length;
-  const atRiskGoals = goalsToShow.filter(g => g.status === "at_risk" || g.status === "behind").length;
+  const notStartedGoals = goalsToShow.filter(g => g.status === "not_started").length;
   
-  const getAssigneeForGoal = (assigneeId?: number) => {
+  const getAssigneeForGoal = (assigneeId?: number | null) => {
     if (!assigneeId) return undefined;
     return users.find(u => u.id === assigneeId);
   };
@@ -276,11 +302,11 @@ export default function Goals() {
               <div className="p-2 rounded-md bg-red-50">
                 <Target className="h-4 w-4 text-red-600" />
               </div>
-              <span className="text-xs uppercase text-neutral-500 font-medium">At Risk</span>
+              <span className="text-xs uppercase text-neutral-500 font-medium">Not Started</span>
             </div>
-            <div className="text-2xl font-bold">{atRiskGoals}</div>
+            <div className="text-2xl font-bold">{notStartedGoals}</div>
             <div className="text-sm text-neutral-500 mt-1">
-              {Math.round((atRiskGoals / totalGoals) * 100)}% of total goals
+              {Math.round((notStartedGoals / totalGoals) * 100)}% of total goals
             </div>
           </CardContent>
         </Card>
@@ -340,11 +366,9 @@ export default function Goals() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="behind">Behind</SelectItem>
-                      <SelectItem value="at_risk">At Risk</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="not_started">Not Started</SelectItem>
                       <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="draft">Draft</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -379,8 +403,7 @@ export default function Goals() {
                     <GoalCard
                       key={goal.id}
                       goal={goal}
-                      onClick={() => handleViewGoal(goal)}
-                      assignee={getAssigneeForGoal(goal.userId)}
+                      onViewDetails={handleViewGoalById}
                     />
                   ))}
                 </div>
@@ -393,8 +416,7 @@ export default function Goals() {
                   <GoalCard
                     key={goal.id}
                     goal={goal}
-                    onClick={() => handleViewGoal(goal)}
-                    assignee={getAssigneeForGoal(goal.assigneeId)}
+                    onViewDetails={handleViewGoalById}
                   />
                 ))}
               </div>
@@ -406,8 +428,7 @@ export default function Goals() {
                   <GoalCard
                     key={goal.id}
                     goal={goal}
-                    onClick={() => handleViewGoal(goal)}
-                    assignee={getAssigneeForGoal(goal.assigneeId)}
+                    onViewDetails={handleViewGoalById}
                   />
                 ))}
               </div>
@@ -419,8 +440,7 @@ export default function Goals() {
                   <GoalCard
                     key={goal.id}
                     goal={goal}
-                    onClick={() => handleViewGoal(goal)}
-                    assignee={getAssigneeForGoal(goal.assigneeId)}
+                    onViewDetails={handleViewGoalById}
                   />
                 ))}
               </div>
@@ -511,22 +531,17 @@ export default function Goals() {
         <GoalForm
           open={isGoalFormOpen}
           onClose={() => setIsGoalFormOpen(false)}
-          initialData={selectedGoal}
-          assignees={users}
-          teams={teams}
-          departments={departments}
-          parentGoals={goalsToShow.filter(g => g.isCompanyGoal || g.category === "okr")}
+          initialData={undefined}
+          users={users.map(u => ({ id: u.id.toString(), name: u.name }))}
+          teams={teams.map(t => ({ id: t.id.toString(), name: t.name }))}
+          parentGoals={goalsToShow.filter(g => g.category === "okr").map(g => ({ id: g.id.toString(), title: g.title }))}
         />
       )}
       
       {/* Goal Detail Dialog */}
-      {isDetailOpen && selectedGoal && (
+      {isDetailOpen && selectedGoal && 'id' in selectedGoal && (
         <GoalDetail
-          open={isDetailOpen}
-          onClose={() => setIsDetailOpen(false)}
-          goal={selectedGoal}
-          assignee={selectedGoal.assigneeId ? getAssigneeForGoal(selectedGoal.assigneeId) : undefined}
-          owner={users[0]}
+          goal={selectedGoal as Goal}
         />
       )}
     </>

@@ -38,19 +38,33 @@ import { ReviewCard } from "@/components/reviews/review-card";
 import { ReviewDetail } from "@/components/reviews/review-detail";
 import { PlusCircle, Filter } from "lucide-react";
 
-type ReviewStatus = typeof reviewStatusEnum.enum;
+type ReviewStatus = typeof reviewStatusEnum.enumValues[number];
+
+// Extended type with populated employee and reviewer data
+type PopulatedPerformanceReview = PerformanceReview & {
+  employee?: {
+    name: string;
+    title: string;
+    image?: string;
+  };
+  reviewer?: {
+    name: string;
+    title: string;
+    image?: string;
+  };
+};
 
 export default function PerformanceReviews() {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [cycleFilter, setCycleFilter] = useState("current");
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [selectedReview, setSelectedReview] = useState<Partial<PerformanceReview> | undefined>(undefined);
+  const [selectedReview, setSelectedReview] = useState<Partial<PopulatedPerformanceReview> | undefined>(undefined);
   
   // Media query for responsive design
   const isDesktop = useMediaQuery("(min-width: 768px)");
   
-  const { data: reviews, isLoading, error } = useQuery<PerformanceReview[]>({
+  const { data: reviews, isLoading, error } = useQuery<PopulatedPerformanceReview[]>({
     queryKey: ['/api/reviews'],
   });
 
@@ -81,16 +95,21 @@ export default function PerformanceReviews() {
   };
   
   // Sample review data for UI demonstration
-  const sampleReviews = [
+  const sampleReviews: PopulatedPerformanceReview[] = [
     {
       id: 1,
       employeeId: 1,
       reviewerId: 5,
       reviewCycleId: 1,
-      dueDate: "2023-11-15",
+      reviewType: "quarterly",
       status: "self_review" as ReviewStatus,
-      type: "quarterly",
+      startDate: "2023-11-01",
+      dueDate: "2023-11-15",
+      completedAt: null,
       feedback: "Good progress on design system implementation.",
+      rating: null,
+      createdAt: new Date("2023-11-01"),
+      updatedAt: new Date("2023-11-01"),
       employee: {
         name: "Michael Chen",
         title: "Product Designer",
@@ -108,8 +127,13 @@ export default function PerformanceReviews() {
       reviewCycleId: 1,
       dueDate: "2023-11-22",
       status: "peer_review" as ReviewStatus,
-      type: "annual",
+      reviewType: "annual",
+      startDate: "2023-11-08",
+      completedAt: null,
       feedback: "Excellent leadership skills demonstrated during the project turnaround.",
+      rating: null,
+      createdAt: new Date("2023-11-08"),
+      updatedAt: new Date("2023-11-08"),
       employee: {
         name: "Sarah Wilson",
         title: "Engineering Lead",
@@ -127,8 +151,13 @@ export default function PerformanceReviews() {
       reviewCycleId: 1,
       dueDate: "2023-11-30",
       status: "not_started" as ReviewStatus,
-      type: "quarterly",
+      reviewType: "quarterly",
+      startDate: "2023-11-15",
+      completedAt: null,
       feedback: "",
+      rating: null,
+      createdAt: new Date("2023-11-15"),
+      updatedAt: new Date("2023-11-15"),
       employee: {
         name: "David Rodriguez",
         title: "Software Engineer",
@@ -283,10 +312,10 @@ export default function PerformanceReviews() {
                                 </div>
                               </TableCell>
                               <TableCell>
-                                {review.type === 'quarterly' ? 'Quarterly Review' : 
-                                 review.type === 'annual' ? 'Annual Review' : 
-                                 review.type === 'peer' ? 'Peer Review' : 
-                                 review.type === 'self' ? 'Self Review' : 'Review'}
+                                {review.reviewType === 'quarterly' ? 'Quarterly Review' : 
+                                 review.reviewType === 'annual' ? 'Annual Review' : 
+                                 review.reviewType === 'peer' ? 'Peer Review' : 
+                                 review.reviewType === 'self' ? 'Self Review' : 'Review'}
                               </TableCell>
                               <TableCell>
                                 <span className={getStatusBadgeClass(review.status)}>
@@ -367,10 +396,10 @@ export default function PerformanceReviews() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {review.type === 'quarterly' ? 'Quarterly Review' : 
-                             review.type === 'annual' ? 'Annual Review' : 
-                             review.type === 'peer' ? 'Peer Review' : 
-                             review.type === 'self' ? 'Self Review' : 'Review'}
+                            {review.reviewType === 'quarterly' ? 'Quarterly Review' : 
+                             review.reviewType === 'annual' ? 'Annual Review' : 
+                             review.reviewType === 'peer' ? 'Peer Review' : 
+                             review.reviewType === 'self' ? 'Self Review' : 'Review'}
                           </TableCell>
                           <TableCell>
                             <span className={getStatusBadgeClass(review.status)}>
@@ -455,10 +484,10 @@ export default function PerformanceReviews() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {review.type === 'quarterly' ? 'Quarterly Review' : 
-                             review.type === 'annual' ? 'Annual Review' : 
-                             review.type === 'peer' ? 'Peer Review' : 
-                             review.type === 'self' ? 'Self Review' : 'Review'}
+                            {review.reviewType === 'quarterly' ? 'Quarterly Review' : 
+                             review.reviewType === 'annual' ? 'Annual Review' : 
+                             review.reviewType === 'peer' ? 'Peer Review' : 
+                             review.reviewType === 'self' ? 'Self Review' : 'Review'}
                           </TableCell>
                           <TableCell>
                             <span className={getStatusBadgeClass(review.status)}>
