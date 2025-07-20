@@ -36,8 +36,7 @@ export function Auth0ProviderWrapper({ children }: Auth0ProviderWrapperProps) {
       clientId={clientId}
       authorizationParams={{
         redirect_uri: redirectUri,
-        audience: audience,
-        scope: "openid profile email read:users update:users"
+        scope: "openid profile email"
       }}
       useRefreshTokens={true}
       cacheLocation="localstorage"
