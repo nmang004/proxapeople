@@ -1,0 +1,109 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+    run.googleapis.com/urls: '["https://proxapeople-production-673103558160.us-central1.run.app","https://proxapeople-production-fnenzqaojq-uc.a.run.app"]'
+  labels:
+    application: proxapeople
+    cloud.googleapis.com/location: us-central1
+    environment: production
+  name: proxapeople-production
+  namespace: '673103558160'
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+        autoscaling.knative.dev/minScale: '1'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 529.0.0
+        run.googleapis.com/cpu-throttling: 'true'
+        run.googleapis.com/secrets: secret-alias-1:projects/proxapeople-production/secrets/auth0-client-secret-production,secret-alias-2:projects/proxapeople-production/secrets/db-password-production,secret-alias-3:projects/proxapeople-production/secrets/jwt-secret-production,secret-alias-4:projects/proxapeople-production/secrets/session-secret-production
+        run.googleapis.com/sessionAffinity: 'false'
+        run.googleapis.com/startup-cpu-boost: 'true'
+        run.googleapis.com/vpc-access-connector: projects/proxapeople-production/locations/us-central1/connectors/proxa-conn-production
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+      labels:
+        client.knative.dev/nonce: tgkyohjpzm
+        run.googleapis.com/startupProbeType: Custom
+    spec:
+      containerConcurrency: 160
+      containers:
+      - env:
+        - name: AUTH0_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: secret-alias-1
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: secret-alias-2
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: secret-alias-3
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: secret-alias-4
+        - name: NODE_ENV
+          value: production
+        - name: AUTH0_DOMAIN
+          value: proxapeople.auth0.com
+        - name: AUTH0_CLIENT_ID
+          value: your_client_id
+        - name: AUTH0_AUDIENCE
+          value: https://proxapeople.auth0.com/api/v2/
+        - name: JWT_EXPIRES_IN
+          value: 1h
+        - name: JWT_REFRESH_EXPIRES_IN
+          value: 7d
+        - name: FRONTEND_URL
+          value: https://proxapeople-production-673103558160.us-central1.run.app
+        - name: CORS_ORIGIN
+          value: https://proxapeople-production-673103558160.us-central1.run.app
+        - name: CORS_CREDENTIALS
+          value: 'true'
+        - name: BCRYPT_ROUNDS
+          value: '12'
+        - name: RATE_LIMIT_WINDOW_MS
+          value: '900000'
+        - name: RATE_LIMIT_MAX_REQUESTS
+          value: '100'
+        - name: SESSION_MAX_AGE
+          value: '86400000'
+        image: gcr.io/proxapeople-production/proxapeople:latest
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 8080
+          name: http1
+        resources:
+          limits:
+            cpu: '2'
+            memory: 2Gi
+        startupProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+      serviceAccountName: cloud-run-production@proxapeople-production.iam.gserviceaccount.com
+      timeoutSeconds: 300
+  traffic:
+  - latestRevision: true
+    percent: 100

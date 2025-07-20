@@ -147,3 +147,7 @@ vite.config.ts.*
 # Misc
 .cache/
 .temp/
+.vercel
+
+# Sensitive configuration files
+SUPABASE_ENV.md

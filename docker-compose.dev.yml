@@ -1,0 +1,96 @@
+# Development Docker Compose Configuration
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development  # Use development stage for hot reloading
+    ports:
+      - "5000:5000"  # Development port
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/proxapeople_dev
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN:-dev-tenant.auth0.com}
+      - AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID:-dev_client_id}
+      - AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET:-dev_client_secret}
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE:-https://dev-api.proxapeople.com}
+      - JWT_SECRET=${JWT_SECRET:-development_jwt_secret_32_chars_minimum}
+      - JWT_EXPIRES_IN=1h
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - FRONTEND_URL=http://localhost:5173
+      - BCRYPT_ROUNDS=10  # Lower rounds for faster development
+      - RATE_LIMIT_WINDOW_MS=900000
+      - RATE_LIMIT_MAX_REQUESTS=1000  # Higher limit for development
+      - CORS_ORIGIN=http://localhost:5173
+      - CORS_CREDENTIALS=true
+      - SESSION_SECRET=${SESSION_SECRET:-development_session_secret}
+      - SESSION_MAX_AGE=86400000
+    volumes:
+      # Mount source code for hot reloading
+      - ./client:/app/client
+      - ./server:/app/server
+      - ./shared:/app/shared
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./vite.config.ts:/app/vite.config.ts
+      # Exclude node_modules to use container's version
+      - /app/node_modules
+      - /app/client/node_modules
+      - /app/server/node_modules
+    depends_on:
+      - db
+    restart: unless-stopped
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=proxapeople_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      # Mount initialization scripts if needed
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts with local PostgreSQL
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Optional: pgAdmin for database management in development
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@proxapeople.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    restart: unless-stopped
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  default:
+    name: proxapeople-dev-network

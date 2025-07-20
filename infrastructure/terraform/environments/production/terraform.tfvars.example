@@ -1,0 +1,26 @@
+# infrastructure/terraform/environments/production/terraform.tfvars.example
+
+project_id      = "proxapeople-production-123456"
+region          = "us-central1"
+
+# Container image - update this with your actual image
+container_image = "gcr.io/proxapeople-production-123456/proxapeople:latest"
+
+# Cloud Run configuration
+cloud_run_cpu    = "2"
+cloud_run_memory = "2Gi"
+min_instances    = 2
+max_instances    = 100
+
+# Database configuration
+database_tier = "db-n1-standard-2"
+
+# Auth0 configuration
+auth0_domain     = "proxapeople.auth0.com"
+auth0_client_id  = "your_production_auth0_client_id"
+
+# URLs
+frontend_url = "https://app.proxapeople.com"
+
+# Alerts - Replace with your actual email address
+alert_email = "admin@yourcompany.com"

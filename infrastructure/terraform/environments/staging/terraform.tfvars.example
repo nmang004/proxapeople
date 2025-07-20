@@ -1,0 +1,26 @@
+# infrastructure/terraform/environments/staging/terraform.tfvars.example
+
+project_id      = "proxapeople-staging-123456"
+region          = "us-central1"
+
+# Container image - update this with your actual image
+container_image = "gcr.io/proxapeople-staging-123456/proxapeople:latest"
+
+# Cloud Run configuration
+cloud_run_cpu    = "1"
+cloud_run_memory = "512Mi"
+min_instances    = 0
+max_instances    = 10
+
+# Database configuration
+database_tier = "db-f1-micro"
+
+# Auth0 configuration
+auth0_domain     = "proxapeople-staging.auth0.com"
+auth0_client_id  = "your_staging_auth0_client_id"
+
+# URLs
+frontend_url = "https://staging.proxapeople.com"
+
+# Alerts
+alert_email = "devops@proxapeople.com"

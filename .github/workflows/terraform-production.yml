@@ -1,0 +1,84 @@
+# COMMENTED OUT FOR VERCEL/SUPABASE MIGRATION - Original GCP Terraform Production Deployment
+
+# This GitHub Actions workflow was used to deploy to Google Cloud Platform
+# It has been commented out as part of the migration to Vercel/Supabase
+
+# name: Terraform Deploy - Production
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       action:
+#         description: 'Terraform action to perform'
+#         required: true
+#         default: 'plan'
+#         type: choice
+#         options:
+#         - plan
+#         - apply
+#       container_image:
+#         description: 'Container image to deploy'
+#         required: true
+#         type: string
+
+# env:
+#   TERRAFORM_VERSION: 1.7.0
+#   WORKING_DIRECTORY: infrastructure/terraform/environments/production
+
+# jobs:
+#   terraform:
+#     name: 'Terraform Production'
+#     runs-on: ubuntu-latest
+#     environment: production
+#     permissions:
+#       contents: read
+#       id-token: write
+#     
+#     defaults:
+#       run:
+#         working-directory: ${{ env.WORKING_DIRECTORY }}
+#     
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#       
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v3
+#         with:
+#           terraform_version: ${{ env.TERRAFORM_VERSION }}
+#       
+#       - name: Authenticate to Google Cloud
+#         uses: google-github-actions/auth@v2
+#         with:
+#           workload_identity_provider: ${{ secrets.WIF_PROVIDER_PROD }}
+#           service_account: ${{ secrets.WIF_SERVICE_ACCOUNT_PROD }}
+#       
+#       - name: Setup Google Cloud SDK
+#         uses: google-github-actions/setup-gcloud@v2
+#       
+#       - name: Terraform Init
+#         run: terraform init
+#       
+#       - name: Terraform Validate
+#         run: terraform validate -no-color
+#       
+#       - name: Terraform Plan
+#         id: plan
+#         run: |
+#           terraform plan -no-color -input=false \
+#             -var="container_image=${{ github.event.inputs.container_image }}"
+#       
+#       - name: Terraform Apply
+#         if: github.event.inputs.action == 'apply'
+#         run: |
+#           terraform apply -auto-approve -input=false \
+#             -var="container_image=${{ github.event.inputs.container_image }}"
+#       
+#       - name: Output Results
+#         if: always()
+#         run: |
+#           echo "### Terraform ${{ github.event.inputs.action }} completed"
+#           echo "Container Image: ${{ github.event.inputs.container_image }}"
+#           if [ "${{ github.event.inputs.action }}" == "apply" ]; then
+#             terraform output
+#           fi

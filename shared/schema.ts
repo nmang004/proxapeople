@@ -28,7 +28,7 @@ export const users = pgTable("users", {
   role: userRoleEnum("role").notNull().default('employee'),
   jobTitle: text("job_title").notNull(),
   department: text("department").notNull(),
-  managerId: integer("manager_id").references(() => users.id),
+  managerId: integer("manager_id"),
   profileImage: text("profile_image"),
   hireDate: date("hire_date"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -225,6 +225,16 @@ export const userPermissions = pgTable("user_permissions", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Password Reset Tokens Table
+export const passwordResetTokens = pgTable("password_reset_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  used: boolean("used").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert Schemas
 
 export const insertUserSchema = createInsertSchema(users).omit({
@@ -330,6 +340,11 @@ export const insertUserPermissionSchema = createInsertSchema(userPermissions).om
   updatedAt: true,
 });
 
+export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTokens).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -381,3 +396,6 @@ export type RolePermission = typeof rolePermissions.$inferSelect;
 
 export type InsertUserPermission = z.infer<typeof insertUserPermissionSchema>;
 export type UserPermission = typeof userPermissions.$inferSelect;
+
+export type InsertPasswordResetToken = z.infer<typeof insertPasswordResetTokenSchema>;
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;

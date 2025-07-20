@@ -6,7 +6,8 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 export default defineConfig({
   plugins: [
     react(),
-    runtimeErrorOverlay(),
+    // Only include runtime error overlay in development
+    ...(process.env.NODE_ENV !== "production" ? [runtimeErrorOverlay()] : []),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [
@@ -18,6 +19,10 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      "@/components/ui": path.resolve(import.meta.dirname, "client", "src", "shared", "ui", "components"),
+      "@/lib": path.resolve(import.meta.dirname, "client", "src", "shared", "lib"),
+      "@/hooks": path.resolve(import.meta.dirname, "client", "src", "shared", "ui", "hooks"),
+      "@/contexts": path.resolve(import.meta.dirname, "client", "src", "app", "providers"),
       "@": path.resolve(import.meta.dirname, "client", "src"),
       "@shared": path.resolve(import.meta.dirname, "shared"),
       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
@@ -27,5 +32,16 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    // Fix potential bundling issues
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          utils: ['zustand', '@tanstack/react-query'],
+        },
+      },
+    },
+    // Ensure proper minification
+    minify: true,
   },
 });
