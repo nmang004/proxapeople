@@ -22,14 +22,12 @@ export function GoalCard({ goal, onClick, assignee }: GoalCardProps) {
   
   const getStatusBadge = () => {
     switch (goal.status) {
-      case 'active':
-        return <Badge variant="outline" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200">Active</Badge>;
+      case 'in_progress':
+        return <Badge variant="outline" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200">In Progress</Badge>;
       case 'completed':
         return <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200">Completed</Badge>;
-      case 'at_risk':
-        return <Badge variant="outline" className="bg-amber-50 text-amber-700 hover:bg-amber-50 border-amber-200">At Risk</Badge>;
-      case 'behind':
-        return <Badge variant="outline" className="bg-red-50 text-red-700 hover:bg-red-50 border-red-200">Behind</Badge>;
+      case 'not_started':
+        return <Badge variant="outline" className="bg-neutral-50 text-neutral-700 hover:bg-neutral-50 border-neutral-200">Not Started</Badge>;
       default:
         return <Badge variant="outline" className="bg-neutral-50 text-neutral-700 hover:bg-neutral-50 border-neutral-200">Draft</Badge>;
     }

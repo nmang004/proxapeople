@@ -90,6 +90,14 @@ export interface Goal {
   currentValue?: string;
   targetValue?: string;
   isCompanyGoal: boolean;
+  category?: string;
+  notes?: string;
+  keyResults?: Array<{
+    id: number;
+    description: string;
+    progress: number;
+    completed: boolean;
+  }>;
   createdAt: string;
   updatedAt: string;
 }

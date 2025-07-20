@@ -57,6 +57,18 @@ export function LoginForm({ onSuccess, onSwitchToRegister, onSwitchToForgotPassw
     }
   };
 
+  const handleDemoLogin = (role: 'admin' | 'hr' | 'manager' | 'employee') => {
+    const credentials = {
+      admin: { email: 'admin@demo.com', password: 'admin' },
+      hr: { email: 'hr@demo.com', password: 'hr123' },
+      manager: { email: 'manager@demo.com', password: 'manager123' },
+      employee: { email: 'employee@demo.com', password: 'employee123' }
+    };
+    
+    const cred = credentials[role];
+    setFormData({ email: cred.email, password: cred.password });
+  };
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="space-y-1">
@@ -167,6 +179,72 @@ export function LoginForm({ onSuccess, onSwitchToRegister, onSwitchToForgotPassw
             </div>
           )}
         </form>
+
+        {/* Demo Credentials Section */}
+        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="text-sm font-semibold text-blue-900 mb-3">🚀 Demo Accounts (For Testing)</h3>
+          
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
+              onClick={() => handleDemoLogin('admin')}
+              disabled={isSubmitting}
+            >
+              👑 Admin Demo
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+              onClick={() => handleDemoLogin('hr')}
+              disabled={isSubmitting}
+            >
+              👥 HR Demo
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs bg-yellow-50 border-yellow-200 text-yellow-700 hover:bg-yellow-100"
+              onClick={() => handleDemoLogin('manager')}
+              disabled={isSubmitting}
+            >
+              📊 Manager Demo
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-xs bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100"
+              onClick={() => handleDemoLogin('employee')}
+              disabled={isSubmitting}
+            >
+              💼 Employee Demo
+            </Button>
+          </div>
+          
+          <div className="space-y-2 text-xs text-blue-700">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="font-medium">admin@demo.com / admin</p>
+                <p className="font-medium">hr@demo.com / hr123</p>
+              </div>
+              <div>
+                <p className="font-medium">manager@demo.com / manager123</p>
+                <p className="font-medium">employee@demo.com / employee123</p>
+              </div>
+            </div>
+            <div className="pt-2 border-t border-blue-200">
+              <p className="text-blue-600 text-center text-xs">
+                ✨ Click buttons above to auto-fill credentials, then Sign In
+              </p>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-6 text-center">
           <p className="text-xs text-muted-foreground">

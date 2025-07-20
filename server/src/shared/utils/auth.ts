@@ -42,7 +42,7 @@ export function generateTokens(user: Pick<User, 'id' | 'email' | 'role'>): AuthT
 
   const accessToken = jwt.sign(
     payload, 
-    config.JWT_SECRET as string, 
+    config.JWT_SECRET, 
     {
       expiresIn: config.JWT_EXPIRES_IN || '1h',
       issuer: 'proxapeople-api',
@@ -52,7 +52,7 @@ export function generateTokens(user: Pick<User, 'id' | 'email' | 'role'>): AuthT
 
   const refreshToken = jwt.sign(
     { userId: user.id },
-    config.JWT_SECRET as string,
+    config.JWT_SECRET,
     {
       expiresIn: config.JWT_REFRESH_EXPIRES_IN || '7d',
       issuer: 'proxapeople-api',

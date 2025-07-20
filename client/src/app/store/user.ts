@@ -1,10 +1,14 @@
 import { createStore, BaseState, AsyncActions } from './index';
 import { User } from './auth';
+import type { User as SchemaUser } from '@shared/schema';
 
 // Extended user types for directory and profiles
 export interface Employee extends User {
+  // Properties from base User interface are: id, email, firstName, lastName, role, jobTitle, department, profileImage, hireDate
   manager?: number; // Manager's user ID
+  managerId?: number; // Alternative naming - align with schema
   teamId?: number;
+  departmentId?: number; // Department ID for relationships
   status: 'active' | 'inactive' | 'pending';
   skills?: string[];
   bio?: string;

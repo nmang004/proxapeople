@@ -8,10 +8,9 @@ export const createMockRequest = (overrides: Partial<Request> = {}): Partial<Req
     params: {},
     query: {},
     headers: {},
-    session: {} as any,
     user: undefined,
     ...overrides,
-  };
+  } as Partial<Request>;
 };
 
 // Mock Express Response
