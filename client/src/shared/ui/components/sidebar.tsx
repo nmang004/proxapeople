@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedButton } from "@/components/ui/animated-button";
+import { useAuth } from "@/app/store/auth0-store";
 
 type SidebarLink = {
   href: string;
@@ -51,6 +52,7 @@ const links: SidebarLink[] = [
 ];
 
 export function Sidebar() {
+  const { user, logout } = useAuth();
   const [location] = useLocation();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -143,15 +145,15 @@ export function Sidebar() {
           transition={{ duration: 0.4, delay: 0.2 }}
         >
           <Avatar className="h-9 w-9 border-2 border-primary/10">
-            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330" alt="Ashley Johnson" />
-            <AvatarFallback>AJ</AvatarFallback>
+            <AvatarImage src={user?.profileImage || ""} alt={`${user?.firstName} ${user?.lastName}`} />
+            <AvatarFallback>{user?.firstName?.[0]}{user?.lastName?.[0]}</AvatarFallback>
           </Avatar>
           <div className="flex-1 ml-3">
-            <p className="text-sm font-medium">Ashley Johnson</p>
-            <p className="text-xs text-muted-foreground">HR Director</p>
+            <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
+            <p className="text-xs text-muted-foreground">{user?.jobTitle}</p>
           </div>
-          <AnimatedButton variant="ghost" size="sm" className="ml-auto h-8 w-8 p-0">
-            <i className="ri-settings-3-line"></i>
+          <AnimatedButton variant="ghost" size="sm" className="ml-auto h-8 w-8 p-0" onClick={logout}>
+            <i className="ri-logout-box-line"></i>
           </AnimatedButton>
         </motion.div>
         
@@ -247,14 +249,19 @@ export function Sidebar() {
             <Separator className="mb-4" />
             <div className="flex items-center px-2 group hover:bg-primary/5 rounded-lg transition-all duration-200 py-2 cursor-pointer">
               <Avatar className="h-9 w-9 border-2 border-primary/10 group-hover:border-primary/30 transition-all duration-200">
-                <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330" alt="Ashley Johnson" />
-                <AvatarFallback>AJ</AvatarFallback>
+                <AvatarImage src={user?.profileImage || ""} alt={`${user?.firstName} ${user?.lastName}`} />
+                <AvatarFallback>{user?.firstName?.[0]}{user?.lastName?.[0]}</AvatarFallback>
               </Avatar>
               <div className="flex-1 ml-3">
-                <p className="text-sm font-medium">Ashley Johnson</p>
-                <p className="text-xs text-slate-500">HR Director</p>
+                <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
+                <p className="text-xs text-slate-500">{user?.jobTitle}</p>
               </div>
-              <Button variant="ghost" size="icon" className="ml-auto h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="ml-auto h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={logout}
+              >
                 <i className="ri-logout-box-line text-slate-500"></i>
               </Button>
             </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "wouter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { AnimatedButton } from "@/components/ui/animated-button";
@@ -20,6 +21,7 @@ interface HeaderProps {
 
 export function Header({ onOpenMobileSidebar }: HeaderProps) {
   const { user, logout } = useAuth();
+  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [notifications, setNotifications] = useState([
@@ -164,11 +166,17 @@ export function Header({ onOpenMobileSidebar }: HeaderProps) {
                   <p className="text-xs text-muted-foreground">{user?.email}</p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center cursor-pointer hover:bg-secondary/50 transition-all duration-150">
+                <DropdownMenuItem 
+                  className="flex items-center cursor-pointer hover:bg-secondary/50 transition-all duration-150"
+                  onClick={() => setLocation('/profile')}
+                >
                   <i className="ri-user-line mr-2 text-primary/70"></i>
                   <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center cursor-pointer hover:bg-secondary/50 transition-all duration-150">
+                <DropdownMenuItem 
+                  className="flex items-center cursor-pointer hover:bg-secondary/50 transition-all duration-150"
+                  onClick={() => setLocation('/settings')}
+                >
                   <i className="ri-settings-line mr-2 text-primary/70"></i>
                   <span>Settings</span>
                 </DropdownMenuItem>
