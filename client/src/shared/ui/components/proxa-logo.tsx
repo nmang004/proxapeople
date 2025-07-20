@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import logoUrl from "@/assets/logo.webp";
 
 interface ProxaLogoProps {
   className?: string;
@@ -19,11 +20,11 @@ export function ProxaLogo({ className, variant = "full", size = "md" }: ProxaLog
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <img 
-        src="/logo.webp" 
+        src={logoUrl} 
         alt="ProxaPeople" 
         className={cn(getSizeClasses(), "object-contain")}
         onError={(e) => {
-          console.warn("Logo failed to load from /logo.webp");
+          console.warn("Logo failed to load:", logoUrl);
         }}
       />
       {variant === "full" && (
