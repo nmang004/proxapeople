@@ -9,7 +9,14 @@ export function Auth0ProviderWrapper({ children }: Auth0ProviderWrapperProps) {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN;
   const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
   const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
-  const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI || window.location.origin;
+  const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI || `${window.location.origin}/callback`;
+
+  console.log('🔐 Auth0Provider config:', {
+    domain,
+    clientId,
+    audience,
+    redirectUri,
+  });
 
   if (!domain || !clientId) {
     console.error('Auth0 configuration missing. Please check your environment variables.');
