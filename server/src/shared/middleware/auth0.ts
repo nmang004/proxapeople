@@ -70,18 +70,18 @@ export function validateAuth0Token(req: Request, res: Response, next: NextFuncti
     if (req.auth?.payload) {
       console.log('✅ Auth0 middleware: Extracting user info from payload');
       req.auth0User = {
-        sub: req.auth.payload.sub || '',
-        email: req.auth.payload.email || '',
-        given_name: req.auth.payload.given_name,
-        family_name: req.auth.payload.family_name,
-        name: req.auth.payload.name,
-        picture: req.auth.payload.picture,
-        email_verified: req.auth.payload.email_verified,
-        scope: req.auth.payload.scope,
+        sub: (req.auth.payload.sub as string) || '',
+        email: (req.auth.payload.email as string) || '',
+        given_name: req.auth.payload.given_name as string | undefined,
+        family_name: req.auth.payload.family_name as string | undefined,
+        name: req.auth.payload.name as string | undefined,
+        picture: req.auth.payload.picture as string | undefined,
+        email_verified: req.auth.payload.email_verified as boolean | undefined,
+        scope: req.auth.payload.scope as string | undefined,
       };
       console.log('✅ Auth0 middleware: User extracted:', { 
-        sub: req.auth0User.sub, 
-        email: req.auth0User.email 
+        sub: req.auth0User?.sub, 
+        email: req.auth0User?.email 
       });
     }
 
@@ -102,14 +102,14 @@ export function optionalAuth0Token(req: Request, res: Response, next: NextFuncti
   jwtCheck(req, res, (err) => {
     if (!err && req.auth?.payload) {
       req.auth0User = {
-        sub: req.auth.payload.sub || '',
-        email: req.auth.payload.email || '',
-        given_name: req.auth.payload.given_name,
-        family_name: req.auth.payload.family_name,
-        name: req.auth.payload.name,
-        picture: req.auth.payload.picture,
-        email_verified: req.auth.payload.email_verified,
-        scope: req.auth.payload.scope,
+        sub: (req.auth.payload.sub as string) || '',
+        email: (req.auth.payload.email as string) || '',
+        given_name: req.auth.payload.given_name as string | undefined,
+        family_name: req.auth.payload.family_name as string | undefined,
+        name: req.auth.payload.name as string | undefined,
+        picture: req.auth.payload.picture as string | undefined,
+        email_verified: req.auth.payload.email_verified as boolean | undefined,
+        scope: req.auth.payload.scope as string | undefined,
       };
     }
     // Continue regardless of token validity

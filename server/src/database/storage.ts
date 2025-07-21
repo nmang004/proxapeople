@@ -635,7 +635,8 @@ export class DatabaseStorage implements IStorage {
       return this.demoUsers[id];
     }
     
-    return db.users.findFirst({ id });
+    const result = await db.users.findFirst({ id });
+    return result || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
@@ -645,7 +646,8 @@ export class DatabaseStorage implements IStorage {
       return demoUser;
     }
     
-    return db.users.findFirst({ email });
+    const result = await db.users.findFirst({ email });
+    return result || undefined;
   }
 
   async createUser(userData: InsertUser): Promise<User> {

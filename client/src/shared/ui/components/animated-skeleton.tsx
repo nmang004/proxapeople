@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface AnimatedSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AnimatedSkeletonProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'onDragEnter' | 'onDragExit' | 'onDragLeave' | 'onDragOver' | 'onDrop' | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'> {
   width?: string | number;
   height?: string | number;
   rounded?: "sm" | "md" | "lg" | "full" | "none";

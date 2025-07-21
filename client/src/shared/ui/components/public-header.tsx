@@ -20,11 +20,17 @@ export function PublicHeader() {
           <Link href="/pricing">
             <a className="text-sm font-medium text-neutral-600 hover:text-primary">Pricing</a>
           </Link>
+          <Link href="/customers">
+            <a className="text-sm font-medium text-neutral-600 hover:text-primary">Customers</a>
+          </Link>
+          <Link href="/resources">
+            <a className="text-sm font-medium text-neutral-600 hover:text-primary">Resources</a>
+          </Link>
         </nav>
         
         <div className="flex items-center space-x-3">
-          <Link href="/dashboard">
-            <Button variant="outline" size="sm">Sign In</Button>
+          <Link href="/demo">
+            <Button variant="outline" size="sm">View Demo</Button>
           </Link>
           <Link href="/dashboard">
             <Button size="sm">Get Started</Button>

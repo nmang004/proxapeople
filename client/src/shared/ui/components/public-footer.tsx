@@ -22,6 +22,7 @@ export function PublicFooter() {
               links: [
                 { label: "Features", href: "/features" },
                 { label: "Pricing", href: "/pricing" },
+                { label: "Demo", href: "/demo" },
                 { label: "Integrations", href: "/integrations" },
                 { label: "Updates", href: "/updates" }
               ]
@@ -30,14 +31,18 @@ export function PublicFooter() {
               title: "Company", 
               links: [
                 { label: "About", href: "/about" },
+                { label: "Customers", href: "/customers" },
                 { label: "Blog", href: "/blog" },
                 { label: "Careers", href: "/careers" },
                 { label: "Contact", href: "/contact" }
               ]
             },
             {
-              title: "Support",
+              title: "Resources",
               links: [
+                { label: "Resource Center", href: "/resources" },
+                { label: "Templates", href: "/templates" },
+                { label: "Developers", href: "/developers" },
                 { label: "Help Center", href: "/help" },
                 { label: "Security", href: "/security" },
                 { label: "Status", href: "/status" },

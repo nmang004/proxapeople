@@ -13,6 +13,11 @@ import HelpPage from "@/pages/help";
 import SecurityPage from "@/pages/security";
 import StatusPage from "@/pages/status";
 import PrivacyPage from "@/pages/privacy";
+import DemoPage from "@/pages/demo";
+import CustomersPage from "@/pages/customers";
+import ResourcesPage from "@/pages/resources";
+import TemplatesPage from "@/pages/templates";
+import DevelopersPage from "@/pages/developers";
 import Dashboard from "@/pages/(app)/dashboard";
 import EmployeeDirectory from "@/pages/(app)/employee-directory";
 import OrgChart from "@/pages/(app)/org-chart";
@@ -74,6 +79,21 @@ function App() {
         </Route>
         <Route path="/privacy">
           <PrivacyPage />
+        </Route>
+        <Route path="/demo">
+          <DemoPage />
+        </Route>
+        <Route path="/customers">
+          <CustomersPage />
+        </Route>
+        <Route path="/resources">
+          <ResourcesPage />
+        </Route>
+        <Route path="/templates">
+          <TemplatesPage />
+        </Route>
+        <Route path="/developers">
+          <DevelopersPage />
         </Route>
         <Route path="/login">
           <Auth0LoginPage />

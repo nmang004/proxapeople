@@ -41,7 +41,7 @@ export function generateTokens(user: Pick<User, 'id' | 'email' | 'role'>): AuthT
   };
 
   const accessTokenOptions: jwt.SignOptions = {
-    expiresIn: (config.JWT_EXPIRES_IN || '1h') as string,
+    expiresIn: config.JWT_EXPIRES_IN || '1h',
     issuer: 'proxapeople-api',
   };
   
@@ -52,7 +52,7 @@ export function generateTokens(user: Pick<User, 'id' | 'email' | 'role'>): AuthT
   const accessToken = jwt.sign(payload, config.JWT_SECRET, accessTokenOptions);
 
   const refreshTokenOptions: jwt.SignOptions = {
-    expiresIn: (config.JWT_REFRESH_EXPIRES_IN || '7d') as string,
+    expiresIn: config.JWT_REFRESH_EXPIRES_IN || '7d',
     issuer: 'proxapeople-api',
   };
   

@@ -2,33 +2,12 @@ import express, { Request, Response } from 'express';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import { storage } from '../../database/storage';
-import { 
-  hashPassword, 
-  verifyPassword, 
-  generateTokens, 
-  verifyToken, 
-  validatePasswordStrength,
-  generateSecureToken
-} from '../../shared/utils/auth';
-import { authenticateToken } from '../../shared/middleware/auth';
-import { insertUserSchema } from '@shared/schema';
+import { validateAuth0Token, optionalAuth0Token } from '../../shared/middleware/auth0';
+import { hashPassword, verifyPassword } from '../../shared/utils/auth';
 
 const router = express.Router();
 
 // Validation schemas
-const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(1, 'Password is required'),
-});
-
-const registerSchema = insertUserSchema.extend({
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
   newPassword: z.string().min(8, 'New password must be at least 8 characters'),
@@ -38,291 +17,32 @@ const changePasswordSchema = z.object({
   path: ["confirmPassword"],
 });
 
-const refreshTokenSchema = z.object({
-  refreshToken: z.string().min(1, 'Refresh token is required'),
-});
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email format'),
-});
-
-const resetPasswordSchema = z.object({
-  token: z.string().min(1, 'Reset token is required'),
-  newPassword: z.string().min(8, 'New password must be at least 8 characters'),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-/**
- * POST /auth/register
- * Register a new user
- */
-router.post('/register', async (req: Request, res: Response) => {
-  try {
-    const validatedData = registerSchema.parse(req.body);
-    
-    // Validate password strength
-    const passwordValidation = validatePasswordStrength(validatedData.password);
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        error: 'Weak password',
-        message: 'Password does not meet security requirements',
-        details: passwordValidation.errors,
-      });
-    }
-
-    // Check if user already exists
-    const existingUser = await storage.getUserByEmail(validatedData.email);
-    if (existingUser) {
-      return res.status(409).json({
-        error: 'User already exists',
-        message: 'An account with this email already exists',
-      });
-    }
-
-    // Hash password
-    const hashedPassword = await hashPassword(validatedData.password);
-
-    // Create user (exclude password confirmation)
-    const { confirmPassword, password, ...userData } = validatedData;
-    const newUser = await storage.createUser({
-      ...userData,
-      password: hashedPassword,
-    });
-
-    // Generate tokens
-    const tokens = generateTokens(newUser);
-
-    // Return user data (excluding password) and tokens
-    const { password: _, ...userResponse } = newUser;
-    
-    res.status(201).json({
-      message: 'User registered successfully',
-      user: userResponse,
-      ...tokens,
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        error: 'Validation failed',
-        message: 'Invalid registration data',
-        details: fromZodError(error).toString(),
-      });
-    }
-    
-    console.error('Registration error:', error);
-    res.status(500).json({
-      error: 'Registration failed',
-      message: 'An error occurred during registration',
-    });
-  }
-});
-
-/**
- * POST /auth/demo
- * Demo login - generates real JWT tokens for demo users
- */
-router.post('/demo', async (req: Request, res: Response) => {
-  try {
-    const { userType = 'admin' } = req.body;
-    
-    // Define demo users
-    const demoUsers = {
-      admin: {
-        id: 1,
-        email: 'admin@demo.com',
-        firstName: 'Admin',
-        lastName: 'Demo',
-        role: 'admin' as const,
-        jobTitle: 'System Administrator',
-        department: 'IT',
-        profileImage: null,
-        hireDate: new Date().toISOString(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        password: '', // Not used for demo
-      },
-      hr: {
-        id: 2,
-        email: 'hr@demo.com',
-        firstName: 'HR',
-        lastName: 'Demo',
-        role: 'hr' as const,
-        jobTitle: 'HR Manager',
-        department: 'Human Resources',
-        profileImage: null,
-        hireDate: new Date().toISOString(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        password: '',
-      },
-      manager: {
-        id: 3,
-        email: 'manager@demo.com',
-        firstName: 'Manager',
-        lastName: 'Demo',
-        role: 'manager' as const,
-        jobTitle: 'Department Manager',
-        department: 'Operations',
-        profileImage: null,
-        hireDate: new Date().toISOString(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        password: '',
-      },
-      employee: {
-        id: 4,
-        email: 'employee@demo.com',
-        firstName: 'Employee',
-        lastName: 'Demo',
-        role: 'employee' as const,
-        jobTitle: 'Software Engineer',
-        department: 'Engineering',
-        profileImage: null,
-        hireDate: new Date().toISOString(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        password: '',
-      }
-    };
-    
-    const user = demoUsers[userType as keyof typeof demoUsers] || demoUsers.admin;
-    
-    // Generate real JWT tokens
-    const tokens = generateTokens(user);
-    
-    // Return user data (excluding password) and tokens
-    const { password: _, ...userResponse } = user;
-    
-    res.json({
-      message: 'Demo login successful',
-      user: userResponse,
-      ...tokens,
-    });
-  } catch (error) {
-    console.error('Demo login error:', error);
-    res.status(500).json({
-      error: 'Demo login failed',
-      message: 'An error occurred during demo login',
-    });
-  }
-});
-
-/**
- * POST /auth/login
- * Login user with email and password
- */
-router.post('/login', async (req: Request, res: Response) => {
-  try {
-    const { email, password } = loginSchema.parse(req.body);
-
-    // Find user by email
-    const user = await storage.getUserByEmail(email);
-    if (!user) {
-      return res.status(401).json({
-        error: 'Authentication failed',
-        message: 'Invalid email or password',
-      });
-    }
-
-    // Verify password
-    const isValidPassword = await verifyPassword(password, user.password);
-    if (!isValidPassword) {
-      return res.status(401).json({
-        error: 'Authentication failed',
-        message: 'Invalid email or password',
-      });
-    }
-
-    // Generate tokens
-    const tokens = generateTokens(user);
-
-    // Return user data (excluding password) and tokens
-    const { password: _, ...userResponse } = user;
-    
-    res.json({
-      message: 'Login successful',
-      user: userResponse,
-      ...tokens,
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        error: 'Validation failed',
-        message: 'Invalid login data',
-        details: fromZodError(error).toString(),
-      });
-    }
-    
-    console.error('Login error:', error);
-    res.status(500).json({
-      error: 'Login failed',
-      message: 'An error occurred during login',
-    });
-  }
-});
-
-/**
- * POST /auth/refresh
- * Refresh access token using refresh token
- */
-router.post('/refresh', async (req: Request, res: Response) => {
-  try {
-    const { refreshToken } = refreshTokenSchema.parse(req.body);
-
-    // Verify refresh token
-    const payload = verifyToken(refreshToken);
-    
-    // Get user to ensure they still exist
-    const user = await storage.getUser(payload.userId);
-    if (!user) {
-      return res.status(401).json({
-        error: 'Token refresh failed',
-        message: 'User not found',
-      });
-    }
-
-    // Generate new tokens
-    const newTokens = generateTokens(user);
-
-    res.json({
-      message: 'Tokens refreshed successfully',
-      ...newTokens,
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        error: 'Validation failed',
-        message: 'Invalid refresh token data',
-        details: fromZodError(error).toString(),
-      });
-    }
-    
-    console.error('Token refresh error:', error);
-    res.status(401).json({
-      error: 'Token refresh failed',
-      message: 'Invalid or expired refresh token',
-    });
-  }
-});
-
 /**
  * GET /auth/me
- * Get current user profile
+ * Get current user profile (Auth0 protected)
+ * This route now uses Auth0 authentication
  */
-router.get('/me', authenticateToken, async (req: Request, res: Response) => {
+router.get('/me', validateAuth0Token, async (req: Request, res: Response) => {
   try {
-    if (!req.user) {
+    if (!req.auth0User) {
       return res.status(401).json({
         error: 'Authentication required',
         message: 'User not authenticated',
       });
     }
 
+    // Find user by email from Auth0
+    const user = await storage.getUserByEmail(req.auth0User.email);
+    
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+        message: 'User profile not found in system. Please sync your profile first.',
+      });
+    }
+
     // Return user data excluding password
-    const { password: _, ...userResponse } = req.user;
+    const { password: _, ...userResponse } = user;
     
     res.json({
       user: userResponse,
@@ -338,21 +58,33 @@ router.get('/me', authenticateToken, async (req: Request, res: Response) => {
 
 /**
  * POST /auth/change-password
- * Change user password
+ * Change user password (Auth0 protected)
+ * Note: This is for internal password changes. Auth0 users should use Auth0's password reset.
  */
-router.post('/change-password', authenticateToken, async (req: Request, res: Response) => {
+router.post('/change-password', validateAuth0Token, async (req: Request, res: Response) => {
   try {
-    if (!req.user) {
+    if (!req.auth0User) {
       return res.status(401).json({
         error: 'Authentication required',
         message: 'User not authenticated',
       });
     }
 
-    const { currentPassword, newPassword } = changePasswordSchema.parse(req.body);
+    // Find user by email from Auth0
+    const user = await storage.getUserByEmail(req.auth0User.email);
+    
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found',
+        message: 'User profile not found in system',
+      });
+    }
 
+    const validatedData = changePasswordSchema.parse(req.body);
+    const { currentPassword, newPassword } = validatedData;
+    
     // Verify current password
-    const isValidPassword = await verifyPassword(currentPassword, req.user.password);
+    const isValidPassword = await verifyPassword(currentPassword, user.password);
     if (!isValidPassword) {
       return res.status(400).json({
         error: 'Password change failed',
@@ -360,22 +92,12 @@ router.post('/change-password', authenticateToken, async (req: Request, res: Res
       });
     }
 
-    // Validate new password strength
-    const passwordValidation = validatePasswordStrength(newPassword);
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        error: 'Weak password',
-        message: 'New password does not meet security requirements',
-        details: passwordValidation.errors,
-      });
-    }
-
     // Hash new password
     const hashedPassword = await hashPassword(newPassword);
-
+    
     // Update password in database
-    await storage.updateUserPassword(req.user.id, hashedPassword);
-
+    await storage.updateUserPassword(user.id, hashedPassword);
+    
     res.json({
       message: 'Password changed successfully',
     });
@@ -388,7 +110,7 @@ router.post('/change-password', authenticateToken, async (req: Request, res: Res
       });
     }
     
-    console.error('Password change error:', error);
+    console.error('Change password error:', error);
     res.status(500).json({
       error: 'Password change failed',
       message: 'An error occurred while changing password',
@@ -397,129 +119,16 @@ router.post('/change-password', authenticateToken, async (req: Request, res: Res
 });
 
 /**
- * POST /auth/forgot-password
- * Request password reset email
- */
-router.post('/forgot-password', async (req: Request, res: Response) => {
-  try {
-    const { email } = forgotPasswordSchema.parse(req.body);
-
-    // Check if user exists
-    const user = await storage.getUserByEmail(email);
-    if (!user) {
-      // Don't reveal whether email exists or not for security
-      return res.json({
-        message: 'If an account with that email exists, a password reset link has been sent.',
-      });
-    }
-
-    // Generate reset token (expires in 1 hour)
-    const resetToken = generateSecureToken(64);
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
-
-    // Save reset token to database
-    await storage.createPasswordResetToken({
-      userId: user.id,
-      token: resetToken,
-      expiresAt,
-      used: false,
-    });
-
-    // TODO: Send email with reset link
-    // For now, we'll just log the token (remove this in production)
-    console.log(`Password reset token for ${email}: ${resetToken}`);
-    console.log(`Reset URL: ${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/reset-password?token=${resetToken}`);
-
-    res.json({
-      message: 'If an account with that email exists, a password reset link has been sent.',
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        error: 'Validation failed',
-        message: 'Invalid email format',
-        details: fromZodError(error).toString(),
-      });
-    }
-    
-    console.error('Forgot password error:', error);
-    res.status(500).json({
-      error: 'Password reset failed',
-      message: 'An error occurred while processing password reset request',
-    });
-  }
-});
-
-/**
- * POST /auth/reset-password
- * Reset password using token
- */
-router.post('/reset-password', async (req: Request, res: Response) => {
-  try {
-    const { token, newPassword } = resetPasswordSchema.parse(req.body);
-
-    // Find valid reset token
-    const resetToken = await storage.getPasswordResetToken(token);
-    if (!resetToken) {
-      return res.status(400).json({
-        error: 'Invalid token',
-        message: 'Password reset token is invalid or has expired',
-      });
-    }
-
-    // Validate new password strength
-    const passwordValidation = validatePasswordStrength(newPassword);
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        error: 'Weak password',
-        message: 'New password does not meet security requirements',
-        details: passwordValidation.errors,
-      });
-    }
-
-    // Hash new password
-    const hashedPassword = await hashPassword(newPassword);
-
-    // Update user password
-    await storage.updateUserPassword(resetToken.userId, hashedPassword);
-
-    // Mark token as used
-    await storage.markPasswordResetTokenAsUsed(resetToken.id);
-
-    // Clean up expired tokens
-    await storage.deleteExpiredPasswordResetTokens();
-
-    res.json({
-      message: 'Password reset successful. You can now login with your new password.',
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        error: 'Validation failed',
-        message: 'Invalid password reset data',
-        details: fromZodError(error).toString(),
-      });
-    }
-    
-    console.error('Reset password error:', error);
-    res.status(500).json({
-      error: 'Password reset failed',
-      message: 'An error occurred while resetting password',
-    });
-  }
-});
-
-/**
  * POST /auth/logout
- * Logout user (invalidate tokens)
+ * Logout endpoint (Auth0 protected)
+ * Since Auth0 manages sessions, this just confirms logout
  */
-router.post('/logout', authenticateToken, async (req: Request, res: Response) => {
+router.post('/logout', validateAuth0Token, async (req: Request, res: Response) => {
   try {
-    // In a more advanced implementation, you'd maintain a blacklist of tokens
-    // For now, we'll just return success and let the client handle token removal
-    
+    // Since Auth0 manages sessions, we just return success
+    // The client will handle the Auth0 logout redirect
     res.json({
-      message: 'Logout successful',
+      message: 'Logout successful. Please complete logout with Auth0.',
     });
   } catch (error) {
     console.error('Logout error:', error);
@@ -528,6 +137,31 @@ router.post('/logout', authenticateToken, async (req: Request, res: Response) =>
       message: 'An error occurred during logout',
     });
   }
+});
+
+/**
+ * Legacy authentication routes are no longer available.
+ * Auth0 handles:
+ * - User registration
+ * - User login
+ * - Password reset
+ * - Token refresh
+ * - Session management
+ * 
+ * Redirect to Auth0 Universal Login for these operations.
+ */
+
+// Health check route
+router.get('/health', (req: Request, res: Response) => {
+  const hasAuth0Config = !!(process.env.AUTH0_DOMAIN && process.env.AUTH0_AUDIENCE);
+  
+  res.json({
+    status: 'ok',
+    authType: 'auth0',
+    auth0Configured: hasAuth0Config,
+    legacyAuth: false,
+    message: 'Authentication is managed by Auth0'
+  });
 });
 
 export default router;

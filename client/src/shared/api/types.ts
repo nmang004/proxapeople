@@ -193,6 +193,6 @@ export type GoalFilter = z.infer<typeof goalFilterSchema>;
 export type MeetingFilter = z.infer<typeof meetingFilterSchema>;
 export type ReviewFilter = z.infer<typeof reviewFilterSchema>;
 
-export type BulkUpdate<T> = z.infer<ReturnType<typeof bulkUpdateSchema<z.ZodType<T>>>>;
+export type BulkUpdate<T> = z.infer<ReturnType<typeof bulkUpdateSchema<z.ZodObject<any>>>>;
 export type BulkDelete = z.infer<typeof bulkDeleteSchema>;
 export type BulkOperationResponse = z.infer<typeof bulkOperationResponseSchema>;

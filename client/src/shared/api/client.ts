@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TokenManager } from '../auth/token-manager';
 
 // Storage utilities
 const STORAGE_KEYS = {
@@ -167,8 +168,29 @@ export class ApiClient {
 
   // Token management
   private getAuthHeader(): Record<string, string> {
+    // First try to get token from TokenManager (Auth0)
+    const auth0Token = TokenManager.getToken();
+    
+    if (auth0Token) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔑 API Client: Using Auth0 token:', auth0Token.substring(0, 20) + '...');
+      }
+      return { Authorization: `Bearer ${auth0Token}` };
+    }
+    
+    // Fallback to legacy token storage
     const token = storage.get(STORAGE_KEYS.ACCESS_TOKEN);
-    return token ? { Authorization: `Bearer ${token}` } : {};
+    if (token) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔑 API Client: Using legacy token:', token.substring(0, 20) + '...');
+      }
+      return { Authorization: `Bearer ${token}` };
+    }
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ API Client: No authentication token available');
+    }
+    return {};
   }
 
   private async refreshToken(): Promise<void> {

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants, type ButtonProps } from "@/components/ui/button";
 import { useState } from "react";
 
-interface AnimatedButtonProps extends ButtonProps {
+interface AnimatedButtonProps extends Omit<ButtonProps, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'onDragEnter' | 'onDragExit' | 'onDragLeave' | 'onDragOver' | 'onDrop' | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'> {
   glowEffect?: boolean;
   pulseEffect?: boolean;
 }

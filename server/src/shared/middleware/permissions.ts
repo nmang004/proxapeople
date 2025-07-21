@@ -155,11 +155,16 @@ export async function checkPermission(req: Request, res: Response) {
 // Check Current User Permission
 export async function checkCurrentUserPermission(req: Request, res: Response) {
   try {
-    if (!req.user || !(req.user as any).id) {
+    if (!req.auth0User?.email) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     
-    const userId = (req.user as any).id;
+    // Get user from database using Auth0 email
+    const user = await storage.getUserByEmail(req.auth0User.email);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    
     const { resourceName, action } = req.body;
     
     if (!resourceName || !action) {
@@ -168,7 +173,7 @@ export async function checkCurrentUserPermission(req: Request, res: Response) {
       });
     }
     
-    const hasAccess = await storage.checkUserPermission(userId, resourceName, action);
+    const hasAccess = await storage.checkUserPermission(user.id, resourceName, action);
     res.json({ hasPermission: hasAccess });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

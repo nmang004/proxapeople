@@ -113,7 +113,7 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
       if (user) {
         const hasChildren = users.some(u => u.managerId === userId);
         if (hasChildren && !expandedNodes.has(userId)) {
-          setExpandedNodes(prev => new Set([...prev, userId]));
+          setExpandedNodes(prev => new Set(Array.from(prev).concat(userId)));
           // Wait for expansion animation before scrolling
           setTimeout(() => {
             element.scrollIntoView({

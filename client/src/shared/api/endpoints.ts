@@ -162,7 +162,7 @@ class EndpointBuilder {
     };
   }
 
-  bulkUpdate<TRequest>(requestSchema: z.ZodType<TRequest>) {
+  bulkUpdate<TRequest>(requestSchema: z.ZodObject<any>) {
     return {
       execute: async (data: { ids: number[]; updates: Partial<TRequest> }) => {
         const validatedData = bulkUpdateSchema(requestSchema).parse(data);
