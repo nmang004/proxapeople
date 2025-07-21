@@ -191,10 +191,10 @@ export function useAuth() {
             }
             TokenManager.setToken(accessToken);
             console.log('📤 Auth0Store: Token stored in TokenManager, invalidating queries...');
-            // Small delay to ensure token is fully set before triggering API calls
-            setTimeout(() => {
-              queryClient.invalidateQueries();
-            }, 100);
+            // Trigger a re-render and invalidate queries that need authentication
+            queryClient.invalidateQueries({ 
+              predicate: (query) => query.queryKey[0] === 'dashboard' 
+            });
           }
         })
         .catch(error => {
