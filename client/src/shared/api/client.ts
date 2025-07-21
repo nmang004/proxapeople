@@ -288,7 +288,6 @@ export class ApiClient {
         headers: interceptedConfig.headers,
         signal: requestSignal,
         credentials: 'include',
-        mode: 'cors', // Explicitly set CORS mode
       };
 
       if (body && method !== 'GET') {
