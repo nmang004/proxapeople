@@ -1113,14 +1113,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTeamPerformance(): Promise<any> {
-    // For demo purposes, return static data
+    // For demo purposes, return comprehensive performance data
     return {
       quarterly: [
-        { quarter: 'Q1', overallScore: 7.5, growthScore: 7.2 },
-        { quarter: 'Q2', overallScore: 7.8, growthScore: 6.5 },
-        { quarter: 'Q3', overallScore: 8.5, growthScore: 8.0 },
-        { quarter: 'Q4', overallScore: 8.0, growthScore: 8.0 }
-      ]
+        { quarter: 'Q1', overallScore: 7.2, growthScore: 6.8 },
+        { quarter: 'Q2', overallScore: 7.8, growthScore: 7.4 },
+        { quarter: 'Q3', overallScore: 8.3, growthScore: 8.1 },
+        { quarter: 'Q4', overallScore: 8.7, growthScore: 8.5 }
+      ],
+      monthly: [
+        { month: 'Jan', overallScore: 7.0, growthScore: 6.5 },
+        { month: 'Feb', overallScore: 7.1, growthScore: 6.7 },
+        { month: 'Mar', overallScore: 7.3, growthScore: 7.0 },
+        { month: 'Apr', overallScore: 7.5, growthScore: 7.2 },
+        { month: 'May', overallScore: 7.8, growthScore: 7.6 },
+        { month: 'Jun', overallScore: 8.0, growthScore: 7.8 },
+        { month: 'Jul', overallScore: 8.1, growthScore: 7.9 },
+        { month: 'Aug', overallScore: 8.3, growthScore: 8.0 },
+        { month: 'Sep', overallScore: 8.4, growthScore: 8.2 },
+        { month: 'Oct', overallScore: 8.6, growthScore: 8.3 },
+        { month: 'Nov', overallScore: 8.7, growthScore: 8.5 },
+        { month: 'Dec', overallScore: 8.8, growthScore: 8.6 }
+      ],
+      summary: {
+        currentScore: 8.8,
+        previousScore: 8.7,
+        trend: 'positive',
+        improvement: 0.1,
+        topPerformingArea: 'Team Collaboration',
+        focusArea: 'Work-Life Balance'
+      }
     };
   }
 
