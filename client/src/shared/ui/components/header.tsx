@@ -35,7 +35,7 @@ export function Header({ onOpenMobileSidebar }: HeaderProps) {
       <AnimatedButton 
         type="button" 
         variant="ghost"
-        className="md:hidden px-4 border-r border-neutral-200 text-neutral-500 hover:bg-secondary/30"
+        className="md:hidden px-4 border-r border-neutral-200 text-neutral-500 hover:bg-secondary/30 h-16 flex items-center justify-center"
         aria-label="Open sidebar"
         onClick={onOpenMobileSidebar}
       >
