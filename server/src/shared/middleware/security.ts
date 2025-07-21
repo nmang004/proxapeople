@@ -46,10 +46,14 @@ export const corsConfig = cors({
       'http://localhost:5173',
       // Allow production Cloud Run domain
       'https://proxapeople-production-673103558160.us-central1.run.app',
+      // Allow Vercel domain
+      'https://proxapeople.vercel.app',
     ];
     
-    // Also allow any Cloud Run domain pattern for flexibility
-    if (origin.includes('us-central1.run.app') || allowedOrigins.includes(origin)) {
+    // Also allow any Cloud Run or Vercel domain pattern for flexibility
+    if (origin.includes('us-central1.run.app') || 
+        origin.includes('vercel.app') || 
+        allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
@@ -81,7 +85,10 @@ export const generalRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true,
+  keyGenerator: (req) => {
+    // Use a combination of IP and user agent for serverless environments
+    return req.ip || req.connection?.remoteAddress || 'anonymous';
+  },
   // Skip rate limiting for successful responses in development
   skip: (req, res) => config.NODE_ENV === 'development' && res.statusCode < 400,
 });
@@ -99,7 +106,7 @@ export const authRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true,
+  keyGenerator: (req) => req.ip || req.connection?.remoteAddress || 'anonymous',
   skipSuccessfulRequests: true, // Don't count successful attempts
 });
 
@@ -116,7 +123,7 @@ export const passwordResetRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true,
+  keyGenerator: (req) => req.ip || req.connection?.remoteAddress || 'anonymous',
 });
 
 /**
@@ -132,7 +139,7 @@ export const apiRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true,
+  keyGenerator: (req) => req.ip || req.connection?.remoteAddress || 'anonymous',
 });
 
 /**
