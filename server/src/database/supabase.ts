@@ -1,6 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
 import * as schema from '@shared/schema'
 import dotenv from 'dotenv'
 
@@ -12,69 +10,95 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Create Supabase client for authentication and real-time features
-// Use dummy values if not configured to prevent crashes
-export const supabase = supabaseUrl ? createClient(
-  supabaseUrl,
-  supabaseServiceKey || supabaseAnonKey || '',
+// Create Supabase client with service role key for server-side operations
+export const supabase = createClient(
+  supabaseUrl!,
+  supabaseServiceKey || supabaseAnonKey!,
   {
     auth: {
       autoRefreshToken: false,
       persistSession: false
     }
   }
-) : null
+)
 
-// Database connection using Drizzle with Supabase PostgreSQL
-let _db: ReturnType<typeof drizzle> | null = null
-
-const getDatabaseUrl = () => {
-  // Supabase database URL format: postgresql://postgres:[password]@[host]:5432/postgres
-  const databaseUrl = process.env.DATABASE_URL || process.env.SUPABASE_DATABASE_URL
+// Database operations using Supabase client directly
+export const db = {
+  // User operations
+  users: {
+    async findMany() {
+      const { data, error } = await supabase.from('users').select('*')
+      if (error) throw error
+      return data || []
+    },
+    async findFirst(where: any) {
+      let query = supabase.from('users').select('*')
+      if (where?.email) {
+        query = query.eq('email', where.email)
+      }
+      if (where?.id) {
+        query = query.eq('id', where.id)
+      }
+      const { data, error } = await query.single()
+      if (error && error.code !== 'PGRST116') throw error // PGRST116 = no rows found
+      return data
+    },
+    async create(data: any) {
+      const { data: result, error } = await supabase.from('users').insert(data).select().single()
+      if (error) throw error
+      return result
+    },
+    async update(where: any, data: any) {
+      let query = supabase.from('users').update(data)
+      if (where?.id) {
+        query = query.eq('id', where.id)
+      }
+      const { error } = await query
+      if (error) throw error
+    }
+  },
   
-  if (!databaseUrl) {
-    console.warn('Database not configured: DATABASE_URL or SUPABASE_DATABASE_URL environment variable is not set')
-    return null
+  // Generic query methods for other tables
+  async select() {
+    return {
+      from: (tableName: string) => ({
+        where: (condition: any) => ({
+          async execute() {
+            const { data, error } = await supabase.from(tableName).select('*')
+            if (error) throw error
+            return data || []
+          }
+        }),
+        async execute() {
+          const { data, error } = await supabase.from(tableName).select('*')
+          if (error) throw error
+          return data || []
+        }
+      })
+    }
+  },
+  
+  async insert(tableName: string) {
+    return {
+      values: (values: any) => ({
+        async execute() {
+          const { data, error } = await supabase.from(tableName).insert(values).select().single()
+          if (error) throw error
+          return data
+        }
+      })
+    }
   }
-  
-  return databaseUrl
 }
 
-function initializeDb() {
-  if (!_db) {
-    const connectionString = getDatabaseUrl()
-    if (!connectionString) {
-      console.warn('Database not available - using mock database')
-      return null
-    }
-    
-    // Create PostgreSQL connection for Drizzle
-    const queryClient = postgres(connectionString)
-    _db = drizzle(queryClient, { schema })
-  }
-  return _db
-}
-
-// Main database export
-export const db = new Proxy({} as ReturnType<typeof drizzle>, {
-  get(_, prop) {
-    const database = initializeDb()
-    if (!database) {
-      console.warn('Database operation attempted but database is not configured')
-      return () => Promise.resolve([])
-    }
-    return database[prop as keyof ReturnType<typeof drizzle>]
-  }
-})
-
-// Get database instance
+// Get database instance (for compatibility)
 export const getDb = () => {
-  return initializeDb()
+  return db
 }
 
 // For compatibility with existing code
 export const getPool = () => {
-  console.warn('getPool() is deprecated with Supabase. Use getDb() instead.')
+  console.warn('getPool() is deprecated with Supabase. Use db directly.')
   return null
 }
 

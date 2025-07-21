@@ -188,8 +188,7 @@ export class DatabaseStorage implements IStorage {
       return this.demoUsers[id];
     }
     
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+    return db.users.findFirst({ id });
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
@@ -199,13 +198,11 @@ export class DatabaseStorage implements IStorage {
       return demoUser;
     }
     
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user;
+    return db.users.findFirst({ email });
   }
 
   async createUser(userData: InsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(userData).returning();
-    return user;
+    return db.users.create(userData);
   }
 
   async getAllUsers(): Promise<User[]> {

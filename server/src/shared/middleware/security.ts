@@ -81,6 +81,7 @@ export const generalRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true,
   // Skip rate limiting for successful responses in development
   skip: (req, res) => config.NODE_ENV === 'development' && res.statusCode < 400,
 });
@@ -98,6 +99,7 @@ export const authRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true,
   skipSuccessfulRequests: true, // Don't count successful attempts
 });
 
@@ -114,6 +116,7 @@ export const passwordResetRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true,
 });
 
 /**
@@ -129,6 +132,7 @@ export const apiRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true,
 });
 
 /**
