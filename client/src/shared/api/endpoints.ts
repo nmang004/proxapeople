@@ -495,7 +495,14 @@ export const analytics = {
         });
         console.log('📊 analytics.dashboardData: Raw API response:', response);
         console.log('📊 analytics.dashboardData: Response data:', response.data);
-        return response.data as {
+        console.log('📊 analytics.dashboardData: Response type:', typeof response);
+        console.log('📊 analytics.dashboardData: Response keys:', Object.keys(response));
+        
+        // If response.data is undefined, use the response directly
+        const data = response.data || response;
+        console.log('📊 analytics.dashboardData: Using data:', data);
+        
+        return data as {
           stats: Record<string, unknown>;
           upcomingReviews: unknown[];
           teamGoals: unknown[];
