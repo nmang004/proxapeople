@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResponsiveTable } from "@/components/ui/table";
+import { ResponsiveTable, Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import type { ReviewStatus } from "@/shared/types/types";
 import { ErrorMessage } from "@/shared/ui/components/error-message";
 import { Spinner } from "@/shared/ui/components/spinner";
@@ -171,8 +171,63 @@ export function UpcomingReviews({ data, isLoading = false, error = null }: Upcom
                 )
               }
             ]}
-            className="[&_table]:min-w-full"
-          />
+          >
+            <Table className="min-w-full">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Employee</TableHead>
+                  <TableHead>Review Type</TableHead>
+                  <TableHead>Due Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {reviews.map((review) => (
+                  <TableRow key={review.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={review.employee.profileImage} alt={review.employee.name} />
+                          <AvatarFallback className="text-xs">
+                            {review.employee.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="text-sm font-medium text-neutral-800">{review.employee.name}</div>
+                          <div className="text-xs text-neutral-500">{review.employee.jobTitle}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-neutral-800">
+                        {review.type === 'quarterly' ? 'Quarterly Performance' : 
+                         review.type === 'annual' ? 'Annual Review' : 
+                         review.type === 'peer' ? 'Peer Review' : 'Self Review'}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-neutral-800">{formatDate(review.dueDate)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className={getStatusBadgeClass(review.status)}>
+                        {review.status === 'not_started' ? 'Not Started' :
+                         review.status === 'self_review' ? 'Self-Review' :
+                         review.status === 'peer_review' ? 'Peer Review' :
+                         review.status === 'manager_review' ? 'Manager Review' :
+                         review.status === 'completed' ? 'Completed' : 'In Progress'}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <a href="#" className="text-primary hover:text-primary-dark text-sm font-medium">
+                        View
+                      </a>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ResponsiveTable>
         ) : (
           <div className="py-8 text-center text-sm text-neutral-500">
             No upcoming reviews
