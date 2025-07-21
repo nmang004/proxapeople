@@ -131,10 +131,6 @@ export function Sidebar() {
             <ProxaLogo variant="full" size="md" />
           </div>
           
-          {/* Mobile Only - Version Label */}
-          <div className="md:hidden ml-auto">
-            <Badge variant="outline" className="text-xs bg-primary/5 text-primary border-primary/20">Proxa People</Badge>
-          </div>
         </motion.div>
         
         {/* User Profile - Mobile Only */}
@@ -158,7 +154,7 @@ export function Sidebar() {
         </motion.div>
         
         {/* Sidebar Links */}
-        <div className="flex flex-col flex-1 overflow-y-auto">
+        <div className="flex flex-col flex-1 overflow-y-auto md:overflow-visible">
           <nav className="flex-1 px-2 md:px-3 py-4">
             {sortedCategories.map((category, categoryIndex) => (
               <motion.div 
