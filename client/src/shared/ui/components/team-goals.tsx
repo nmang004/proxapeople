@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 // Removed card imports as we're handling this at the dashboard level
 import { Button } from "@/components/ui/button";
 import { GoalProgress } from "@/components/ui/goal-progress";
@@ -89,14 +88,15 @@ const sampleTeamGoals: Goal[] = [
   }
 ];
 
-export function TeamGoals() {
-  const { data: apiGoals, isLoading, error } = useQuery<Goal[]>({
-    queryKey: ['/api/dashboard'],
-    select: (data: any) => data?.teamGoals || [],
-  });
-  
-  // Use sample data for visual representation
-  const goals = apiGoals?.length ? apiGoals : sampleTeamGoals;
+interface TeamGoalsProps {
+  goals?: Goal[];
+  isLoading?: boolean;
+  error?: Error | null;
+}
+
+export function TeamGoals({ goals: propGoals, isLoading = false, error = null }: TeamGoalsProps) {
+  // Use goals from props (passed from dashboard) or fall back to sample data
+  const goals = propGoals?.length ? propGoals : sampleTeamGoals;
 
   return (
     <div className="h-full overflow-hidden">
@@ -108,7 +108,9 @@ export function TeamGoals() {
         {isLoading ? (
           <div className="py-4 text-center text-neutral-500">Loading goals...</div>
         ) : error ? (
-          <div className="py-4 text-center text-red-500">Error loading goals</div>
+          <div className="py-4 text-center text-red-500">
+            {error.message || 'Error loading goals'}
+          </div>
         ) : goals && goals.length > 0 ? (
           <div className="space-y-5">
             {/* Sample goals for demonstration */}

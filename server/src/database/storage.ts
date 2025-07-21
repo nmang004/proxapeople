@@ -121,60 +121,507 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // Demo users cache
+  // Rival Digital employees
   private demoUsers: Record<number, User> = {
+    // Leadership
     1: {
       id: 1,
-      email: 'admin@demo.com',
-      firstName: 'Admin',
-      lastName: 'Demo',
+      email: 'eric@rivaldigital.com',
+      firstName: 'Eric',
+      lastName: 'President',
       role: 'admin',
-      jobTitle: 'System Administrator',
-      department: 'IT',
+      jobTitle: 'President',
+      department: 'Executive',
       profileImage: null,
-      hireDate: new Date().toISOString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      password: '$2b$10$demopasswordhash', // Not used for demo auth
-    },
-    2: {
-      id: 2,
-      email: 'hr@demo.com',
-      firstName: 'HR',
-      lastName: 'Demo',
-      role: 'hr',
-      jobTitle: 'HR Manager',
-      department: 'Human Resources',
-      profileImage: null,
-      hireDate: new Date().toISOString(),
+      hireDate: '2020-01-01',
+      managerId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
       password: '$2b$10$demopasswordhash',
     },
-    3: {
-      id: 3,
-      email: 'manager@demo.com',
-      firstName: 'Manager',
-      lastName: 'Demo',
+    2: {
+      id: 2,
+      email: 'sophia@rivaldigital.com',
+      firstName: 'Sophia',
+      lastName: 'Manager',
       role: 'manager',
-      jobTitle: 'Department Manager',
+      jobTitle: 'OPS Manager',
       department: 'Operations',
       profileImage: null,
-      hireDate: new Date().toISOString(),
+      hireDate: '2020-02-01',
+      managerId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    // Shared Services
+    3: {
+      id: 3,
+      email: 'erik@rivaldigital.com',
+      firstName: 'Erik',
+      lastName: 'CEO',
+      role: 'admin',
+      jobTitle: 'CEO',
+      department: 'Shared Services',
+      profileImage: null,
+      hireDate: '2020-01-01',
+      managerId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
       password: '$2b$10$demopasswordhash',
     },
     4: {
       id: 4,
-      email: 'employee@demo.com',
-      firstName: 'Employee',
-      lastName: 'Demo',
+      email: 'marcia@rivaldigital.com',
+      firstName: 'Marcia',
+      lastName: 'Finance',
       role: 'employee',
-      jobTitle: 'Software Engineer',
-      department: 'Engineering',
+      jobTitle: 'Finance Admin',
+      department: 'Shared Services',
       profileImage: null,
-      hireDate: new Date().toISOString(),
+      hireDate: '2020-03-01',
+      managerId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    5: {
+      id: 5,
+      email: 'madison@rivaldigital.com',
+      firstName: 'Madison',
+      lastName: 'Business',
+      role: 'employee',
+      jobTitle: 'Business Manager',
+      department: 'Shared Services',
+      profileImage: null,
+      hireDate: '2020-04-01',
+      managerId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    6: {
+      id: 6,
+      email: 'nadia@rivaldigital.com',
+      firstName: 'Nadia',
+      lastName: 'Social',
+      role: 'employee',
+      jobTitle: 'Social Media Coord.',
+      department: 'Shared Services',
+      profileImage: null,
+      hireDate: '2021-01-01',
+      managerId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    7: {
+      id: 7,
+      email: 'madison.auto@rivaldigital.com',
+      firstName: 'Madison',
+      lastName: 'Auto',
+      role: 'employee',
+      jobTitle: 'Automation Spec',
+      department: 'Shared Services',
+      profileImage: null,
+      hireDate: '2021-02-01',
+      managerId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    8: {
+      id: 8,
+      email: 'diana@rivaldigital.com',
+      firstName: 'Diana',
+      lastName: 'Assistant',
+      role: 'employee',
+      jobTitle: 'Virtual Assistant',
+      department: 'Shared Services',
+      profileImage: null,
+      hireDate: '2021-03-01',
+      managerId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    // Sales Department
+    9: {
+      id: 9,
+      email: 'trevor@rivaldigital.com',
+      firstName: 'Trevor',
+      lastName: 'Sales',
+      role: 'manager',
+      jobTitle: 'Sales Manager',
+      department: 'Sales',
+      profileImage: null,
+      hireDate: '2020-05-01',
+      managerId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    10: {
+      id: 10,
+      email: 'josh@rivaldigital.com',
+      firstName: 'Josh',
+      lastName: 'BusinessDev',
+      role: 'employee',
+      jobTitle: 'Business Dev. Rep',
+      department: 'Sales',
+      profileImage: null,
+      hireDate: '2021-04-01',
+      managerId: 9,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    // Websites Department
+    11: {
+      id: 11,
+      email: 'zack@rivaldigital.com',
+      firstName: 'Zack',
+      lastName: 'Web',
+      role: 'manager',
+      jobTitle: 'Web Manager',
+      department: 'Websites',
+      profileImage: null,
+      hireDate: '2020-06-01',
+      managerId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    12: {
+      id: 12,
+      email: 'aaron@rivaldigital.com',
+      firstName: 'Aaron',
+      lastName: 'Dev',
+      role: 'employee',
+      jobTitle: 'Developer',
+      department: 'Websites',
+      profileImage: null,
+      hireDate: '2021-05-01',
+      managerId: 11,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    13: {
+      id: 13,
+      email: 'jack@rivaldigital.com',
+      firstName: 'Jack',
+      lastName: 'Dev',
+      role: 'employee',
+      jobTitle: 'Developer',
+      department: 'Websites',
+      profileImage: null,
+      hireDate: '2021-06-01',
+      managerId: 11,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    14: {
+      id: 14,
+      email: 'noah@rivaldigital.com',
+      firstName: 'Noah',
+      lastName: 'Design',
+      role: 'employee',
+      jobTitle: 'Graphic Designer',
+      department: 'Websites',
+      profileImage: null,
+      hireDate: '2021-07-01',
+      managerId: 11,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    15: {
+      id: 15,
+      email: 'evan@rivaldigital.com',
+      firstName: 'Evan',
+      lastName: 'Dev',
+      role: 'employee',
+      jobTitle: 'Developer',
+      department: 'Websites',
+      profileImage: null,
+      hireDate: '2021-08-01',
+      managerId: 11,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    // Search Department (Reports to OPS Manager)
+    16: {
+      id: 16,
+      email: 'kylie@rivaldigital.com',
+      firstName: 'Kylie',
+      lastName: 'Ads',
+      role: 'manager',
+      jobTitle: 'Ad Manager',
+      department: 'Search',
+      profileImage: null,
+      hireDate: '2020-07-01',
+      managerId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    17: {
+      id: 17,
+      email: 'allison@rivaldigital.com',
+      firstName: 'Allison',
+      lastName: 'AdSpec',
+      role: 'employee',
+      jobTitle: 'Ad Spec.',
+      department: 'Search',
+      profileImage: null,
+      hireDate: '2021-09-01',
+      managerId: 16,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    18: {
+      id: 18,
+      email: 'everett@rivaldigital.com',
+      firstName: 'Everett',
+      lastName: 'PPC',
+      role: 'employee',
+      jobTitle: 'PPC Spec.',
+      department: 'Search',
+      profileImage: null,
+      hireDate: '2021-10-01',
+      managerId: 16,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    19: {
+      id: 19,
+      email: 'christopher@rivaldigital.com',
+      firstName: 'Christopher',
+      lastName: 'SEO',
+      role: 'manager',
+      jobTitle: 'SEO Manager',
+      department: 'Search',
+      profileImage: null,
+      hireDate: '2020-08-01',
+      managerId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    20: {
+      id: 20,
+      email: 'laura@rivaldigital.com',
+      firstName: 'Laura',
+      lastName: 'SEOSpec',
+      role: 'employee',
+      jobTitle: 'SEO Spec.',
+      department: 'Search',
+      profileImage: null,
+      hireDate: '2021-11-01',
+      managerId: 19,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    21: {
+      id: 21,
+      email: 'christian@rivaldigital.com',
+      firstName: 'Christian',
+      lastName: 'SEOSpec',
+      role: 'employee',
+      jobTitle: 'SEO Spec.',
+      department: 'Search',
+      profileImage: null,
+      hireDate: '2021-12-01',
+      managerId: 19,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    22: {
+      id: 22,
+      email: 'nick@rivaldigital.com',
+      firstName: 'Nick',
+      lastName: 'SEOSpec',
+      role: 'employee',
+      jobTitle: 'SEO Spec.',
+      department: 'Search',
+      profileImage: null,
+      hireDate: '2022-01-01',
+      managerId: 19,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    // Account Management
+    23: {
+      id: 23,
+      email: 'georgia@rivaldigital.com',
+      firstName: 'Georgia',
+      lastName: 'Director',
+      role: 'manager',
+      jobTitle: 'Dir. of AM',
+      department: 'Account Management',
+      profileImage: null,
+      hireDate: '2020-09-01',
+      managerId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    24: {
+      id: 24,
+      email: 'rachel.kent@rivaldigital.com',
+      firstName: 'Rachel',
+      lastName: 'Kent',
+      role: 'employee',
+      jobTitle: 'AM',
+      department: 'Account Management',
+      profileImage: null,
+      hireDate: '2022-02-01',
+      managerId: 23,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    25: {
+      id: 25,
+      email: 'nina@rivaldigital.com',
+      firstName: 'Nina',
+      lastName: 'AM',
+      role: 'employee',
+      jobTitle: 'AM',
+      department: 'Account Management',
+      profileImage: null,
+      hireDate: '2022-03-01',
+      managerId: 23,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    26: {
+      id: 26,
+      email: 'london@rivaldigital.com',
+      firstName: 'London',
+      lastName: 'AM',
+      role: 'employee',
+      jobTitle: 'AM',
+      department: 'Account Management',
+      profileImage: null,
+      hireDate: '2022-04-01',
+      managerId: 23,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    27: {
+      id: 27,
+      email: 'katie@rivaldigital.com',
+      firstName: 'Katie',
+      lastName: 'Coord',
+      role: 'employee',
+      jobTitle: 'Acc. Coord.',
+      department: 'Account Management',
+      profileImage: null,
+      hireDate: '2022-05-01',
+      managerId: 23,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    // Content Department
+    28: {
+      id: 28,
+      email: 'reagan@rivaldigital.com',
+      firstName: 'Reagan',
+      lastName: 'Content',
+      role: 'employee',
+      jobTitle: 'Content Str.',
+      department: 'Content',
+      profileImage: null,
+      hireDate: '2022-06-01',
+      managerId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    29: {
+      id: 29,
+      email: 'maya@rivaldigital.com',
+      firstName: 'Maya',
+      lastName: 'Content',
+      role: 'employee',
+      jobTitle: 'Content Str.',
+      department: 'Content',
+      profileImage: null,
+      hireDate: '2022-07-01',
+      managerId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    30: {
+      id: 30,
+      email: 'ariela@rivaldigital.com',
+      firstName: 'Ariela',
+      lastName: 'Content',
+      role: 'employee',
+      jobTitle: 'Content Str.',
+      department: 'Content',
+      profileImage: null,
+      hireDate: '2022-08-01',
+      managerId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    31: {
+      id: 31,
+      email: 'rachel.keller@rivaldigital.com',
+      firstName: 'Rachel',
+      lastName: 'Keller',
+      role: 'employee',
+      jobTitle: 'Content Str.',
+      department: 'Content',
+      profileImage: null,
+      hireDate: '2022-09-01',
+      managerId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    32: {
+      id: 32,
+      email: 'bella@rivaldigital.com',
+      firstName: 'Bella',
+      lastName: 'Content',
+      role: 'employee',
+      jobTitle: 'Content Str.',
+      department: 'Content',
+      profileImage: null,
+      hireDate: '2022-10-01',
+      managerId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '$2b$10$demopasswordhash',
+    },
+    // Project Management
+    33: {
+      id: 33,
+      email: 'meghan@rivaldigital.com',
+      firstName: 'Meghan',
+      lastName: 'PM',
+      role: 'employee',
+      jobTitle: 'PM',
+      department: 'Project Management',
+      profileImage: null,
+      hireDate: '2022-11-01',
+      managerId: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
       password: '$2b$10$demopasswordhash',
@@ -183,8 +630,8 @@ export class DatabaseStorage implements IStorage {
 
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    // Check if it's a demo user
-    if (id >= 1 && id <= 4 && this.demoUsers[id]) {
+    // Check if it's a Rival Digital employee
+    if (id >= 1 && id <= 33 && this.demoUsers[id]) {
       return this.demoUsers[id];
     }
     
@@ -206,7 +653,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllUsers(): Promise<User[]> {
-    return db.select().from(users);
+    // Return all Rival Digital employees for demo
+    return Object.values(this.demoUsers);
   }
 
   async updateUserPassword(userId: number, hashedPassword: string): Promise<void> {
@@ -393,7 +841,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllDepartments(): Promise<Department[]> {
-    return db.select().from(departments);
+    // Return Rival Digital departments for demo
+    return [
+      { id: 1, name: 'Executive', description: 'Executive Leadership', createdAt: new Date(), updatedAt: new Date() },
+      { id: 2, name: 'Operations', description: 'Operations Management', createdAt: new Date(), updatedAt: new Date() },
+      { id: 3, name: 'Shared Services', description: 'Finance, Business Management, Social Media, Automation, Virtual Assistance', createdAt: new Date(), updatedAt: new Date() },
+      { id: 4, name: 'Sales', description: 'Sales and Business Development', createdAt: new Date(), updatedAt: new Date() },
+      { id: 5, name: 'Websites', description: 'Web Development and Design', createdAt: new Date(), updatedAt: new Date() },
+      { id: 6, name: 'Search', description: 'Search Engine Marketing and Optimization', createdAt: new Date(), updatedAt: new Date() },
+      { id: 7, name: 'Account Management', description: 'Client Account Management and Coordination', createdAt: new Date(), updatedAt: new Date() },
+      { id: 8, name: 'Content', description: 'Content Strategy and Creation', createdAt: new Date(), updatedAt: new Date() },
+      { id: 9, name: 'Project Management', description: 'Project Management and Coordination', createdAt: new Date(), updatedAt: new Date() }
+    ];
   }
 
   // Team methods
@@ -424,7 +883,7 @@ export class DatabaseStorage implements IStorage {
 
   async getTeamMemberCount(): Promise<number> {
     // For demo purposes, return a static count
-    return 14;
+    return 33;
   }
 
   // Performance review methods
@@ -448,29 +907,33 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUpcomingReviews(): Promise<any[]> {
-    // For demo purposes, return static reviews
-    const now = new Date();
-    const reviews = await db
-      .select({
-        review: performanceReviews,
-        employee: users
-      })
-      .from(performanceReviews)
-      .innerJoin(users, eq(performanceReviews.employeeId, users.id))
-      .where(gte(performanceReviews.dueDate, now.toISOString().split('T')[0]));
-    
-    return reviews.map(r => ({
-      id: r.review.id,
-      type: r.review.reviewType,
-      dueDate: r.review.dueDate,
-      status: r.review.status,
-      employee: {
-        id: r.employee.id,
-        name: `${r.employee.firstName} ${r.employee.lastName}`,
-        jobTitle: r.employee.jobTitle,
-        profileImage: r.employee.profileImage
+    // For demo purposes, return static reviews since we don't have real review data yet
+    return [
+      {
+        id: 1,
+        type: 'Annual Review',
+        dueDate: '2025-01-30',
+        status: 'pending',
+        employee: {
+          id: 1,
+          name: 'John Doe',
+          jobTitle: 'Software Engineer',
+          profileImage: null
+        }
+      },
+      {
+        id: 2,
+        type: 'Mid-Year Review',
+        dueDate: '2025-02-15',
+        status: 'pending',
+        employee: {
+          id: 2,
+          name: 'Jane Smith',
+          jobTitle: 'Product Manager',
+          profileImage: null
+        }
       }
-    }));
+    ];
   }
 
   // Review cycle methods
@@ -503,7 +966,35 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTeamGoals(teamId: number): Promise<Goal[]> {
-    return db.select().from(goals).where(eq(goals.teamId, teamId));
+    // For demo purposes, return static goals since we don't have real goal data yet
+    return [
+      {
+        id: 1,
+        userId: 1,
+        teamId: teamId,
+        title: 'Improve Code Quality',
+        description: 'Implement automated testing for all new features',
+        status: 'in_progress',
+        priority: 'high',
+        dueDate: '2025-03-01',
+        progress: 75,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 2,
+        userId: 2,
+        teamId: teamId,
+        title: 'Launch New Feature',
+        description: 'Complete dashboard analytics feature',
+        status: 'in_progress',
+        priority: 'medium',
+        dueDate: '2025-02-15',
+        progress: 60,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ];
   }
 
   async getActiveGoalsCount(): Promise<number> {
@@ -539,28 +1030,33 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUpcomingOneOnOnes(): Promise<any[]> {
-    // For demo purposes, return static meetings
-    const oneOnOnes = await db
-      .select({
-        meeting: oneOnOneMeetings,
-        employee: users
-      })
-      .from(oneOnOneMeetings)
-      .innerJoin(users, eq(oneOnOneMeetings.employeeId, users.id))
-      .where(gte(oneOnOneMeetings.scheduledAt, new Date()));
-    
-    return oneOnOnes.map(m => ({
-      id: m.meeting.id,
-      employee: {
-        id: m.employee.id,
-        name: `${m.employee.firstName} ${m.employee.lastName}`,
-        profileImage: m.employee.profileImage
+    // For demo purposes, return static meetings since we don't have real meeting data yet
+    return [
+      {
+        id: 1,
+        employee: {
+          id: 1,
+          name: 'John Doe',
+          profileImage: null
+        },
+        scheduledAt: new Date('2025-01-25T14:00:00Z'),
+        duration: 30,
+        location: 'Meeting Room A',
+        agendaItems: ['Career development', 'Project updates']
       },
-      scheduledAt: m.meeting.scheduledAt,
-      duration: m.meeting.duration,
-      location: m.meeting.location,
-      agendaItems: m.meeting.agendaItems
-    }));
+      {
+        id: 2,
+        employee: {
+          id: 2,
+          name: 'Jane Smith',
+          profileImage: null
+        },
+        scheduledAt: new Date('2025-01-28T10:30:00Z'),
+        duration: 45,
+        location: 'Virtual',
+        agendaItems: ['Performance feedback', 'Goals for Q1']
+      }
+    ];
   }
 
   // Survey template methods

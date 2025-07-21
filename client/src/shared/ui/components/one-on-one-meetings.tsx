@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import { useUpcomingOneOnOnes } from "@/shared/api/hooks";
 import type { OneOnOneMeeting } from "@shared/schema";
 
 // Sample 1:1 meeting data
@@ -47,11 +46,15 @@ const sampleMeetings: OneOnOneMeeting[] = [
   }
 ];
 
-export function OneOnOneMeetings() {
-  const { data: apiMeetings, isLoading, error } = useUpcomingOneOnOnes();
-  
-  // Use sample data for visual representation
-  const meetings = (apiMeetings && apiMeetings.length > 0) ? apiMeetings : sampleMeetings;
+interface OneOnOneMeetingsProps {
+  meetings?: any[];
+  isLoading?: boolean;
+  error?: Error | null;
+}
+
+export function OneOnOneMeetings({ meetings: propMeetings, isLoading = false, error = null }: OneOnOneMeetingsProps) {
+  // Use meetings from props (passed from dashboard) or fall back to sample data
+  const meetings = (propMeetings && propMeetings.length > 0) ? propMeetings : sampleMeetings;
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -81,7 +84,9 @@ export function OneOnOneMeetings() {
         {isLoading ? (
           <div className="py-4 text-center text-neutral-500">Loading meetings...</div>
         ) : error ? (
-          <div className="py-4 text-center text-red-500">Error loading meetings</div>
+          <div className="py-4 text-center text-red-500">
+            {error.message || 'Error loading meetings'}
+          </div>
         ) : meetings && meetings.length > 0 ? (
           <div className="space-y-4">
             {meetings.map((meeting) => (
@@ -96,7 +101,7 @@ export function OneOnOneMeetings() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-sm font-medium text-neutral-800">1:1 with Employee {meeting.employeeId}</h3>
-                  <p className="text-xs text-neutral-500 mt-1">{formatDateTime(meeting.scheduledAt.toISOString())}</p>
+                  <p className="text-xs text-neutral-500 mt-1">{formatDateTime(typeof meeting.scheduledAt === 'string' ? meeting.scheduledAt : meeting.scheduledAt.toISOString())}</p>
                   <div className="flex items-center mt-2">
                     <span className="px-2 py-0.5 text-xs rounded-full bg-secondary text-primary">
                       {(meeting.agendaItems && Array.isArray(meeting.agendaItems) && meeting.agendaItems.length > 0) ? 'Has Agenda' : 'No Agenda'}

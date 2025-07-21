@@ -19,18 +19,8 @@ export function Auth0RouteGuard({
 }: Auth0RouteGuardProps) {
   const { isAuthenticated, isLoading, user } = useAuth();
   
-  console.log("🔐 Auth0RouteGuard: Starting with", {
-    requireAuth,
-    isAuthenticated,
-    isLoading,
-    user: user ? `${user.firstName} ${user.lastName}` : 'null',
-    fallbackUrl,
-    requiredRoles
-  });
-
   // Show loading spinner while checking authentication status
   if (isLoading) {
-    console.log("🔐 Auth0RouteGuard: Showing loading spinner");
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -43,7 +33,6 @@ export function Auth0RouteGuard({
 
   // Check authentication requirement
   if (requireAuth && !isAuthenticated) {
-    console.log("🔐 Auth0RouteGuard: User not authenticated, redirecting to", fallbackUrl);
     onNavigate(fallbackUrl);
     return null;
   }
@@ -69,7 +58,6 @@ export function Auth0RouteGuard({
     }
   }
 
-  console.log("🔐 Auth0RouteGuard: All checks passed, rendering children");
   return <>{children}</>;
 }
 

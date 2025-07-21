@@ -7,9 +7,6 @@ import { TooltipProvider } from "@/shared/ui/components/tooltip";
 import { Toaster } from "@/shared/ui/components/toaster";
 import { Auth0ProviderWrapper } from "@/features/auth/components/auth0-provider";
 
-console.log("🏁 main.tsx: Starting application render");
-
-console.log("🏁 main.tsx: About to render App component");
 
 createRoot(document.getElementById("root")!).render(
   <Auth0ProviderWrapper>
@@ -22,4 +19,3 @@ createRoot(document.getElementById("root")!).render(
   </Auth0ProviderWrapper>
 );
 
-console.log("🏁 main.tsx: Application render setup complete");

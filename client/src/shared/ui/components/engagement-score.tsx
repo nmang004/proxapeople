@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { Separator } from "@/components/ui/separator";
-import { useTeamEngagement } from "@/shared/api/hooks";
 import type { EngagementData } from "@/shared/types/types";
 
 // Sample engagement data for better visual representation
@@ -16,9 +15,13 @@ const sampleEngagementData: EngagementData = {
   ]
 };
 
-export function EngagementScore() {
-  const { data, isLoading, error } = useTeamEngagement();
+interface EngagementScoreProps {
+  data?: EngagementData;
+  isLoading?: boolean;
+  error?: Error | null;
+}
 
+export function EngagementScore({ data, isLoading = false, error = null }: EngagementScoreProps) {
   // Use sample data for visual representation
   const engagementData = data?.overall ? data : sampleEngagementData;
   const score = engagementData.overall;
@@ -39,7 +42,9 @@ export function EngagementScore() {
         {isLoading ? (
           <div className="py-4 text-center text-neutral-500">Loading engagement data...</div>
         ) : error ? (
-          <div className="py-4 text-center text-red-500">Error loading engagement data</div>
+          <div className="py-4 text-center text-red-500">
+            {error.message || 'Error loading engagement data'}
+          </div>
         ) : (
           <>
             <div className="flex justify-center mb-4">

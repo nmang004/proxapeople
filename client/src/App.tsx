@@ -1,6 +1,18 @@
 import { Switch, Route, useLocation } from "wouter";
 import { useEffect } from "react";
 import HomePage from "@/pages/home";
+import FeaturesPage from "@/pages/features";
+import PricingPage from "@/pages/pricing";
+import IntegrationsPage from "@/pages/integrations";
+import UpdatesPage from "@/pages/updates";
+import AboutPage from "@/pages/about";
+import BlogPage from "@/pages/blog";
+import CareersPage from "@/pages/careers";
+import ContactPage from "@/pages/contact";
+import HelpPage from "@/pages/help";
+import SecurityPage from "@/pages/security";
+import StatusPage from "@/pages/status";
+import PrivacyPage from "@/pages/privacy";
 import Dashboard from "@/pages/(app)/dashboard";
 import EmployeeDirectory from "@/pages/(app)/employee-directory";
 import OrgChart from "@/pages/(app)/org-chart";
@@ -18,11 +30,7 @@ import { Auth0LoginPage } from "@/features/auth/components/auth0-login";
 import { Auth0Callback } from "@/features/auth/components/auth0-callback";
 
 function App() {
-  console.log("🚀 App.tsx: Component starting to render");
-  
   const [, setLocation] = useLocation();
-  
-  console.log("🚀 App.tsx: About to render Switch component");
   
   return (
     <div className="min-h-screen bg-white">
@@ -30,6 +38,42 @@ function App() {
         {/* Public Routes */}
         <Route path="/">
           <HomePage />
+        </Route>
+        <Route path="/features">
+          <FeaturesPage />
+        </Route>
+        <Route path="/pricing">
+          <PricingPage />
+        </Route>
+        <Route path="/integrations">
+          <IntegrationsPage />
+        </Route>
+        <Route path="/updates">
+          <UpdatesPage />
+        </Route>
+        <Route path="/about">
+          <AboutPage />
+        </Route>
+        <Route path="/blog">
+          <BlogPage />
+        </Route>
+        <Route path="/careers">
+          <CareersPage />
+        </Route>
+        <Route path="/contact">
+          <ContactPage />
+        </Route>
+        <Route path="/help">
+          <HelpPage />
+        </Route>
+        <Route path="/security">
+          <SecurityPage />
+        </Route>
+        <Route path="/status">
+          <StatusPage />
+        </Route>
+        <Route path="/privacy">
+          <PrivacyPage />
         </Route>
         <Route path="/login">
           <Auth0LoginPage />

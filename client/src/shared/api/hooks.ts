@@ -6,6 +6,7 @@ import {
   UseMutationOptions,
   QueryKey,
 } from '@tanstack/react-query';
+import { useAuth } from '@/app/store/auth0-store';
 import { 
   User,
   Department,
@@ -124,17 +125,20 @@ export const queryKeys = {
 // Hook factory for creating typed hooks
 function createQueryHook<TData, TError = ApiError>(
   keyFactory: (...args: any[]) => QueryKey,
-  queryFn: (...args: any[]) => Promise<TData>
+  queryFn: (...args: any[]) => Promise<TData>,
+  requiresAuth: boolean = true
 ) {
   return (
     ...args: Parameters<typeof keyFactory>
   ) => {
+    const { isAuthenticated, isLoading: authLoading } = requiresAuth ? useAuth() : { isAuthenticated: true, isLoading: false };
     const options = args[args.length - 1] as UseQueryOptions<TData, TError> | undefined;
     const queryArgs = options ? args.slice(0, -1) : args;
     
     return useQuery<TData, TError>({
       queryKey: keyFactory(...queryArgs),
       queryFn: () => queryFn(...queryArgs),
+      enabled: requiresAuth ? isAuthenticated && !authLoading && (options?.enabled !== false) : (options?.enabled !== false),
       ...options,
     });
   };
@@ -425,20 +429,6 @@ export const useDashboardData = createQueryHook(
   () => api.analytics.dashboardData.execute()
 );
 
-export const useTeamEngagement = createQueryHook(
-  queryKeys.analytics.dashboard,
-  () => api.analytics.dashboardData.execute().then(res => res.teamEngagement)
-);
-
-export const useTeamPerformance = createQueryHook(
-  queryKeys.analytics.dashboard,
-  () => api.analytics.dashboardData.execute().then(res => res.teamPerformance)
-);
-
-export const useUpcomingReviews = createQueryHook(
-  queryKeys.analytics.dashboard,
-  () => api.analytics.dashboardData.execute().then(res => res.upcomingReviews)
-);
 
 export const useUpcomingOneOnOnes = createQueryHook(
   queryKeys.analytics.dashboard,

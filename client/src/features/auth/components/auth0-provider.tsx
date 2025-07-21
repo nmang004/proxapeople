@@ -11,12 +11,6 @@ export function Auth0ProviderWrapper({ children }: Auth0ProviderWrapperProps) {
   const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
   const redirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI || `${window.location.origin}/callback`;
 
-  console.log('🔐 Auth0Provider config:', {
-    domain,
-    clientId,
-    audience,
-    redirectUri,
-  });
 
   if (!domain || !clientId) {
     console.error('Auth0 configuration missing. Please check your environment variables.');

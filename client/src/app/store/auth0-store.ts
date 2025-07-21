@@ -2,6 +2,8 @@ import React from 'react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { TokenManager } from '../../shared/auth/token-manager';
 
 // User interface matching the backend
 export interface User {
@@ -144,6 +146,8 @@ export function useAuth() {
     syncUserProfile,
   } = useAuth0Store();
 
+  const queryClient = useQueryClient();
+
   // Combined loading state
   const isLoading = auth0Loading || storeLoading;
 
@@ -164,17 +168,74 @@ export function useAuth() {
     });
   };
 
+  // Set token immediately when authenticated, regardless of user sync status
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      console.log('🔐 Auth0Store: User is authenticated, getting access token...');
+      getAccessTokenSilently()
+        .then(accessToken => {
+          console.log('✅ Auth0Store: Got Auth0 token:', accessToken.substring(0, 50) + '...');
+          try {
+            const tokenPayload = JSON.parse(atob(accessToken.split('.')[1]));
+            console.log('🔑 Auth0Store: Token payload preview:', {
+              aud: tokenPayload.aud,
+              exp: new Date(tokenPayload.exp * 1000).toISOString(),
+              iat: new Date(tokenPayload.iat * 1000).toISOString(),
+              sub: tokenPayload.sub
+            });
+          } catch (e) {
+            console.warn('⚠️ Auth0Store: Could not parse token payload:', e);
+          }
+          TokenManager.setToken(accessToken);
+          console.log('📤 Auth0Store: Token stored in TokenManager, invalidating queries...');
+          // Invalidate and refetch all queries when token becomes available
+          queryClient.invalidateQueries();
+        })
+        .catch(error => {
+          console.error('❌ Auth0Store: Failed to get access token for API calls:', error);
+          TokenManager.clearToken();
+        });
+    } else {
+      console.log('🚫 Auth0Store: User not authenticated, clearing token');
+    }
+  }, [isAuthenticated, getAccessTokenSilently, queryClient]);
+
   // Initialize user profile when Auth0 authentication is complete
   React.useEffect(() => {
     if (isAuthenticated && auth0User && !user && !storeLoading) {
       getAccessTokenSilently()
-        .then(accessToken => syncUserProfile(auth0User, accessToken))
+        .then(accessToken => {
+          return syncUserProfile(auth0User, accessToken);
+        })
         .catch(error => {
           console.error('Failed to get access token:', error);
           setError('Failed to initialize user session');
         });
     }
   }, [isAuthenticated, auth0User, user, storeLoading, getAccessTokenSilently, syncUserProfile, setError]);
+
+  // Clear token when user logs out
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      TokenManager.clearToken();
+    }
+  }, [isAuthenticated]);
+
+  // Helper function to refresh and store tokens
+  const refreshAndStoreToken = React.useCallback(async () => {
+    if (isAuthenticated) {
+      try {
+        const token = await getAccessTokenSilently();
+        TokenManager.setToken(token);
+        return token;
+      } catch (error) {
+        console.error('Failed to refresh access token:', error);
+        TokenManager.clearToken();
+        throw error;
+      }
+    }
+    return null;
+  }, [isAuthenticated, getAccessTokenSilently]);
 
   return {
     // State
@@ -190,5 +251,6 @@ export function useAuth() {
     
     // Auth0 specific
     getAccessToken: getAccessTokenSilently,
+    refreshAndStoreToken,
   };
 }

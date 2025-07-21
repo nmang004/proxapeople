@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/app/store/auth0-store";
 import { Helmet } from 'react-helmet';
+import type { EngagementData } from "@/shared/types/types";
+import { useDashboardData } from "@/shared/api/useDashboardData";
 import { StatsCards } from "@/shared/ui/components/stats-cards";
 import { TeamPerformance } from "@/shared/ui/components/team-performance";
 import { UpcomingReviews } from "@/shared/ui/components/upcoming-reviews";
@@ -16,11 +18,7 @@ import { NewSurveyDialog } from "@/shared/ui/components/new-survey-dialog";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
-
-  // Fetch dashboard data
-  const { data: dashboardData, isLoading } = useQuery({
-    queryKey: ['/api/dashboard'],
-  });
+  const { data: dashboardData, isLoading, error } = useDashboardData();
 
   // Mock stats data
   const stats = {
@@ -78,29 +76,49 @@ export default function Dashboard() {
 
             <TabsContent value="overview" className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <EngagementScore />
-                <TeamPerformance />
+                <EngagementScore 
+                  data={dashboardData?.teamEngagement as EngagementData} 
+                  isLoading={isLoading} 
+                  error={error}
+                />
+                <TeamPerformance 
+                  data={dashboardData?.teamPerformance as any} 
+                  isLoading={isLoading} 
+                  error={error}
+                />
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <UpcomingReviews />
-                <OneOnOneMeetings />
+                <UpcomingReviews 
+                  data={dashboardData?.upcomingReviews as any[]} 
+                  isLoading={isLoading} 
+                  error={error}
+                />
+                <OneOnOneMeetings meetings={dashboardData?.upcomingOneOnOnes} isLoading={isLoading} error={error} />
               </div>
             </TabsContent>
 
             <TabsContent value="performance" className="space-y-6">
               <div className="grid grid-cols-1 gap-6">
-                <TeamPerformance />
-                <EngagementScore />
+                <TeamPerformance 
+                  data={dashboardData?.teamPerformance as any} 
+                  isLoading={isLoading} 
+                  error={error}
+                />
+                <EngagementScore 
+                  data={dashboardData?.teamEngagement as EngagementData} 
+                  isLoading={isLoading} 
+                  error={error}
+                />
               </div>
             </TabsContent>
 
             <TabsContent value="goals" className="space-y-6">
-              <TeamGoals />
+              <TeamGoals goals={dashboardData?.teamGoals as any} isLoading={isLoading} error={error} />
             </TabsContent>
 
             <TabsContent value="meetings" className="space-y-6">
-              <OneOnOneMeetings />
+              <OneOnOneMeetings meetings={dashboardData?.upcomingOneOnOnes as any} isLoading={isLoading} error={error} />
             </TabsContent>
           </Tabs>
         </div>

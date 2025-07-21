@@ -1,7 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUpcomingReviews } from "@/shared/api/hooks";
 import type { ReviewStatus } from "@/shared/types/types";
+import { ErrorMessage } from "@/shared/ui/components/error-message";
+import { Spinner } from "@/shared/ui/components/spinner";
 
 interface Employee {
   id: number;
@@ -58,11 +59,15 @@ const sampleReviews: Review[] = [
   }
 ];
 
-export function UpcomingReviews() {
-  const { data: apiReviews, isLoading, error } = useUpcomingReviews();
-  
+interface UpcomingReviewsProps {
+  data?: Review[];
+  isLoading?: boolean;
+  error?: Error | null;
+}
+
+export function UpcomingReviews({ data, isLoading = false, error = null }: UpcomingReviewsProps) {
   // Use sample data for visual representation
-  const reviews = apiReviews?.length ? apiReviews : sampleReviews;
+  const reviews = data?.length ? data : sampleReviews;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -91,10 +96,18 @@ export function UpcomingReviews() {
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="overflow-hidden -mx-5">
-          <div className="align-middle inline-block min-w-full">
-            <div className="shadow overflow-hidden border-b border-neutral-200">
-              <table className="min-w-full divide-y divide-neutral-200">
+        {error ? (
+          <div className="p-6">
+            <ErrorMessage 
+              title="Failed to load reviews"
+              message={error.message || "Unable to fetch upcoming reviews. Please try again later."}
+            />
+          </div>
+        ) : (
+          <div className="overflow-hidden -mx-5">
+            <div className="align-middle inline-block min-w-full">
+              <div className="shadow overflow-hidden border-b border-neutral-200">
+                <table className="min-w-full divide-y divide-neutral-200">
                 <thead className="bg-neutral-50">
                   <tr>
                     <th scope="col" className="px-5 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Employee</th>
@@ -107,14 +120,8 @@ export function UpcomingReviews() {
                 <tbody className="bg-white divide-y divide-neutral-200">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={5} className="px-5 py-4 text-center text-sm text-neutral-500">
-                        Loading reviews...
-                      </td>
-                    </tr>
-                  ) : error ? (
-                    <tr>
-                      <td colSpan={5} className="px-5 py-4 text-center text-sm text-red-500">
-                        Error loading reviews
+                      <td colSpan={5} className="px-5 py-8">
+                        <Spinner className="mx-auto" />
                       </td>
                     </tr>
                   ) : reviews && reviews.length > 0 ? (
@@ -172,6 +179,7 @@ export function UpcomingReviews() {
             </div>
           </div>
         </div>
+        )}
       </CardContent>
     </Card>
   );

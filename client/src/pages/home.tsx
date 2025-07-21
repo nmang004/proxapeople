@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { Button } from "@/shared/ui/components/button";
-import LogoIconPurplePath from "@assets/LogoIcon_Purple.png";
+import { PublicHeader } from "@/shared/ui/components/public-header";
+import { PublicFooter } from "@/shared/ui/components/public-footer";
 import DashboardScreenshotPath from "@assets/dashtest.png";
 
 // Hero Section Component
@@ -240,31 +241,7 @@ export default function HomePage() {
         <meta name="description" content="Proxa's unified people management platform simplifies performance reviews, goal setting, and employee engagement with powerful tools designed for both HR teams and managers." />
       </Helmet>
       
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/dashboard">
-            <div className="flex items-center gap-2 cursor-pointer">
-              <img src={LogoIconPurplePath} alt="Proxa People Logo" className="h-8 w-8" />
-              <span className="font-heading text-xl font-bold">Proxa People</span>
-            </div>
-          </Link>
-          
-          <nav className="hidden md:flex space-x-6">
-            <a href="#features" className="text-sm font-medium text-neutral-600 hover:text-primary">Features</a>
-            <a href="#pricing" className="text-sm font-medium text-neutral-600 hover:text-primary">Pricing</a>
-          </nav>
-          
-          <div className="flex items-center space-x-3">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm">Sign In</Button>
-            </Link>
-            <Link href="/dashboard">
-              <Button size="sm">Get Started</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PublicHeader />
 
       <main>
         <HeroSection />
@@ -273,54 +250,7 @@ export default function HomePage() {
         <CTASection />
       </main>
 
-      {/* Footer */}
-      <footer className="bg-neutral-800 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <img src={LogoIconPurplePath} alt="Proxa People Logo" className="h-6 w-6" />
-                <span className="font-heading text-lg font-bold">Proxa People</span>
-              </div>
-              <p className="text-neutral-400 text-sm">
-                The people management platform that drives success.
-              </p>
-            </div>
-            
-            {[
-              {
-                title: "Product",
-                links: ["Features", "Pricing", "Integrations", "Updates"]
-              },
-              {
-                title: "Company", 
-                links: ["About", "Blog", "Careers", "Contact"]
-              },
-              {
-                title: "Support",
-                links: ["Help Center", "Security", "Status", "Privacy"]
-              }
-            ].map((section) => (
-              <div key={section.title}>
-                <h3 className="font-semibold mb-4">{section.title}</h3>
-                <ul className="space-y-2">
-                  {section.links.map((link) => (
-                    <li key={link}>
-                      <a href="#" className="text-neutral-400 hover:text-white text-sm">
-                        {link}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          
-          <div className="border-t border-neutral-700 mt-8 pt-8 text-center text-neutral-400 text-sm">
-            © 2025 Proxa People. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </>
   );
 }

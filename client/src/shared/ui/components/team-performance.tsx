@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useTeamPerformance } from "@/shared/api/hooks";
+import { EmptyState } from "@/shared/ui/components/empty-state";
+import { Spinner } from "@/shared/ui/components/spinner";
+import { ErrorMessage } from "@/shared/ui/components/error-message";
+import { TrendingUp } from "lucide-react";
 
 type TimeRange = 'monthly' | 'quarterly';
 
@@ -36,15 +39,19 @@ const mockPerformanceData = {
   ]
 };
 
-export function TeamPerformance() {
-  const [timeRange, setTimeRange] = useState<TimeRange>('quarterly');
-  
-  const { data, isLoading, error } = useTeamPerformance();
+interface TeamPerformanceProps {
+  data?: PerformanceData;
+  isLoading?: boolean;
+  error?: Error | null;
+}
 
-  // Use mock data for visual presentation until the API provides real data
-  const performanceData = timeRange === 'quarterly' 
+export function TeamPerformance({ data, isLoading = false, error = null }: TeamPerformanceProps) {
+  const [timeRange, setTimeRange] = useState<TimeRange>('quarterly');
+
+  // Use actual data if available, otherwise fall back to mock data
+  const performanceData = data?.[timeRange] || (timeRange === 'quarterly' 
     ? mockPerformanceData.quarterly 
-    : mockPerformanceData.monthly.slice(0, 6);
+    : mockPerformanceData.monthly.slice(0, 6));
 
   return (
     <div className="h-full overflow-hidden">
@@ -78,12 +85,19 @@ export function TeamPerformance() {
         
         {isLoading ? (
           <div className="flex justify-center items-center h-48">
-            <p className="text-neutral-500">Loading performance data...</p>
+            <Spinner size="lg" />
           </div>
         ) : error ? (
-          <div className="flex justify-center items-center h-48">
-            <p className="text-red-500">Error loading performance data</p>
-          </div>
+          <ErrorMessage 
+            title="Failed to load performance data"
+            message={error.message || "Unable to fetch team performance trends. Please try again later."}
+          />
+        ) : performanceData.length === 0 ? (
+          <EmptyState
+            icon={<TrendingUp className="h-12 w-12" />}
+            title="No performance data available"
+            description="Performance trends will appear here once data is collected."
+          />
         ) : (
           <>
             {/* Chart */}
