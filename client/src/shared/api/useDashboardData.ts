@@ -5,6 +5,12 @@ import { TokenManager } from "../auth/token-manager";
 import { analytics } from "./endpoints";
 
 interface DashboardData {
+  stats?: {
+    teamCount?: number;
+    reviewsInProgress?: number;
+    activeGoals?: number;
+    engagementScore?: number;
+  };
   teamEngagement?: any;
   teamPerformance?: any;
   upcomingReviews?: any[];
@@ -66,6 +72,7 @@ export function useDashboardData(): UseDashboardDataReturn {
     queryFn: async () => {
       console.log('📊 useDashboardData: Making API call for dashboard data');
       const response = await analytics.dashboardData.execute();
+      console.log('📊 useDashboardData: API response received:', response);
       // Backend returns the data directly, not wrapped in another object
       return response;
     },
