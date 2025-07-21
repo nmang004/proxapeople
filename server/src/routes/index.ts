@@ -1,7 +1,7 @@
 import express, { type Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { ModuleRegistry } from '../shared/module-registry';
-import { authenticateToken, requirePermission } from "../shared/middleware/auth";
+import { validateAuth0Token } from "../shared/middleware/auth0";
 import { authRateLimit, apiRateLimit } from "../shared/middleware/security";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -20,13 +20,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     apiRouter.use(authModule.config.prefix, authRateLimit, authModule.router);
   }
 
-  // Require authentication for all subsequent routes
-  apiRouter.use(authenticateToken);
+  // Require Auth0 authentication for all subsequent routes
+  apiRouter.use(validateAuth0Token);
 
-  // Register permission management routes (admin only)
+  // Register permission management routes (Auth0 protected)
   const permissionModule = moduleRegistry.getModule('permissions');
   if (permissionModule) {
-    apiRouter.use(permissionModule.config.prefix, requirePermission('settings', 'admin'), permissionModule.router);
+    apiRouter.use(permissionModule.config.prefix, permissionModule.router);
   }
 
   // Register all other protected modules

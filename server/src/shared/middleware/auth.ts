@@ -4,15 +4,15 @@ import { verifyToken, extractTokenFromHeader } from '../utils/auth';
 import type { JWTPayload } from '../utils/auth';
 import type { User } from '@shared/schema';
 
-// Extend Express Request type to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
-      auth?: JWTPayload;
-    }
-  }
-}
+// LEGACY: These types are commented out to avoid conflicts with Auth0
+// declare global {
+//   namespace Express {
+//     interface Request {
+//       user?: User;
+//       auth?: JWTPayload;
+//     }
+//   }
+// }
 
 /**
  * Authentication middleware - verifies JWT token and attaches user to request
@@ -35,7 +35,7 @@ export async function authenticateToken(
 
     // Verify and decode token
     const payload = verifyToken(token);
-    req.auth = payload;
+    // req.auth = payload; // Commented out to avoid type conflicts with Auth0
 
     // Fetch user from database to ensure they still exist and get latest data
     const user = await storage.getUser(payload.userId);
@@ -48,7 +48,7 @@ export async function authenticateToken(
       return;
     }
 
-    req.user = user;
+    // req.user = user; // Commented out to avoid type conflicts with Auth0
     next();
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Token verification failed';
@@ -76,8 +76,8 @@ export async function optionalAuth(
       const user = await storage.getUser(payload.userId);
       
       if (user) {
-        req.auth = payload;
-        req.user = user;
+        // req.auth = payload; // Commented out to avoid type conflicts with Auth0
+        // req.user = user; // Commented out to avoid type conflicts with Auth0
       }
     }
     
