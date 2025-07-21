@@ -24,13 +24,8 @@ export function useDashboardData(): UseDashboardDataReturn {
     queryKey: ['dashboard'],
     queryFn: async () => {
       const response = await analytics.dashboardData.execute();
-      return {
-        teamEngagement: response.teamEngagement,
-        teamPerformance: response.teamPerformance,
-        upcomingReviews: response.upcomingReviews,
-        upcomingOneOnOnes: response.upcomingOneOnOnes,
-        teamGoals: response.teamGoals,
-      };
+      // Backend returns the data directly, not wrapped in another object
+      return response;
     },
     enabled: isAuthenticated && !authLoading,
     retry: 1,

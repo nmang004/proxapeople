@@ -134,6 +134,7 @@ export class ApiClient {
 
   constructor(baseUrl = '/api') {
     this.baseUrl = baseUrl;
+    console.log('🌐 API Client: Initialized with baseUrl:', this.baseUrl);
     this.defaultHeaders = {
       'Content-Type': 'application/json',
     };
@@ -172,24 +173,18 @@ export class ApiClient {
     const auth0Token = TokenManager.getToken();
     
     if (auth0Token) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔑 API Client: Using Auth0 token:', auth0Token.substring(0, 20) + '...');
-      }
+      console.log('🔑 API Client: Using Auth0 token:', auth0Token.substring(0, 20) + '...');
       return { Authorization: `Bearer ${auth0Token}` };
     }
     
     // Fallback to legacy token storage
     const token = storage.get(STORAGE_KEYS.ACCESS_TOKEN);
     if (token) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔑 API Client: Using legacy token:', token.substring(0, 20) + '...');
-      }
+      console.log('🔑 API Client: Using legacy token:', token.substring(0, 20) + '...');
       return { Authorization: `Bearer ${token}` };
     }
     
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('⚠️ API Client: No authentication token available');
-    }
+    console.warn('⚠️ API Client: No authentication token available');
     return {};
   }
 
@@ -255,6 +250,7 @@ export class ApiClient {
     } = config;
 
     const url = `${this.baseUrl}${endpoint}`;
+    console.log('🌐 API Client: Making request to:', url);
     
     // Build headers
     let requestHeaders = {
@@ -263,11 +259,15 @@ export class ApiClient {
     };
 
     if (!skipAuth) {
+      const authHeaders = this.getAuthHeader();
+      console.log('🔑 API Client: Auth headers to add:', authHeaders);
       requestHeaders = {
         ...requestHeaders,
-        ...this.getAuthHeader(),
+        ...authHeaders,
       };
     }
+
+    console.log('📤 API Client: Final request headers for', method, url, ':', requestHeaders);
 
     // Apply request interceptors
     let interceptedConfig: RequestConfig = { ...config, headers: requestHeaders };
@@ -288,11 +288,20 @@ export class ApiClient {
         headers: interceptedConfig.headers,
         signal: requestSignal,
         credentials: 'include',
+        mode: 'cors', // Explicitly set CORS mode
       };
 
       if (body && method !== 'GET') {
         requestInit.body = JSON.stringify(body);
       }
+
+      console.log('📡 API Client: Making fetch request with:', {
+        url,
+        method: requestInit.method,
+        hasAuthHeader: !!requestInit.headers?.['Authorization'],
+        authHeaderPreview: requestInit.headers?.['Authorization']?.substring(0, 50) + '...',
+        allHeaders: requestInit.headers,
+      });
 
       const response = await fetch(url, requestInit);
       clearTimeout(timeoutId);
@@ -451,7 +460,12 @@ export class ApiClient {
 }
 
 // Create default client instance
-export const apiClient = new ApiClient();
+const getApiBaseUrl = () => {
+  // Use relative URL so it works with any domain
+  return '/api';
+};
+
+export const apiClient = new ApiClient(getApiBaseUrl());
 
 // Export for convenience
 export default apiClient;

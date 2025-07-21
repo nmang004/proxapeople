@@ -170,35 +170,42 @@ export function useAuth() {
 
   // Set token immediately when authenticated, regardless of user sync status
   React.useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !auth0Loading) {
       console.log('🔐 Auth0Store: User is authenticated, getting access token...');
       getAccessTokenSilently()
         .then(accessToken => {
-          console.log('✅ Auth0Store: Got Auth0 token:', accessToken.substring(0, 50) + '...');
-          try {
-            const tokenPayload = JSON.parse(atob(accessToken.split('.')[1]));
-            console.log('🔑 Auth0Store: Token payload preview:', {
-              aud: tokenPayload.aud,
-              exp: new Date(tokenPayload.exp * 1000).toISOString(),
-              iat: new Date(tokenPayload.iat * 1000).toISOString(),
-              sub: tokenPayload.sub
-            });
-          } catch (e) {
-            console.warn('⚠️ Auth0Store: Could not parse token payload:', e);
+          const currentToken = TokenManager.getToken();
+          // Only update if token changed to prevent unnecessary invalidations
+          if (currentToken !== accessToken) {
+            console.log('✅ Auth0Store: Got new Auth0 token:', accessToken.substring(0, 50) + '...');
+            try {
+              const tokenPayload = JSON.parse(atob(accessToken.split('.')[1]));
+              console.log('🔑 Auth0Store: Token payload preview:', {
+                aud: tokenPayload.aud,
+                exp: new Date(tokenPayload.exp * 1000).toISOString(),
+                iat: new Date(tokenPayload.iat * 1000).toISOString(),
+                sub: tokenPayload.sub
+              });
+            } catch (e) {
+              console.warn('⚠️ Auth0Store: Could not parse token payload:', e);
+            }
+            TokenManager.setToken(accessToken);
+            console.log('📤 Auth0Store: Token stored in TokenManager, invalidating queries...');
+            // Small delay to ensure token is fully set before triggering API calls
+            setTimeout(() => {
+              queryClient.invalidateQueries();
+            }, 100);
           }
-          TokenManager.setToken(accessToken);
-          console.log('📤 Auth0Store: Token stored in TokenManager, invalidating queries...');
-          // Invalidate and refetch all queries when token becomes available
-          queryClient.invalidateQueries();
         })
         .catch(error => {
           console.error('❌ Auth0Store: Failed to get access token for API calls:', error);
           TokenManager.clearToken();
         });
-    } else {
+    } else if (!isAuthenticated) {
       console.log('🚫 Auth0Store: User not authenticated, clearing token');
+      TokenManager.clearToken();
     }
-  }, [isAuthenticated, getAccessTokenSilently, queryClient]);
+  }, [isAuthenticated, auth0Loading, getAccessTokenSilently, queryClient]);
 
   // Initialize user profile when Auth0 authentication is complete
   React.useEffect(() => {
