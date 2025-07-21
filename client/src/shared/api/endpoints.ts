@@ -481,24 +481,32 @@ export const analytics = {
       teamPerformance: unknown;
       teamEngagement: unknown;
     }> => {
-      const response = await apiClient.get('/dashboard', {
-        validateResponse: apiResponseSchema(z.object({
-          stats: z.record(z.unknown()),
-          upcomingReviews: z.array(z.unknown()),
-          teamGoals: z.array(z.unknown()),
-          upcomingOneOnOnes: z.array(z.unknown()),
-          teamPerformance: z.unknown(),
-          teamEngagement: z.unknown(),
-        })),
-      });
-      return response.data as {
-        stats: Record<string, unknown>;
-        upcomingReviews: unknown[];
-        teamGoals: unknown[];
-        upcomingOneOnOnes: unknown[];
-        teamPerformance: unknown;
-        teamEngagement: unknown;
-      };
+      console.log('📊 analytics.dashboardData: Starting API call to /dashboard');
+      try {
+        const response = await apiClient.get('/dashboard', {
+          validateResponse: apiResponseSchema(z.object({
+            stats: z.record(z.unknown()),
+            upcomingReviews: z.array(z.unknown()),
+            teamGoals: z.array(z.unknown()),
+            upcomingOneOnOnes: z.array(z.unknown()),
+            teamPerformance: z.unknown(),
+            teamEngagement: z.unknown(),
+          })),
+        });
+        console.log('📊 analytics.dashboardData: Raw API response:', response);
+        console.log('📊 analytics.dashboardData: Response data:', response.data);
+        return response.data as {
+          stats: Record<string, unknown>;
+          upcomingReviews: unknown[];
+          teamGoals: unknown[];
+          upcomingOneOnOnes: unknown[];
+          teamPerformance: unknown;
+          teamEngagement: unknown;
+        };
+      } catch (error) {
+        console.error('❌ analytics.dashboardData: API call failed:', error);
+        throw error;
+      }
     },
   },
 
