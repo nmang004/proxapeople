@@ -43,15 +43,15 @@ export default function Dashboard() {
       </Helmet>
 
       <PageTransition>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Header */}
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-heading font-semibold text-neutral-800">Dashboard</h1>
-              <p className="text-neutral-500 mt-1">Welcome back! Here's what's happening with your team.</p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl font-heading font-semibold text-neutral-800">Dashboard</h1>
+              <p className="text-sm sm:text-base text-neutral-500 mt-1">Welcome back! Here's what's happening with your team.</p>
             </div>
             
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 sm:gap-2">
               <NewReviewDialog />
               <ScheduleMeetingDialog />
               <NewSurveyDialog />
@@ -67,15 +67,15 @@ export default function Dashboard() {
 
           {/* Main Content Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="performance">Performance</TabsTrigger>
-              <TabsTrigger value="goals">Goals</TabsTrigger>
-              <TabsTrigger value="meetings">Meetings</TabsTrigger>
+            <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-auto">
+              <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+              <TabsTrigger value="performance" className="text-xs sm:text-sm">Performance</TabsTrigger>
+              <TabsTrigger value="goals" className="text-xs sm:text-sm">Goals</TabsTrigger>
+              <TabsTrigger value="meetings" className="text-xs sm:text-sm">Meetings</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <TabsContent value="overview" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <EngagementScore 
                   data={dashboardData?.teamEngagement as EngagementData} 
                   isLoading={isLoading} 
@@ -88,7 +88,7 @@ export default function Dashboard() {
                 />
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <UpcomingReviews 
                   data={dashboardData?.upcomingReviews as any[]} 
                   isLoading={isLoading} 
@@ -98,8 +98,8 @@ export default function Dashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="performance" className="space-y-6">
-              <div className="grid grid-cols-1 gap-6">
+            <TabsContent value="performance" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 <TeamPerformance 
                   data={dashboardData?.teamPerformance as any} 
                   isLoading={isLoading} 
@@ -113,11 +113,11 @@ export default function Dashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="goals" className="space-y-6">
+            <TabsContent value="goals" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
               <TeamGoals goals={dashboardData?.teamGoals as any} isLoading={isLoading} error={error} />
             </TabsContent>
 
-            <TabsContent value="meetings" className="space-y-6">
+            <TabsContent value="meetings" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
               <OneOnOneMeetings meetings={dashboardData?.upcomingOneOnOnes as any} isLoading={isLoading} error={error} />
             </TabsContent>
           </Tabs>

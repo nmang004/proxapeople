@@ -13,11 +13,12 @@ interface ChartContainerProps {
   description?: string;
   children: React.ReactNode;
   height?: number | string;
+  className?: string;
 }
 
-export function ChartContainer({ title, description, children, height = 300 }: ChartContainerProps) {
+export function ChartContainer({ title, description, children, height = 300, className }: ChartContainerProps) {
   return (
-    <Card className="shadow-sm">
+    <Card className={`shadow-sm ${className || ''}`}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}

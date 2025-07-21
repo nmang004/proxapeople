@@ -89,20 +89,20 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
 
   return (
     <div className={className}>
-      {/* Time Frame Selector */}
-      <div className="flex justify-between items-center mb-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="engagement">Engagement</TabsTrigger>
-            <TabsTrigger value="performance">Performance</TabsTrigger>
-            <TabsTrigger value="goals">Goals</TabsTrigger>
-            <TabsTrigger value="headcount">Headcount</TabsTrigger>
+      {/* Mobile-responsive Time Frame Selector */}
+      <div className="space-y-4 md:space-y-0 md:flex md:justify-between md:items-center mb-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-auto">
+            <TabsTrigger value="engagement" className="text-xs sm:text-sm">Engagement</TabsTrigger>
+            <TabsTrigger value="performance" className="text-xs sm:text-sm">Performance</TabsTrigger>
+            <TabsTrigger value="goals" className="text-xs sm:text-sm">Goals</TabsTrigger>
+            <TabsTrigger value="headcount" className="text-xs sm:text-sm">Headcount</TabsTrigger>
           </TabsList>
         </Tabs>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:space-x-2 md:gap-0">
           <Select value={timeFrame} onValueChange={setTimeFrame}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select time frame" />
             </SelectTrigger>
             <SelectContent>
@@ -112,9 +112,10 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
             </SelectContent>
           </Select>
           
-          <Button variant="outline">
-            <i className="ri-download-line mr-1"></i>
-            Export
+          <Button variant="outline" className="w-full sm:w-auto">
+            <i className="ri-download-line mr-2"></i>
+            <span className="hidden sm:inline">Export</span>
+            <span className="sm:hidden">Export Data</span>
           </Button>
         </div>
       </div>
@@ -147,23 +148,32 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
           <ChartContainer 
             title="Engagement Over Time" 
             description="Team engagement score trend"
-            height="320px"
+            height="280px"
+            className="min-h-[280px]"
           >
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={engagementData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                margin={{ top: 5, right: 15, left: 10, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="quarter" />
-                <YAxis domain={[0, 10]} />
+                <XAxis 
+                  dataKey="quarter" 
+                  fontSize={12}
+                  tickMargin={8}
+                />
+                <YAxis 
+                  domain={[0, 10]} 
+                  fontSize={12}
+                  width={40}
+                />
                 <Tooltip />
                 <Legend />
                 <Line 
                   type="monotone" 
                   dataKey="score" 
                   stroke="#8A4FFF" 
-                  activeDot={{ r: 8 }}
+                  activeDot={{ r: 6 }}
                   strokeWidth={2}
                 />
               </LineChart>
@@ -173,17 +183,27 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
           <ChartContainer 
             title="Department Engagement" 
             description="Engagement scores by department"
-            height="320px"
+            height="280px"
+            className="min-h-[280px]"
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={departmentEngagement}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                margin={{ top: 5, right: 15, left: 10, bottom: 5 }}
                 layout="vertical"
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 10]} />
-                <YAxis dataKey="name" type="category" width={100} />
+                <XAxis 
+                  type="number" 
+                  domain={[0, 10]} 
+                  fontSize={12}
+                />
+                <YAxis 
+                  dataKey="name" 
+                  type="category" 
+                  width={80}
+                  fontSize={10}
+                />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="score" fill="#8A4FFF">
@@ -273,50 +293,61 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
           <ChartContainer 
             title="Performance Distribution" 
             description="Employee rating distribution"
-            height="320px"
+            height="280px"
+            className="min-h-[280px]"
           >
-            <BarChart
-              data={[
-                { rating: '1.0-1.9', count: 3 },
-                { rating: '2.0-2.9', count: 15 },
-                { rating: '3.0-3.9', count: 55 },
-                { rating: '4.0-4.4', count: 47 },
-                { rating: '4.5-5.0', count: 30 },
-              ]}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="rating" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="count" name="Employees" fill="#8A4FFF" />
-            </BarChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { rating: '1.0-1.9', count: 3 },
+                  { rating: '2.0-2.9', count: 15 },
+                  { rating: '3.0-3.9', count: 55 },
+                  { rating: '4.0-4.4', count: 47 },
+                  { rating: '4.5-5.0', count: 30 },
+                ]}
+                margin={{ top: 5, right: 15, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="rating" 
+                  fontSize={12}
+                  tickMargin={8}
+                />
+                <YAxis fontSize={12} width={40} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="count" name="Employees" fill="#8A4FFF" />
+              </BarChart>
+            </ResponsiveContainer>
           </ChartContainer>
           
           <ChartContainer 
             title="Review Status" 
             description="Current review cycle progress"
-            height="320px"
+            height="280px"
+            className="min-h-[280px]"
           >
-            <PieChart>
-              <Pie
-                data={reviewCompletion}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={80}
-                fill="#8A4FFF"
-                dataKey="value"
-                label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
-              >
-                {reviewCompletion.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={reviewCompletion}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={60}
+                  fill="#8A4FFF"
+                  dataKey="value"
+                  label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  fontSize={11}
+                >
+                  {reviewCompletion.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </div>
       </TabsContent>
@@ -349,56 +380,72 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
           <ChartContainer 
             title="Goal Status" 
             description="Current goal progress across organization"
-            height="320px"
+            height="280px"
+            className="min-h-[280px]"
           >
-            <PieChart>
-              <Pie
-                data={goalProgress}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={80}
-                fill="#8A4FFF"
-                dataKey="value"
-                label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
-              >
-                {goalProgress.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={goalProgress}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={60}
+                  fill="#8A4FFF"
+                  dataKey="value"
+                  label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  fontSize={11}
+                >
+                  {goalProgress.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </ChartContainer>
           
           <ChartContainer 
             title="Department Goal Achievement" 
             description="Goal completion rate by department"
-            height="320px"
+            height="280px"
+            className="min-h-[280px]"
           >
-            <BarChart
-              data={[
-                { name: 'Engineering', rate: 72 },
-                { name: 'Marketing', rate: 68 },
-                { name: 'Product', rate: 81 },
-                { name: 'Design', rate: 76 },
-                { name: 'Sales', rate: 59 },
-                { name: 'Customer Success', rate: 63 },
-              ]}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              layout="vertical"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" domain={[0, 100]} />
-              <YAxis dataKey="name" type="category" width={100} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="rate" name="Goal Achievement %" fill="#8A4FFF">
-                {departmentEngagement.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { name: 'Engineering', rate: 72 },
+                  { name: 'Marketing', rate: 68 },
+                  { name: 'Product', rate: 81 },
+                  { name: 'Design', rate: 76 },
+                  { name: 'Sales', rate: 59 },
+                  { name: 'Customer Success', rate: 63 },
+                ]}
+                margin={{ top: 5, right: 15, left: 10, bottom: 5 }}
+                layout="vertical"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  type="number" 
+                  domain={[0, 100]} 
+                  fontSize={12}
+                />
+                <YAxis 
+                  dataKey="name" 
+                  type="category" 
+                  width={80}
+                  fontSize={10}
+                />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="rate" name="Goal Achievement %" fill="#8A4FFF">
+                  {departmentEngagement.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </div>
       </TabsContent>
@@ -431,55 +478,77 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
           <ChartContainer 
             title="Employee Turnover Trend" 
             description="Monthly turnover rate"
-            height="320px"
+            height="280px"
+            className="min-h-[280px]"
           >
-            <LineChart
-              data={turnoverData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis domain={[0, 5]} />
-              <Tooltip />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="rate" 
-                stroke="#8A4FFF" 
-                activeDot={{ r: 8 }}
-                strokeWidth={2}
-              />
-            </LineChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={turnoverData}
+                margin={{ top: 5, right: 15, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="month" 
+                  fontSize={12}
+                  tickMargin={8}
+                />
+                <YAxis 
+                  domain={[0, 5]} 
+                  fontSize={12}
+                  width={40}
+                />
+                <Tooltip />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="rate" 
+                  stroke="#8A4FFF" 
+                  activeDot={{ r: 6 }}
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </ChartContainer>
           
           <ChartContainer 
             title="Department Headcount" 
             description="Employee distribution by department"
-            height="320px"
+            height="280px"
+            className="min-h-[280px]"
           >
-            <BarChart
-              data={[
-                { name: 'Engineering', count: 42 },
-                { name: 'Marketing', count: 18 },
-                { name: 'Product', count: 24 },
-                { name: 'Design', count: 16 },
-                { name: 'Sales', count: 32 },
-                { name: 'Customer Success', count: 18 },
-              ]}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              layout="vertical"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={100} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="count" name="Employees" fill="#8A4FFF">
-                {departmentEngagement.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { name: 'Engineering', count: 42 },
+                  { name: 'Marketing', count: 18 },
+                  { name: 'Product', count: 24 },
+                  { name: 'Design', count: 16 },
+                  { name: 'Sales', count: 32 },
+                  { name: 'Customer Success', count: 18 },
+                ]}
+                margin={{ top: 5, right: 15, left: 10, bottom: 5 }}
+                layout="vertical"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  type="number" 
+                  fontSize={12}
+                />
+                <YAxis 
+                  dataKey="name" 
+                  type="category" 
+                  width={80}
+                  fontSize={10}
+                />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="count" name="Employees" fill="#8A4FFF">
+                  {departmentEngagement.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </div>
       </TabsContent>

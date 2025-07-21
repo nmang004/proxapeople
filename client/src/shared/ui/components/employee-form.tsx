@@ -274,22 +274,22 @@ export function EmployeeForm({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{initialData?.id ? 'Edit' : 'Add'} Employee</DialogTitle>
+      <DialogContent className="w-[95vw] max-w-[600px] max-h-[95vh] overflow-y-auto p-4 sm:p-6">
+        <DialogHeader className="pb-4">
+          <DialogTitle className="text-lg sm:text-xl">{initialData?.id ? 'Edit' : 'Add'} Employee</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs">First Name</FormLabel>
+                    <FormLabel className="text-sm font-medium">First Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="First name" {...field} className="h-9" />
+                      <Input placeholder="First name" {...field} className="h-10" />
                     </FormControl>
                     <FormMessage className="text-xs" />
                   </FormItem>
@@ -301,11 +301,11 @@ export function EmployeeForm({
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel className="text-sm font-medium">Last Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Last name" {...field} />
+                      <Input placeholder="Last name" {...field} className="h-10" />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -316,26 +316,36 @@ export function EmployeeForm({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-sm font-medium">Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Email address" {...field} />
+                    <Input 
+                      type="email" 
+                      placeholder="Email address" 
+                      {...field} 
+                      className="h-10"
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-sm font-medium">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Password" {...field} />
+                      <Input 
+                        type="password" 
+                        placeholder="Password" 
+                        {...field} 
+                        className="h-10"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -345,27 +355,32 @@ export function EmployeeForm({
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel className="text-sm font-medium">Confirm Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Confirm password" {...field} />
+                      <Input 
+                        type="password" 
+                        placeholder="Confirm password" 
+                        {...field} 
+                        className="h-10"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="jobTitle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Job Title</FormLabel>
+                    <FormLabel className="text-sm font-medium">Job Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Job title" {...field} />
+                      <Input placeholder="Job title" {...field} className="h-10" />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -375,7 +390,7 @@ export function EmployeeForm({
                 name="department"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Department</FormLabel>
+                    <FormLabel className="text-sm font-medium">Department</FormLabel>
                     <div className="space-y-2">
                       <Select 
                         onValueChange={(value) => {
@@ -388,7 +403,7 @@ export function EmployeeForm({
                         defaultValue={field.value || undefined}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-10">
                             <SelectValue placeholder="Select department" />
                           </SelectTrigger>
                         </FormControl>
@@ -409,10 +424,10 @@ export function EmployeeForm({
                       
                       {/* New Department Form Dialog */}
                       <Dialog open={showNewDepartmentForm} onOpenChange={setShowNewDepartmentForm}>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="w-[95vw] max-w-[425px] p-4 sm:p-6">
                           <DialogHeader>
-                            <DialogTitle>Create New Department</DialogTitle>
-                            <DialogDescription>
+                            <DialogTitle className="text-lg">Create New Department</DialogTitle>
+                            <DialogDescription className="text-sm text-muted-foreground">
                               Add a new department to your organization.
                             </DialogDescription>
                           </DialogHeader>
@@ -424,11 +439,15 @@ export function EmployeeForm({
                                 name="name"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Department Name</FormLabel>
+                                    <FormLabel className="text-sm font-medium">Department Name</FormLabel>
                                     <FormControl>
-                                      <Input placeholder="e.g. Engineering, Marketing, HR" {...field} />
+                                      <Input 
+                                        placeholder="e.g. Engineering, Marketing, HR" 
+                                        {...field} 
+                                        className="h-10"
+                                      />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-xs" />
                                   </FormItem>
                                 )}
                               />
@@ -438,7 +457,7 @@ export function EmployeeForm({
                                 name="managerId"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Department Manager</FormLabel>
+                                    <FormLabel className="text-sm font-medium">Department Manager</FormLabel>
                                     <Select 
                                       onValueChange={(value) => {
                                         if (value === "none") {
@@ -450,7 +469,7 @@ export function EmployeeForm({
                                       defaultValue={field.value !== null ? field.value?.toString() : "none"}
                                     >
                                       <FormControl>
-                                        <SelectTrigger>
+                                        <SelectTrigger className="h-10">
                                           <SelectValue placeholder="Select manager" />
                                         </SelectTrigger>
                                       </FormControl>
@@ -463,20 +482,25 @@ export function EmployeeForm({
                                         ))}
                                       </SelectContent>
                                     </Select>
-                                    <FormMessage />
+                                    <FormMessage className="text-xs" />
                                   </FormItem>
                                 )}
                               />
                               
-                              <DialogFooter>
+                              <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                                 <Button 
                                   variant="outline" 
                                   type="button" 
                                   onClick={() => setShowNewDepartmentForm(false)}
+                                  className="w-full sm:w-auto"
                                 >
                                   Cancel
                                 </Button>
-                                <Button type="submit" disabled={isCreatingDepartment}>
+                                <Button 
+                                  type="submit" 
+                                  disabled={isCreatingDepartment}
+                                  className="w-full sm:w-auto"
+                                >
                                   {isCreatingDepartment ? 'Creating...' : 'Create Department'}
                                 </Button>
                               </DialogFooter>
@@ -485,25 +509,25 @@ export function EmployeeForm({
                         </DialogContent>
                       </Dialog>
                     </div>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel className="text-sm font-medium">Role</FormLabel>
                     <Select 
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-10">
                           <SelectValue placeholder="Select role" />
                         </SelectTrigger>
                       </FormControl>
@@ -513,7 +537,7 @@ export function EmployeeForm({
                         <SelectItem value="employee">Employee</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -523,7 +547,7 @@ export function EmployeeForm({
                 name="teamId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Team</FormLabel>
+                    <FormLabel className="text-sm font-medium">Team</FormLabel>
                     <Select 
                       onValueChange={(value) => {
                         if (value === "none") {
@@ -535,7 +559,7 @@ export function EmployeeForm({
                       defaultValue={field.value !== null ? field.value?.toString() : "none"}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-10">
                           <SelectValue placeholder="Select team" />
                         </SelectTrigger>
                       </FormControl>
@@ -548,17 +572,19 @@ export function EmployeeForm({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
-              
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="managerId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Manager</FormLabel>
+                    <FormLabel className="text-sm font-medium">Manager</FormLabel>
                     <Select 
                       onValueChange={(value) => {
                         if (value === "none") {
@@ -570,7 +596,7 @@ export function EmployeeForm({
                       defaultValue={field.value !== null ? field.value?.toString() : "none"}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-10">
                           <SelectValue placeholder="Select manager" />
                         </SelectTrigger>
                       </FormControl>
@@ -583,36 +609,46 @@ export function EmployeeForm({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="hireDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Hire Date</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="date" 
+                        {...field} 
+                        value={field.value || ''}
+                        onChange={(e) => field.onChange(e.target.value || null)}
+                        className="h-10"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
             </div>
             
-            <FormField
-              control={form.control}
-              name="hireDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Hire Date</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="date" 
-                      {...field} 
-                      value={field.value || ''}
-                      onChange={(e) => field.onChange(e.target.value || null)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <DialogFooter>
-              <Button variant="outline" type="button" onClick={onClose}>
+            <DialogFooter className="flex flex-col sm:flex-row gap-3 sm:gap-0 pt-4">
+              <Button 
+                variant="outline" 
+                type="button" 
+                onClick={onClose}
+                className="w-full sm:w-auto"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full sm:w-auto"
+              >
                 {isSubmitting ? 'Saving...' : initialData?.id ? 'Update' : 'Add'} Employee
               </Button>
             </DialogFooter>
