@@ -56,9 +56,5 @@ export const db = new Proxy({} as ReturnType<typeof drizzle>, {
 });
 */
 
-// TODO: Replace with Supabase connection when ready
-// Temporary placeholder to prevent compilation errors
-export const db = {} as any;
-export const pool = {} as any;
-export const getDb = () => db;
-export const getPool = () => pool;
+// Use Supabase database implementation
+export { db, pool, getDb, getPool } from './supabase';

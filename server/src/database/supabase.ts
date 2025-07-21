@@ -182,35 +182,109 @@ export const db = {
     }
   },
   
-  // Generic query methods for other tables
-  async select() {
+  // Generic query methods for other tables - Drizzle ORM compatible
+  select() {
     return {
-      from: (tableName: string) => ({
-        where: (condition: any) => ({
-          async execute() {
-            const { data, error } = await supabase.from(tableName).select('*')
-            if (error) throw error
-            return data || []
-          }
-        }),
-        async execute() {
-          const { data, error } = await supabase.from(tableName).select('*')
-          if (error) throw error
-          return data || []
+      from: (table: any) => {
+        // Extract table name from Drizzle table object
+        let tableName = 'unknown';
+        if (table && typeof table === 'object') {
+          tableName = table[Symbol.for('drizzle:Name')] || 
+                      table._.name || 
+                      table.$tableName || 
+                      table._.baseName ||
+                      (table._.name && table._.name.replace(/[^a-zA-Z0-9_]/g, '')) ||
+                      'unknown';
         }
-      })
+        return {
+          where: (condition: any) => {
+            // Return a thenable to be compatible with await
+            const query = async () => {
+              const { data, error } = await supabase.from(tableName).select('*')
+              if (error) throw error
+              return data || []
+            };
+            // Add then method to make it thenable
+            query.then = (onResolve: any, onReject: any) => query().then(onResolve, onReject);
+            return query;
+          },
+          // For queries without where clause
+          then: (onResolve: any, onReject: any) => {
+            const query = async () => {
+              const { data, error } = await supabase.from(tableName).select('*')
+              if (error) throw error
+              return data || []
+            };
+            return query().then(onResolve, onReject);
+          }
+        }
+      }
     }
   },
   
-  async insert(tableName: string) {
+  // Insert method - Drizzle ORM compatible
+  insert(table: any) {
+    const tableName = table._.name || table.$tableName || 'unknown';
     return {
-      values: (values: any) => ({
-        async execute() {
-          const { data, error } = await supabase.from(tableName).insert(values).select().single()
-          if (error) throw error
-          return data
+      values: (values: any) => {
+        return {
+          returning: () => {
+            // Return a thenable for .returning() calls
+            const query = async () => {
+              const { data, error } = await supabase.from(tableName).insert(values).select().single()
+              if (error) throw error
+              return [data] // Return array to match Drizzle ORM returning format
+            };
+            query.then = (onResolve: any, onReject: any) => query().then(onResolve, onReject);
+            return query;
+          },
+          // For regular insert without returning
+          then: (onResolve: any, onReject: any) => {
+            const query = async () => {
+              const { data, error } = await supabase.from(tableName).insert(values).select().single()
+              if (error) throw error
+              return data
+            };
+            return query().then(onResolve, onReject);
+          }
         }
-      })
+      }
+    }
+  },
+
+  // Update method - Drizzle ORM compatible
+  update(table: any) {
+    const tableName = table._.name || table.$tableName || 'unknown';
+    return {
+      set: (values: any) => {
+        return {
+          where: (condition: any) => {
+            // Return a thenable for update operations
+            const query = async () => {
+              const { error } = await supabase.from(tableName).update(values)
+              if (error) throw error
+            };
+            query.then = (onResolve: any, onReject: any) => query().then(onResolve, onReject);
+            return query;
+          }
+        }
+      }
+    }
+  },
+
+  // Delete method - Drizzle ORM compatible
+  delete(table: any) {
+    const tableName = table._.name || table.$tableName || 'unknown';
+    return {
+      where: (condition: any) => {
+        // Return a thenable for delete operations
+        const query = async () => {
+          const { error } = await supabase.from(tableName).delete()
+          if (error) throw error
+        };
+        query.then = (onResolve: any, onReject: any) => query().then(onResolve, onReject);
+        return query;
+      }
     }
   }
 }
