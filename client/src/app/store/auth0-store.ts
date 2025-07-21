@@ -171,26 +171,12 @@ export function useAuth() {
   // Set token immediately when authenticated, regardless of user sync status
   React.useEffect(() => {
     if (isAuthenticated && !auth0Loading) {
-      console.log('🔐 Auth0Store: User is authenticated, getting access token...');
       getAccessTokenSilently()
         .then(accessToken => {
           const currentToken = TokenManager.getToken();
           // Only update if token changed to prevent unnecessary invalidations
           if (currentToken !== accessToken) {
-            console.log('✅ Auth0Store: Got new Auth0 token:', accessToken.substring(0, 50) + '...');
-            try {
-              const tokenPayload = JSON.parse(atob(accessToken.split('.')[1]));
-              console.log('🔑 Auth0Store: Token payload preview:', {
-                aud: tokenPayload.aud,
-                exp: new Date(tokenPayload.exp * 1000).toISOString(),
-                iat: new Date(tokenPayload.iat * 1000).toISOString(),
-                sub: tokenPayload.sub
-              });
-            } catch (e) {
-              console.warn('⚠️ Auth0Store: Could not parse token payload:', e);
-            }
             TokenManager.setToken(accessToken);
-            console.log('📤 Auth0Store: Token stored in TokenManager, invalidating queries...');
             // Trigger a re-render and invalidate queries that need authentication
             queryClient.invalidateQueries({ 
               predicate: (query) => query.queryKey[0] === 'dashboard' 
@@ -202,7 +188,6 @@ export function useAuth() {
           TokenManager.clearToken();
         });
     } else if (!isAuthenticated) {
-      console.log('🚫 Auth0Store: User not authenticated, clearing token');
       TokenManager.clearToken();
     }
   }, [isAuthenticated, auth0Loading, getAccessTokenSilently, queryClient]);

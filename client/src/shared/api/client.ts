@@ -135,7 +135,6 @@ export class ApiClient {
   constructor(baseUrl = '/api') {
     // Force relative URL to prevent CORS issues
     this.baseUrl = baseUrl.startsWith('http') ? '/api' : baseUrl;
-    console.log('🌐 API Client: Initialized with baseUrl:', this.baseUrl);
     if (baseUrl.startsWith('http') && baseUrl !== this.baseUrl) {
       console.warn('⚠️ API Client: Overriding absolute URL to use relative path for CORS compliance');
     }
@@ -177,18 +176,15 @@ export class ApiClient {
     const auth0Token = TokenManager.getToken();
     
     if (auth0Token) {
-      console.log('🔑 API Client: Using Auth0 token:', auth0Token.substring(0, 20) + '...');
       return { Authorization: `Bearer ${auth0Token}` };
     }
     
     // Fallback to legacy token storage
     const token = storage.get(STORAGE_KEYS.ACCESS_TOKEN);
     if (token) {
-      console.log('🔑 API Client: Using legacy token:', token.substring(0, 20) + '...');
       return { Authorization: `Bearer ${token}` };
     }
     
-    console.warn('⚠️ API Client: No authentication token available');
     return {};
   }
 
@@ -254,7 +250,6 @@ export class ApiClient {
     } = config;
 
     const url = `${this.baseUrl}${endpoint}`;
-    console.log('🌐 API Client: Making request to:', url);
     
     // Build headers
     let requestHeaders = {
@@ -264,14 +259,11 @@ export class ApiClient {
 
     if (!skipAuth) {
       const authHeaders = this.getAuthHeader();
-      console.log('🔑 API Client: Auth headers to add:', authHeaders);
       requestHeaders = {
         ...requestHeaders,
         ...authHeaders,
       };
     }
-
-    console.log('📤 API Client: Final request headers for', method, url, ':', requestHeaders);
 
     // Apply request interceptors
     let interceptedConfig: RequestConfig = { ...config, headers: requestHeaders };
@@ -297,14 +289,6 @@ export class ApiClient {
       if (body && method !== 'GET') {
         requestInit.body = JSON.stringify(body);
       }
-
-      console.log('📡 API Client: Making fetch request with:', {
-        url,
-        method: requestInit.method,
-        hasAuthHeader: !!requestInit.headers?.['Authorization'],
-        authHeaderPreview: requestInit.headers?.['Authorization']?.substring(0, 50) + '...',
-        allHeaders: requestInit.headers,
-      });
 
       const response = await fetch(url, requestInit);
       clearTimeout(timeoutId);
@@ -466,7 +450,6 @@ export class ApiClient {
 const getApiBaseUrl = () => {
   // IMPORTANT: Always use relative URL to avoid CORS issues
   // This ensures the API calls go to the same domain as the frontend
-  console.log('🌐 getApiBaseUrl: Using relative /api path');
   return '/api';
 };
 

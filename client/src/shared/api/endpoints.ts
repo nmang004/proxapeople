@@ -481,39 +481,28 @@ export const analytics = {
       teamPerformance: unknown;
       teamEngagement: unknown;
     }> => {
-      console.log('📊 analytics.dashboardData: Starting API call to /dashboard');
-      try {
-        const response = await apiClient.get('/dashboard', {
-          validateResponse: apiResponseSchema(z.object({
-            stats: z.record(z.unknown()),
-            upcomingReviews: z.array(z.unknown()),
-            teamGoals: z.array(z.unknown()),
-            upcomingOneOnOnes: z.array(z.unknown()),
-            teamPerformance: z.unknown(),
-            teamEngagement: z.unknown(),
-          })),
-        });
-        console.log('📊 analytics.dashboardData: Raw API response:', response);
-        console.log('📊 analytics.dashboardData: Response data:', response.data);
-        console.log('📊 analytics.dashboardData: Response type:', typeof response);
-        console.log('📊 analytics.dashboardData: Response keys:', Object.keys(response));
-        
-        // If response.data is undefined, use the response directly
-        const data = response.data || response;
-        console.log('📊 analytics.dashboardData: Using data:', data);
-        
-        return data as {
-          stats: Record<string, unknown>;
-          upcomingReviews: unknown[];
-          teamGoals: unknown[];
-          upcomingOneOnOnes: unknown[];
-          teamPerformance: unknown;
-          teamEngagement: unknown;
-        };
-      } catch (error) {
-        console.error('❌ analytics.dashboardData: API call failed:', error);
-        throw error;
-      }
+      const response = await apiClient.get('/dashboard', {
+        validateResponse: apiResponseSchema(z.object({
+          stats: z.record(z.unknown()),
+          upcomingReviews: z.array(z.unknown()),
+          teamGoals: z.array(z.unknown()),
+          upcomingOneOnOnes: z.array(z.unknown()),
+          teamPerformance: z.unknown(),
+          teamEngagement: z.unknown(),
+        })),
+      });
+      
+      // If response.data is undefined, use the response directly
+      const data = response.data || response;
+      
+      return data as {
+        stats: Record<string, unknown>;
+        upcomingReviews: unknown[];
+        teamGoals: unknown[];
+        upcomingOneOnOnes: unknown[];
+        teamPerformance: unknown;
+        teamEngagement: unknown;
+      };
     },
   },
 

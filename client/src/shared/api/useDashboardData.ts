@@ -35,7 +35,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       const checkToken = () => {
         const token = TokenManager.getToken();
         const tokenAvailable = !!token;
-        console.log('🔍 useDashboardData: Token check -', tokenAvailable ? 'Available' : 'Not available');
         setHasToken(tokenAvailable);
         return tokenAvailable;
       };
@@ -55,7 +54,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       // Cleanup after 5 seconds
       const timeout = setTimeout(() => {
         clearInterval(interval);
-        console.warn('⚠️ useDashboardData: Token not available after 5 seconds');
       }, 5000);
 
       return () => {
@@ -70,23 +68,8 @@ export function useDashboardData(): UseDashboardDataReturn {
   const query = useQuery<DashboardData>({
     queryKey: ['dashboard'],
     queryFn: async () => {
-      console.log('📊 useDashboardData: Making API call for dashboard data');
-      try {
-        const response = await analytics.dashboardData.execute();
-        console.log('📊 useDashboardData: API response received:', response);
-        console.log('📊 useDashboardData: Response type:', typeof response);
-        console.log('📊 useDashboardData: Response keys:', response ? Object.keys(response) : 'null/undefined');
-        // Backend returns the data directly, not wrapped in another object
-        return response;
-      } catch (error) {
-        console.error('❌ useDashboardData: API call failed:', error);
-        console.error('❌ useDashboardData: Error details:', {
-          message: error instanceof Error ? error.message : 'Unknown error',
-          stack: error instanceof Error ? error.stack : undefined,
-          name: error instanceof Error ? error.name : undefined
-        });
-        throw error;
-      }
+      const response = await analytics.dashboardData.execute();
+      return response;
     },
     // Only enable the query when authenticated AND we have a token
     enabled: isAuthenticated && !authLoading && hasToken,
