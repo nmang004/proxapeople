@@ -38,7 +38,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Helmet } from 'react-helmet';
-import { ProxaIcon } from "@/lib/proxa-icon";
+import rivalDigitalLogo from "@/assets/rivaldigitallogo.svg";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useAuth } from "@/app/store/auth0-store";
@@ -286,8 +286,12 @@ export default function Profile() {
                   <Form {...companyForm}>
                     <form onSubmit={companyForm.handleSubmit(onCompanySubmit)} className="space-y-6">
                       <div className="flex flex-col md:flex-row gap-8">
-                        <div className="flex flex-col items-center justify-center border border-dashed rounded-lg w-40 h-40 mb-4">
-                          <ProxaIcon className="h-20 w-20 mb-2" />
+                        <div className="flex flex-col items-center justify-center border border-dashed rounded-lg w-40 h-40 mb-4 p-4">
+                          <img 
+                            src={rivalDigitalLogo} 
+                            alt="Rival Digital Logo" 
+                            className="h-16 w-auto mb-2 object-contain"
+                          />
                           <Button variant="outline" size="sm">
                             <Upload className="h-4 w-4 mr-2" />
                             Upload Logo
