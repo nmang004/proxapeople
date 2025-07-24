@@ -46,20 +46,24 @@ export default function OrgChart() {
   }, [showSidebar]);
 
   // Fetch users and departments data
-  const { data: users, isLoading: usersLoading } = useQuery<User[]>({
+  const { data: usersData, isLoading: usersLoading } = useQuery<User[]>({
     queryKey: ["/api/users"],
     retry: false,
   });
 
-  const { data: departments, isLoading: departmentsLoading } = useQuery<Department[]>({
+  const { data: departmentsData, isLoading: departmentsLoading } = useQuery<Department[]>({
     queryKey: ["/api/departments"],
     retry: false,
   });
 
+  // Ensure data is always arrays
+  const users = Array.isArray(usersData) ? usersData : [];
+  const departments = Array.isArray(departmentsData) ? departmentsData : [];
+
   const isLoading = usersLoading || departmentsLoading;
 
   // Filter users based on search term and department filter
-  const filteredUsers = users?.filter((user: User) => {
+  const filteredUsers = users.filter((user: User) => {
     const matchesSearch = searchTerm === "" || 
       (user.firstName && user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (user.lastName && user.lastName.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -69,7 +73,7 @@ export default function OrgChart() {
     const matchesDepartment = filterDepartment === "all" || user.department === filterDepartment;
     
     return matchesSearch && matchesDepartment;
-  }) || [];
+  });
 
   // Handle zoom in/out
   const handleZoomIn = () => {
@@ -202,7 +206,7 @@ export default function OrgChart() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Departments</SelectItem>
-                      {!departmentsLoading && departments?.map((dept: Department) => (
+                      {!departmentsLoading && departments.map((dept: Department) => (
                         <SelectItem key={dept.id} value={dept.id.toString()}>{dept.name}</SelectItem>
                       ))}
                     </SelectContent>
@@ -276,7 +280,7 @@ export default function OrgChart() {
                       <CardContent className="p-3">
                         <div className="text-xs text-muted-foreground">Total Employees</div>
                         <div className="text-xl font-semibold">
-                          {isLoading ? <Skeleton className="h-6 w-12" /> : users?.length || 0}
+                          {isLoading ? <Skeleton className="h-6 w-12" /> : users.length}
                         </div>
                       </CardContent>
                     </Card>
@@ -284,7 +288,7 @@ export default function OrgChart() {
                       <CardContent className="p-3">
                         <div className="text-xs text-muted-foreground">Departments</div>
                         <div className="text-xl font-semibold">
-                          {isLoading ? <Skeleton className="h-6 w-12" /> : departments?.length || 0}
+                          {isLoading ? <Skeleton className="h-6 w-12" /> : departments.length}
                         </div>
                       </CardContent>
                     </Card>
@@ -348,7 +352,7 @@ export default function OrgChart() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All Departments</SelectItem>
-                        {!departmentsLoading && departments?.map((dept: Department) => (
+                        {!departmentsLoading && departments.map((dept: Department) => (
                           <SelectItem key={dept.id} value={dept.id.toString()}>{dept.name}</SelectItem>
                         ))}
                       </SelectContent>
@@ -422,7 +426,7 @@ export default function OrgChart() {
                         <CardContent className="p-3">
                           <div className="text-xs text-muted-foreground">Total Employees</div>
                           <div className="text-xl font-semibold">
-                            {isLoading ? <Skeleton className="h-6 w-12" /> : users?.length || 0}
+                            {isLoading ? <Skeleton className="h-6 w-12" /> : users.length}
                           </div>
                         </CardContent>
                       </Card>
@@ -430,7 +434,7 @@ export default function OrgChart() {
                         <CardContent className="p-3">
                           <div className="text-xs text-muted-foreground">Departments</div>
                           <div className="text-xl font-semibold">
-                            {isLoading ? <Skeleton className="h-6 w-12" /> : departments?.length || 0}
+                            {isLoading ? <Skeleton className="h-6 w-12" /> : departments.length}
                           </div>
                         </CardContent>
                       </Card>
@@ -489,16 +493,16 @@ export default function OrgChart() {
                       }}
                     >
                       <OrgChartTree 
-                        users={filteredUsers || []} 
-                        departments={departments || []}
+                        users={filteredUsers} 
+                        departments={departments}
                         layout={chartLayout}
                       />
                     </div>
                   </TabsContent>
                   <TabsContent value="list" className="mt-0">
                     <OrgChartList 
-                      users={filteredUsers || []} 
-                      departments={departments || []}
+                      users={filteredUsers} 
+                      departments={departments}
                     />
                   </TabsContent>
                 </Tabs>
