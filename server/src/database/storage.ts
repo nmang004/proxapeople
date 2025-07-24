@@ -1026,40 +1026,40 @@ export class DatabaseStorage implements IStorage {
         id: 1,
         managerId: 2, // Sophia Potter (OPS Manager)
         employeeId: 20, // Laura Keenan (SEO Spec.)
-        scheduledAt: new Date('2025-01-25T14:00:00Z'),
+        scheduledAt: new Date('2025-07-25T14:00:00Z'),
         duration: 30,
         status: 'scheduled',
         location: 'Virtual',
-        agendaItems: ['Career development goals', 'Q1 SEO strategy review', 'Training opportunities'],
+        agendaItems: ['Career development goals', 'Q3 SEO strategy review', 'Training opportunities'],
         notes: 'Quarterly check-in meeting',
-        createdAt: new Date('2025-01-20T10:00:00Z'),
-        updatedAt: new Date('2025-01-20T10:00:00Z'),
+        createdAt: new Date('2025-07-20T10:00:00Z'),
+        updatedAt: new Date('2025-07-20T10:00:00Z'),
       },
       {
         id: 2,
         managerId: 19, // Christopher Neckermann (SEO Manager)
         employeeId: 22, // Nick Mangubat (SEO Spec.)
-        scheduledAt: new Date('2025-01-28T10:30:00Z'),
+        scheduledAt: new Date('2025-07-28T10:30:00Z'),
         duration: 45,
         status: 'scheduled',
         location: 'Conference Room',
         agendaItems: ['Project updates', 'Performance feedback', 'Professional development'],
         notes: 'Monthly sync meeting',
-        createdAt: new Date('2025-01-22T09:00:00Z'),
-        updatedAt: new Date('2025-01-22T09:00:00Z'),
+        createdAt: new Date('2025-07-22T09:00:00Z'),
+        updatedAt: new Date('2025-07-22T09:00:00Z'),
       },
       {
         id: 3,
         managerId: 11, // Zack Ledford (Web Manager)
         employeeId: 12, // Aaron Regaldo (Developer)
-        scheduledAt: new Date('2025-01-30T16:00:00Z'),
+        scheduledAt: new Date('2025-08-05T16:00:00Z'),
         duration: 30,
         status: 'scheduled',
         location: 'Virtual',
         agendaItems: ['Code review process', 'Technical skills assessment', 'Sprint planning'],
         notes: 'Technical development discussion',
-        createdAt: new Date('2025-01-23T11:00:00Z'),
-        updatedAt: new Date('2025-01-23T11:00:00Z'),
+        createdAt: new Date('2025-07-23T11:00:00Z'),
+        updatedAt: new Date('2025-07-23T11:00:00Z'),
       },
       {
         id: 4,
@@ -1091,14 +1091,14 @@ export class DatabaseStorage implements IStorage {
         id: 6,
         managerId: 1, // Eric Thomas (President)
         employeeId: 33, // Meghan PM (Project Manager)
-        scheduledAt: new Date('2025-02-05T15:00:00Z'),
+        scheduledAt: new Date('2025-08-15T15:00:00Z'),
         duration: 60,
         status: 'scheduled',
         location: 'Conference Room',
         agendaItems: ['Leadership development', 'Project management efficiency', 'Team coordination strategies'],
         notes: 'Executive mentoring session',
-        createdAt: new Date('2025-01-24T16:00:00Z'),
-        updatedAt: new Date('2025-01-24T16:00:00Z'),
+        createdAt: new Date('2025-07-24T16:00:00Z'),
+        updatedAt: new Date('2025-07-24T16:00:00Z'),
       },
       {
         id: 7,
@@ -1117,14 +1117,14 @@ export class DatabaseStorage implements IStorage {
         id: 8,
         managerId: 9, // Trevor Quinlan (Sales Manager)
         employeeId: 10, // Josh Miller (Business Dev. Rep)
-        scheduledAt: new Date('2025-02-03T09:00:00Z'),
+        scheduledAt: new Date('2025-07-30T09:00:00Z'),
         duration: 30,
         status: 'scheduled',
         location: 'Office',
         agendaItems: ['Lead generation strategies', 'Sales pipeline review', 'Client relationship building'],
         notes: 'Weekly sales strategy meeting',
-        createdAt: new Date('2025-01-24T08:00:00Z'),
-        updatedAt: new Date('2025-01-24T08:00:00Z'),
+        createdAt: new Date('2025-07-24T08:00:00Z'),
+        updatedAt: new Date('2025-07-24T08:00:00Z'),
       }
     ];
     
