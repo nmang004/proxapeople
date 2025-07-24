@@ -163,6 +163,13 @@ export default function Profile() {
     }
   }, [companyData, companyForm]);
   
+  // Debug departments data structure
+  useEffect(() => {
+    if (departments) {
+      console.log('Departments data:', departments, 'Type:', typeof departments, 'IsArray:', Array.isArray(departments));
+    }
+  }, [departments]);
+  
   // User update mutation
   const updateUserMutation = useMutation({
     mutationFn: (data: Partial<User>) => apiRequest('PUT', '/api/auth/me', data),
@@ -507,11 +514,13 @@ export default function Profile() {
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      {departments?.map((dept: Department) => (
-                                        <SelectItem key={dept.id} value={dept.name.toLowerCase()}>
-                                          {dept.name}
-                                        </SelectItem>
-                                      )) || (
+                                      {Array.isArray(departments) && departments.length > 0 ? (
+                                        departments.map((dept: Department) => (
+                                          <SelectItem key={dept.id} value={dept.name.toLowerCase()}>
+                                            {dept.name}
+                                          </SelectItem>
+                                        ))
+                                      ) : (
                                         <>
                                           <SelectItem value="engineering">Engineering</SelectItem>
                                           <SelectItem value="product">Product</SelectItem>
