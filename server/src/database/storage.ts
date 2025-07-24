@@ -1020,7 +1020,115 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllOneOnOneMeetings(): Promise<OneOnOneMeeting[]> {
-    return db.select().from(oneOnOneMeetings);
+    // For demo purposes, return mock meetings with Rival Digital employees
+    const mockMeetings: OneOnOneMeeting[] = [
+      {
+        id: 1,
+        managerId: 2, // Sophia Potter (OPS Manager)
+        employeeId: 20, // Laura Keenan (SEO Spec.)
+        scheduledAt: new Date('2025-01-25T14:00:00Z'),
+        duration: 30,
+        status: 'scheduled',
+        location: 'Virtual',
+        agendaItems: ['Career development goals', 'Q1 SEO strategy review', 'Training opportunities'],
+        notes: 'Quarterly check-in meeting',
+        createdAt: new Date('2025-01-20T10:00:00Z'),
+        updatedAt: new Date('2025-01-20T10:00:00Z'),
+      },
+      {
+        id: 2,
+        managerId: 19, // Christopher Neckermann (SEO Manager)
+        employeeId: 22, // Nick Mangubat (SEO Spec.)
+        scheduledAt: new Date('2025-01-28T10:30:00Z'),
+        duration: 45,
+        status: 'scheduled',
+        location: 'Conference Room',
+        agendaItems: ['Project updates', 'Performance feedback', 'Professional development'],
+        notes: 'Monthly sync meeting',
+        createdAt: new Date('2025-01-22T09:00:00Z'),
+        updatedAt: new Date('2025-01-22T09:00:00Z'),
+      },
+      {
+        id: 3,
+        managerId: 11, // Zack Ledford (Web Manager)
+        employeeId: 12, // Aaron Regaldo (Developer)
+        scheduledAt: new Date('2025-01-30T16:00:00Z'),
+        duration: 30,
+        status: 'scheduled',
+        location: 'Virtual',
+        agendaItems: ['Code review process', 'Technical skills assessment', 'Sprint planning'],
+        notes: 'Technical development discussion',
+        createdAt: new Date('2025-01-23T11:00:00Z'),
+        updatedAt: new Date('2025-01-23T11:00:00Z'),
+      },
+      {
+        id: 4,
+        managerId: 23, // Georgia Elder (Dir. of AM)
+        employeeId: 24, // Rachel Kent (AM)
+        scheduledAt: new Date('2025-01-22T13:00:00Z'),
+        duration: 30,
+        status: 'completed',
+        location: 'Office',
+        agendaItems: ['Client feedback discussion', 'Account growth strategies', 'Team collaboration'],
+        notes: 'Great discussion on client retention strategies. Follow up on training request.',
+        createdAt: new Date('2025-01-15T14:00:00Z'),
+        updatedAt: new Date('2025-01-22T14:00:00Z'),
+      },
+      {
+        id: 5,
+        managerId: 16, // Kylie Morrison (Ad Manager)
+        employeeId: 17, // Allison Long (Ad Spec.)
+        scheduledAt: new Date('2025-01-20T11:00:00Z'),
+        duration: 45,
+        status: 'completed',
+        location: 'Virtual',
+        agendaItems: ['Campaign performance review', 'Budget optimization', 'Certification progress'],
+        notes: 'Reviewed Google Ads certification progress. Need to schedule advanced training.',
+        createdAt: new Date('2025-01-18T10:00:00Z'),
+        updatedAt: new Date('2025-01-20T12:00:00Z'),
+      },
+      {
+        id: 6,
+        managerId: 1, // Eric Thomas (President)
+        employeeId: 33, // Meghan PM (Project Manager)
+        scheduledAt: new Date('2025-02-05T15:00:00Z'),
+        duration: 60,
+        status: 'scheduled',
+        location: 'Conference Room',
+        agendaItems: ['Leadership development', 'Project management efficiency', 'Team coordination strategies'],
+        notes: 'Executive mentoring session',
+        createdAt: new Date('2025-01-24T16:00:00Z'),
+        updatedAt: new Date('2025-01-24T16:00:00Z'),
+      },
+      {
+        id: 7,
+        managerId: 2, // Sophia Potter (OPS Manager)
+        employeeId: 28, // Reagan Content (Content Str.)
+        scheduledAt: new Date('2025-01-18T14:00:00Z'),
+        duration: 30,
+        status: 'completed',
+        location: 'Virtual',
+        agendaItems: ['Content strategy alignment', 'Cross-team collaboration', 'Workload management'],
+        notes: 'Discussed content calendar optimization and resource allocation.',
+        createdAt: new Date('2025-01-16T09:00:00Z'),
+        updatedAt: new Date('2025-01-18T15:00:00Z'),
+      },
+      {
+        id: 8,
+        managerId: 9, // Trevor Quinlan (Sales Manager)
+        employeeId: 10, // Josh Miller (Business Dev. Rep)
+        scheduledAt: new Date('2025-02-03T09:00:00Z'),
+        duration: 30,
+        status: 'scheduled',
+        location: 'Office',
+        agendaItems: ['Lead generation strategies', 'Sales pipeline review', 'Client relationship building'],
+        notes: 'Weekly sales strategy meeting',
+        createdAt: new Date('2025-01-24T08:00:00Z'),
+        updatedAt: new Date('2025-01-24T08:00:00Z'),
+      }
+    ];
+    
+    return mockMeetings;
   }
 
   async getUserOneOnOneMeetings(userId: number): Promise<OneOnOneMeeting[]> {
