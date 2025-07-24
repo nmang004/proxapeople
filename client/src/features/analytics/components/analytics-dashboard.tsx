@@ -89,38 +89,37 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
 
   return (
     <div className={className}>
-      {/* Mobile-responsive Time Frame Selector */}
-      <div className="space-y-4 md:space-y-0 md:flex md:justify-between md:items-center mb-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        {/* Mobile-responsive Time Frame Selector */}
+        <div className="space-y-4 md:space-y-0 md:flex md:justify-between md:items-center mb-6">
           <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full md:w-auto">
             <TabsTrigger value="engagement" className="text-xs sm:text-sm">Engagement</TabsTrigger>
             <TabsTrigger value="performance" className="text-xs sm:text-sm">Performance</TabsTrigger>
             <TabsTrigger value="goals" className="text-xs sm:text-sm">Goals</TabsTrigger>
             <TabsTrigger value="headcount" className="text-xs sm:text-sm">Headcount</TabsTrigger>
           </TabsList>
-        </Tabs>
-        
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:space-x-2 md:gap-0">
-          <Select value={timeFrame} onValueChange={setTimeFrame}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Select time frame" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="quarter">Last Quarter</SelectItem>
-              <SelectItem value="year">Last Year</SelectItem>
-              <SelectItem value="all">All Time</SelectItem>
-            </SelectContent>
-          </Select>
           
-          <Button variant="outline" className="w-full sm:w-auto">
-            <i className="ri-download-line mr-2"></i>
-            <span className="hidden sm:inline">Export</span>
-            <span className="sm:hidden">Export Data</span>
-          </Button>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:space-x-2 md:gap-0">
+            <Select value={timeFrame} onValueChange={setTimeFrame}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Select time frame" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="quarter">Last Quarter</SelectItem>
+                <SelectItem value="year">Last Year</SelectItem>
+                <SelectItem value="all">All Time</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Button variant="outline" className="w-full sm:w-auto">
+              <i className="ri-download-line mr-2"></i>
+              <span className="hidden sm:inline">Export</span>
+              <span className="sm:hidden">Export Data</span>
+            </Button>
+          </div>
         </div>
-      </div>
-      
-      <TabsContent value="engagement" className="mt-0">
+        
+        <TabsContent value="engagement" className="mt-0">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <MetricCard
             title="Current Engagement"
@@ -552,6 +551,7 @@ export function AnalyticsDashboard({ className }: AnalyticsDashboardProps) {
           </ChartContainer>
         </div>
       </TabsContent>
+      </Tabs>
     </div>
   );
 }
