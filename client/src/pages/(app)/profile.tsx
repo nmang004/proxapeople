@@ -88,7 +88,6 @@ export default function Profile() {
   // Fetch current user data
   const { data: userResponse, isLoading: userLoading } = useQuery({
     queryKey: ['/api/auth/me'],
-    queryFn: () => apiRequest('GET', '/api/auth/me'),
     enabled: isAuthenticated,
   });
   
@@ -97,14 +96,12 @@ export default function Profile() {
   // Fetch departments for dropdown
   const { data: departments } = useQuery({
     queryKey: ['/api/departments'],
-    queryFn: () => apiRequest('GET', '/api/departments'),
     enabled: isAuthenticated,
   });
   
   // Fetch company settings
   const { data: companyData, isLoading: companyLoading } = useQuery({
     queryKey: ['/api/auth/company'],
-    queryFn: () => apiRequest('GET', '/api/auth/company'),
     enabled: isAuthenticated,
   });
   
@@ -186,7 +183,10 @@ export default function Profile() {
   
   // User update mutation
   const updateUserMutation = useMutation({
-    mutationFn: (data: Partial<User>) => apiRequest('PUT', '/api/auth/me', data),
+    mutationFn: async (data: Partial<User>) => {
+      const response = await apiRequest('PUT', '/api/auth/me', data);
+      return await response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
       toast({
@@ -205,7 +205,10 @@ export default function Profile() {
   
   // Company update mutation
   const updateCompanyMutation = useMutation({
-    mutationFn: (data: CompanyFormValues) => apiRequest('PUT', '/api/auth/company', data),
+    mutationFn: async (data: CompanyFormValues) => {
+      const response = await apiRequest('PUT', '/api/auth/company', data);
+      return await response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/auth/company'] });
       toast({
