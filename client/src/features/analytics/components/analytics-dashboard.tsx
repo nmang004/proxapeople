@@ -8,9 +8,9 @@ import {
   TabsList, 
   TabsTrigger 
 } from "@/shared/ui/components/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/components/select";
+import { Button } from "@/shared/ui/components/button";
+import { Progress } from "@/shared/ui/components/progress";
 import { 
   BarChart, 
   Bar, 
