@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import ProxaLogoPath from "@/assets/proxa-logo.png";
+import ProxaLogoPath from "@/assets/proxa-logo.webp";
 
 export function PublicFooter() {
   return (

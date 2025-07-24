@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/shared/ui/components/button";
-import ProxaLogoPath from "@/assets/proxa-logo.png";
+import ProxaLogoPath from "@/assets/proxa-logo.webp";
 
 export function PublicHeader() {
   return (
