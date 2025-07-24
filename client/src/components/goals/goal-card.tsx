@@ -10,6 +10,41 @@ interface GoalCardProps {
   onViewDetails?: (id: number) => void;
 }
 
+// Helper function to format status for display
+const formatStatus = (status: string): string => {
+  switch (status) {
+    case 'in_progress':
+      return 'In Progress';
+    case 'not_started':
+      return 'Not Started';
+    case 'completed':
+      return 'Completed';
+    case 'on_hold':
+      return 'On Hold';
+    case 'cancelled':
+      return 'Cancelled';
+    default:
+      return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+};
+
+// Helper function to get status variant for Badge
+const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+  switch (status) {
+    case 'completed':
+      return 'default'; // Green
+    case 'in_progress':
+      return 'secondary'; // Blue
+    case 'not_started':
+      return 'outline'; // Gray
+    case 'on_hold':
+    case 'cancelled':
+      return 'destructive'; // Red
+    default:
+      return 'outline';
+  }
+};
+
 export function GoalCard({ goal, onViewDetails }: GoalCardProps) {
   const progressValue = goal.progress || 0;
 
@@ -17,7 +52,7 @@ export function GoalCard({ goal, onViewDetails }: GoalCardProps) {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">{goal.title}</CardTitle>
-        <Badge variant="outline">{goal.status}</Badge>
+        <Badge variant={getStatusVariant(goal.status)}>{formatStatus(goal.status)}</Badge>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
