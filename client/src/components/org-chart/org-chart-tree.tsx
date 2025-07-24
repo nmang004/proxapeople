@@ -2,7 +2,7 @@ import { User, Department } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronRight, Users, Building2, MousePointer, Move, Hand } from "lucide-react";
+import { ChevronDown, ChevronRight, Users, Building2, MousePointer } from "lucide-react";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -36,15 +36,12 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
   const [expandedNodes, setExpandedNodes] = useState<Set<number>>(new Set());
   const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [hoveredUserId, setHoveredUserId] = useState<number | null>(null);
+  const [focusedUserId, setFocusedUserId] = useState<number | null>(null);
+  const [visibleNodes, setVisibleNodes] = useState<Set<number>>(new Set());
   const nodeRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  
-  // Drag navigation state (only for panning, zoom handled by parent)
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [panTransform, setPanTransform] = useState({ x: 0, y: 0 });
-  const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const intersectionObserver = useRef<IntersectionObserver | null>(null);
   
   // Build the organizational tree structure with levels
   const buildTree = useMemo(() => {
@@ -139,10 +136,10 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
   
   // Handle clicking on employee card
   const handleEmployeeClick = useCallback((user: User, hasChildren: boolean, event: React.MouseEvent) => {
-    // Prevent click if we were dragging
-    if (isDragging) {
+    // Check for Ctrl/Cmd + Click for focus action
+    if (event.ctrlKey || event.metaKey) {
       event.preventDefault();
-      event.stopPropagation();
+      handleFocusOnNode(user.id);
       return;
     }
     
@@ -160,104 +157,125 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
         scrollToUser(user.id, true);
       }
     }
-  }, [scrollToUser, isDragging]);
-  
-  // Drag navigation handlers
-  const handleMouseDown = useCallback((event: React.MouseEvent) => {
-    // Only start drag on left mouse button and not on interactive elements
-    if (event.button !== 0) return;
+  }, [scrollToUser]);
+
+  // Focus on a specific node (Ctrl+Click action)
+  const handleFocusOnNode = useCallback((userId: number) => {
+    setFocusedUserId(userId);
     
-    const target = event.target as HTMLElement;
-    // Don't start drag if clicking on buttons, cards, or interactive elements
-    if (target.closest('button, .card, [role="button"]')) return;
+    // Center and zoom slightly on the focused node
+    const element = nodeRefs.current.get(userId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center'
+      });
+      
+      // Expand children if they exist
+      const user = users.find(u => u.id === userId);
+      if (user) {
+        const hasChildren = users.some(u => u.managerId === userId);
+        if (hasChildren && !expandedNodes.has(userId)) {
+          setExpandedNodes(prev => new Set(Array.from(prev).concat(userId)));
+        }
+      }
+    }
     
-    setIsDragging(false); // Reset dragging state
-    setDragStart({ x: event.clientX, y: event.clientY });
-    setLastPanPoint({ x: event.clientX, y: event.clientY });
-    
+    // Clear focus after 3 seconds
+    setTimeout(() => setFocusedUserId(null), 3000);
+  }, [users, expandedNodes]);
+
+  // Handle expand/collapse button click
+  const handleExpandToggle = useCallback((userId: number, event: React.MouseEvent) => {
     event.preventDefault();
+    event.stopPropagation();
+    toggleNode(userId);
   }, []);
-  
-  const handleMouseMove = useCallback((event: React.MouseEvent) => {
-    if (event.buttons !== 1) return; // Only drag with left mouse button
-    
-    const deltaX = event.clientX - lastPanPoint.x;
-    const deltaY = event.clientY - lastPanPoint.y;
-    
-    // Set dragging state if we've moved enough
-    if (!isDragging && (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5)) {
-      setIsDragging(true);
-    }
-    
-    if (isDragging || Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-      setPanTransform(prev => ({
-        x: prev.x + deltaX,
-        y: prev.y + deltaY
-      }));
-      
-      setLastPanPoint({ x: event.clientX, y: event.clientY });
-      event.preventDefault();
-    }
-  }, [lastPanPoint, isDragging]);
-  
-  const handleMouseUp = useCallback(() => {
-    // Reset dragging state after a short delay to prevent immediate clicks
-    setTimeout(() => setIsDragging(false), 50);
+
+  // Mouse enter/leave handlers for hover effects
+  const handleMouseEnter = useCallback((userId: number) => {
+    setHoveredUserId(userId);
   }, []);
-  
-  // Touch handlers for mobile support
-  const handleTouchStart = useCallback((event: React.TouchEvent) => {
-    if (event.touches.length === 1) {
-      const touch = event.touches[0];
-      setDragStart({ x: touch.clientX, y: touch.clientY });
-      setLastPanPoint({ x: touch.clientX, y: touch.clientY });
-      setIsDragging(false);
-    }
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredUserId(null);
   }, []);
-  
-  const handleTouchMove = useCallback((event: React.TouchEvent) => {
-    if (event.touches.length === 1) {
-      const touch = event.touches[0];
-      const deltaX = touch.clientX - lastPanPoint.x;
-      const deltaY = touch.clientY - lastPanPoint.y;
-      
-      if (!isDragging && (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5)) {
-        setIsDragging(true);
-      }
-      
-      if (isDragging || Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-        setPanTransform(prev => ({
-          x: prev.x + deltaX,
-          y: prev.y + deltaY
-        }));
-        
-        setLastPanPoint({ x: touch.clientX, y: touch.clientY });
-        event.preventDefault();
-      }
-    }
-  }, [lastPanPoint, isDragging]);
-  
-  const handleTouchEnd = useCallback(() => {
-    setTimeout(() => setIsDragging(false), 50);
-  }, []);
-  
-  // Reset pan function (zoom is handled by parent component)
-  const resetPan = useCallback(() => {
-    setPanTransform({ x: 0, y: 0 });
-  }, []);
-  
-  // Keyboard shortcuts for panning reset
+
+  // Virtualization: Setup intersection observer for performance
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'r' && (event.ctrlKey || event.metaKey)) {
-        event.preventDefault();
-        resetPan();
+    if (!containerRef.current) return;
+
+    // For large datasets (>50 nodes), enable virtualization
+    if (users.length > 50) {
+      intersectionObserver.current = new IntersectionObserver(
+        (entries) => {
+          const newVisibleNodes = new Set(visibleNodes);
+          
+          entries.forEach((entry) => {
+            const userId = parseInt(entry.target.getAttribute('data-user-id') || '0');
+            if (entry.isIntersecting) {
+              newVisibleNodes.add(userId);
+            } else {
+              // Keep nodes in memory for a bit longer to prevent flickering
+              setTimeout(() => {
+                setVisibleNodes(prev => {
+                  const updated = new Set(prev);
+                  updated.delete(userId);
+                  return updated;
+                });
+              }, 1000);
+            }
+          });
+          
+          setVisibleNodes(newVisibleNodes);
+        },
+        {
+          root: containerRef.current,
+          rootMargin: '50% 50% 50% 50%', // Load nodes before they're visible
+          threshold: 0
+        }
+      );
+
+      // Observe all existing nodes
+      nodeRefs.current.forEach((node) => {
+        if (intersectionObserver.current) {
+          intersectionObserver.current.observe(node);
+        }
+      });
+    } else {
+      // For smaller datasets, show all nodes
+      setVisibleNodes(new Set(users.map(u => u.id)));
+    }
+
+    return () => {
+      if (intersectionObserver.current) {
+        intersectionObserver.current.disconnect();
       }
     };
+  }, [users.length, visibleNodes]);
+
+  // Helper to check if a node should be rendered
+  const shouldRenderNode = useCallback((userId: number) => {
+    // Always render if dataset is small
+    if (users.length <= 50) return true;
     
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [resetPan]);
+    // Always render root nodes and their direct children
+    const user = users.find(u => u.id === userId);
+    if (!user) return false;
+    
+    // Always render executives and their direct reports
+    if (user.jobTitle.includes('President') || user.jobTitle.includes('CEO')) return true;
+    if (user.managerId) {
+      const manager = users.find(u => u.id === user.managerId);
+      if (manager && (manager.jobTitle.includes('President') || manager.jobTitle.includes('CEO'))) {
+        return true;
+      }
+    }
+    
+    // For other nodes, use intersection observer
+    return visibleNodes.has(userId);
+  }, [users, visibleNodes]);
 
   // Get role level for styling
   const getRoleLevel = (user: User): 'executive' | 'manager' | 'employee' => {
@@ -274,6 +292,8 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
     const isExpanded = expandedNodes.has(user.id);
     const isHighlighted = !selectedDepartment || selectedDepartment === user.department;
     const isSelected = selectedUserId === user.id;
+    const isHovered = hoveredUserId === user.id;
+    const isFocused = focusedUserId === user.id;
     
     const cardStyles = {
       executive: 'w-72 border-2 shadow-lg bg-gradient-to-br from-purple-50 to-white',
@@ -286,15 +306,27 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
         ref={(el) => {
           if (el) nodeRefs.current.set(user.id, el);
         }}
+        data-user-id={user.id}
+        data-department={user.department}
         className={`relative transition-all duration-300 ${!isHighlighted ? 'opacity-40' : ''}`}
+        onMouseEnter={() => handleMouseEnter(user.id)}
+        onMouseLeave={handleMouseLeave}
       >
-        <Card className={`
-          ${cardStyles[roleLevel]} 
-          hover:shadow-xl transition-all cursor-pointer
-          ${isSelected ? 'ring-4 ring-primary/50 ring-offset-2 shadow-2xl scale-105' : ''}
-          group relative
-        `}
-              onClick={(event) => handleEmployeeClick(user, hasChildren, event)}>
+        <Card 
+          role="treeitem"
+          aria-expanded={hasChildren ? isExpanded : undefined}
+          aria-level={node.level + 1}
+          aria-label={`${user.firstName} ${user.lastName}, ${user.jobTitle}, ${user.department}${hasChildren ? `, manages ${node.children.length} direct reports` : ''}`}
+          tabIndex={-1}
+          className={`
+            ${cardStyles[roleLevel]} 
+            hover:shadow-xl transition-all cursor-pointer
+            ${isSelected ? 'ring-4 ring-primary/50 ring-offset-2 shadow-2xl scale-105' : ''}
+            ${isFocused ? 'ring-4 ring-blue-400/60 ring-offset-2 shadow-2xl scale-110 z-10' : ''}
+            ${isHovered ? 'shadow-2xl scale-102 z-5' : ''}
+            group relative
+          `}
+          onClick={(event) => handleEmployeeClick(user, hasChildren, event)}>
           
           {/* Click indicator */}
           <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -365,17 +397,27 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
     return groups;
   };
   
-  // Render tree node with better layout
+  // Render tree node with better layout and virtualization
   const renderTreeNode = (node: TreeNode): JSX.Element => {
     const hasChildren = node.children.length > 0;
     const isExpanded = expandedNodes.has(node.user.id) || node.level === 0; // Always expand top level
     const departmentGroups = groupChildrenByDepartment(node.children);
     
+    // Check if this node should be rendered (virtualization)
+    const shouldRender = shouldRenderNode(node.user.id);
+    
     return (
       <div key={node.user.id} className="relative">
         {/* Employee Card */}
         <div className="flex justify-center">
-          {renderEmployeeCard(node, hasChildren)}
+          {shouldRender ? (
+            renderEmployeeCard(node, hasChildren)
+          ) : (
+            // Placeholder for non-visible nodes (virtualization)
+            <div className="w-56 h-24 bg-gray-100 border border-gray-200 rounded-lg animate-pulse flex items-center justify-center">
+              <div className="text-xs text-gray-400">Loading...</div>
+            </div>
+          )}
         </div>
         
         {/* Children - only render if expanded */}
@@ -473,8 +515,8 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
   }
 
   return (
-    <div className="w-full h-full bg-neutral-50/50">
-      {/* Department Filter & Quick Navigation */}
+    <div className="w-full h-full" role="tree" aria-label="Organization hierarchy">
+      {/* Department Filter & Quick Navigation - Static UI outside canvas */}
       <div className="sticky top-0 z-10 bg-white border-b p-4">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* Department Filter */}
@@ -504,20 +546,8 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
           
           {/* Navigation Controls */}
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium">Navigation:</span>
+            <span className="text-sm font-medium">Quick Access:</span>
             <div className="flex gap-2">
-              {/* Reset pan button */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetPan}
-                className="text-xs"
-                title="Reset panning (Ctrl+R)"
-              >
-                <Move className="h-3 w-3 mr-1" />
-                Center
-              </Button>
-              
               {/* Executive quick access */}
               {users.filter(u => getRoleLevel(u) === 'executive').map(exec => (
                 <Button
@@ -547,60 +577,27 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
         </div>
       </div>
       
-      {/* Org Chart Container */}
-      <div 
-        ref={containerRef}
-        className={`flex-1 overflow-hidden relative bg-neutral-50/30 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {/* Drag instruction overlay */}
-        <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm border">
-          <div className="flex items-center gap-2 text-sm text-neutral-600">
-            <Hand className="h-4 w-4" />
-            <span>Drag to pan • Use sidebar zoom • Click cards to navigate</span>
-          </div>
-          <div className="text-xs text-neutral-500 mt-1">
-            Press Ctrl+R to center • Zoom controls in sidebar
-          </div>
+      {/* Chart Content - Only this gets transformed by parent */}
+      <div className="flex-1 bg-neutral-50/30 overflow-hidden">
+        {/* Company Structure */}
+        <div className="text-center pt-8 pb-4">
+          <h2 className="text-2xl font-bold text-neutral-800 mb-2">Rival Digital</h2>
+          <p className="text-neutral-600">Organizational Structure</p>
         </div>
         
-        {/* Transformable content - only panning, zoom handled by parent */}
-        <div
-          ref={contentRef}
-          className="min-w-max min-h-full flex items-center justify-center transition-transform duration-75"
-          style={{
-            transform: `translate(${panTransform.x}px, ${panTransform.y}px)`,
-            transformOrigin: 'center center'
-          }}
-        >
-          <div className="p-8">
-            {/* Company Structure */}
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-neutral-800 mb-2">Rival Digital</h2>
-              <p className="text-neutral-600">Organizational Structure</p>
+        {/* Render trees side by side for multiple roots */}
+        <div className={`flex ${layout === 'horizontal' ? 'flex-row' : 'flex-col'} gap-16 justify-center items-start pb-8`}>
+          {tree.map((rootNode) => (
+            <div key={rootNode.user.id} className="flex-shrink-0">
+              {renderTreeNode(rootNode)}
             </div>
-            
-            {/* Render trees side by side for multiple roots */}
-            <div className={`flex ${layout === 'horizontal' ? 'flex-row' : 'flex-col'} gap-16 justify-center items-start`}>
-              {tree.map((rootNode) => (
-                <div key={rootNode.user.id} className="flex-shrink-0">
-                  {renderTreeNode(rootNode)}
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
       
-      {/* Legend */}
-      <div className="fixed bottom-4 right-4 bg-white p-4 rounded-lg shadow-lg border max-w-xs">
-        <h4 className="text-sm font-semibold mb-2">Legend & Controls</h4>
+      {/* Legend - Static UI outside canvas */}
+      <div className="absolute bottom-4 right-4 bg-white p-4 rounded-lg shadow-lg border max-w-xs pointer-events-auto">
+        <h4 className="text-sm font-semibold mb-2">Legend</h4>
         <div className="space-y-2">
           {/* Role Levels */}
           <div className="space-y-1 text-xs">
@@ -623,20 +620,12 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
             <h5 className="text-xs font-semibold mb-1">Navigation:</h5>
             <div className="space-y-1 text-xs text-neutral-600">
               <div className="flex items-center gap-2">
-                <Hand className="h-3 w-3" />
-                <span>Drag to pan around</span>
-              </div>
-              <div className="flex items-center gap-2">
                 <MousePointer className="h-3 w-3" />
                 <span>Use sidebar zoom controls</span>
               </div>
               <div className="flex items-center gap-2">
                 <ChevronDown className="h-3 w-3" />
                 <span>Click managers to expand</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Move className="h-3 w-3" />
-                <span>Ctrl+R to center view</span>
               </div>
             </div>
           </div>

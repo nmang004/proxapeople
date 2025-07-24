@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useDragControls } from "framer-motion";
+import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   ChevronDown, 
   ChevronRight, 
@@ -443,11 +443,6 @@ const TreeNode: React.FC<{
 export default function OrgChartTree({ users, departments, layout }: OrgChartTreeProps) {
   // Instead of processing real user data, we're using our sample hierarchy
   const hierarchy = useMemo(() => buildHierarchy(users), [users]);
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // State for drag position
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const dragControls = useDragControls();
   
   // State to track expanded nodes
   const [expandedNodes, setExpandedNodes] = useState<Record<number, boolean>>({
@@ -477,58 +472,10 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
     
     return hierarchy.map(processNode);
   }, [hierarchy, expandedNodes]);
-  
-  // Add drag handle and instructions for mobile
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      const instruction = document.createElement('div');
-      instruction.className = 'absolute top-4 right-4 bg-background/80 backdrop-blur-sm p-2 rounded-md shadow-sm text-xs text-muted-foreground md:hidden';
-      instruction.innerHTML = 'Drag to move around<br>Pinch to zoom';
-      
-      // Add then remove after 3 seconds
-      container.appendChild(instruction);
-      setTimeout(() => {
-        instruction.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-        setTimeout(() => {
-          if (container.contains(instruction)) {
-            container.removeChild(instruction);
-          }
-        }, 500);
-      }, 3000);
-    }
-  }, []);
-
-  // Double click to center chart
-  const handleDoubleClick = () => {
-    setPosition({ x: 0, y: 0 });
-  };
 
   return (
-    <div 
-      ref={containerRef}
-      className="w-full h-full overflow-hidden relative"
-      onDoubleClick={handleDoubleClick}
-    >
-      <div className="absolute top-2 left-2 bg-background/80 backdrop-blur-sm p-2 rounded-md shadow-sm text-xs text-muted-foreground z-10 hidden md:block">
-        Double-click to center • Drag to move
-      </div>
-      
-      <motion.div
-        drag
-        dragControls={dragControls}
-        dragMomentum={false}
-        dragElastic={0.1}
-        dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
-        className="h-full w-full flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
-        style={{ x: position.x, y: position.y }}
-        onDragEnd={(e, info) => {
-          setPosition({ 
-            x: position.x + info.offset.x, 
-            y: position.y + info.offset.y 
-          });
-        }}
-      >
+    <div className="w-full h-full overflow-auto">
+      <div className="flex items-center justify-center min-h-full">
         <div className={`py-10 px-6 ${layout === "vertical" ? "pt-20" : "pl-20"}`}>
           {processedHierarchy.map(rootNode => (
             <TreeNode
@@ -542,7 +489,7 @@ export default function OrgChartTree({ users, departments, layout }: OrgChartTre
             />
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
