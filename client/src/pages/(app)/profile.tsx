@@ -86,11 +86,13 @@ export default function Profile() {
   const profileImageInputRef = useRef<HTMLInputElement>(null);
   
   // Fetch current user data
-  const { data: currentUser, isLoading: userLoading } = useQuery({
+  const { data: userResponse, isLoading: userLoading } = useQuery({
     queryKey: ['/api/auth/me'],
     queryFn: () => apiRequest('GET', '/api/auth/me'),
     enabled: isAuthenticated,
   });
+  
+  const currentUser = userResponse?.user;
   
   // Fetch departments for dropdown
   const { data: departments } = useQuery({
@@ -163,7 +165,19 @@ export default function Profile() {
     }
   }, [companyData, companyForm]);
   
-  // Debug departments data structure
+  // Debug all API responses
+  useEffect(() => {
+    if (currentUser) {
+      console.log('Current User data:', currentUser);
+    }
+  }, [currentUser]);
+  
+  useEffect(() => {
+    if (companyData) {
+      console.log('Company data:', companyData);
+    }
+  }, [companyData]);
+  
   useEffect(() => {
     if (departments) {
       console.log('Departments data:', departments, 'Type:', typeof departments, 'IsArray:', Array.isArray(departments));
@@ -180,10 +194,10 @@ export default function Profile() {
         description: "Your profile has been successfully updated",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Error",
-        description: "Failed to update profile. Please try again.",
+        description: error?.message || "Failed to update profile. Please try again.",
         variant: "destructive",
       });
     },
