@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import LogoIconPurplePath from "@/assets/LogoIcon_Purple.png";
+import ProxaLogoPath from "@/assets/proxa-logo.png";
 
 export function PublicFooter() {
   return (
@@ -8,7 +8,7 @@ export function PublicFooter() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <img src={LogoIconPurplePath} alt="Proxa People Logo" className="h-6 w-6" />
+              <img src={ProxaLogoPath} alt="Proxa People Logo" className="h-6 w-6" />
               <span className="font-heading text-lg font-bold">Proxa People</span>
             </div>
             <p className="text-neutral-400 text-sm">

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import logoUrl from "@/assets/logo.webp";
+import logoUrl from "@/assets/proxa-logo.png";
 
 interface ProxaLogoProps {
   className?: string;
