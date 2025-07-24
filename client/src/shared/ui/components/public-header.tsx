@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/shared/ui/components/button";
-import ProxaLogoPath from "@/assets/proxa-logo.webp";
+import LogoIconPurplePath from "@/assets/LogoIcon_Purple.png";
 
 export function PublicHeader() {
   return (
@@ -8,7 +8,7 @@ export function PublicHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer">
-            <img src={ProxaLogoPath} alt="Proxa People Logo" className="h-8 w-8" />
+            <img src={LogoIconPurplePath} alt="Proxa People Logo" className="h-8 w-8" />
             <span className="font-heading text-xl font-bold">Proxa People</span>
           </div>
         </Link>
