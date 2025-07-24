@@ -175,7 +175,7 @@ export function ScheduleMeetingDialog() {
           <span>Schedule 1:1</span>
         </AnimatedButton>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="max-w-[95vw] sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Schedule 1:1 Meeting</DialogTitle>
           <DialogDescription>
@@ -183,7 +183,7 @@ export function ScheduleMeetingDialog() {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4 px-1">
             <FormField
               control={form.control}
               name="title"
@@ -226,7 +226,7 @@ export function ScheduleMeetingDialog() {
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="date"
@@ -333,7 +333,7 @@ export function ScheduleMeetingDialog() {
               
               {!file ? (
                 <div 
-                  className="flex flex-col items-center justify-center border-2 border-dashed p-6 rounded-lg bg-gray-50 dark:bg-gray-900 cursor-pointer transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="flex flex-col items-center justify-center border-2 border-dashed p-4 sm:p-6 rounded-lg bg-gray-50 dark:bg-gray-900 cursor-pointer transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={(e) => {
                     e.preventDefault();

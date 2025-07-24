@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { 
   Globe, 
   Upload, 
@@ -41,6 +41,10 @@ import { Helmet } from 'react-helmet';
 import { ProxaIcon } from "@/lib/proxa-icon";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { useAuth } from "@/app/store/auth0-store";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import type { User, Department } from "@/shared/schema";
 
 // Company settings form schema
 const companyFormSchema = z.object({
@@ -75,26 +79,49 @@ type UserFormValues = z.infer<typeof userFormSchema>;
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState("company");
+  const { user: authUser, isAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
   
   // File input ref for profile image upload
   const profileImageInputRef = useRef<HTMLInputElement>(null);
+  
+  // Fetch current user data
+  const { data: currentUser, isLoading: userLoading } = useQuery({
+    queryKey: ['/api/auth/me'],
+    queryFn: () => apiRequest('GET', '/api/auth/me'),
+    enabled: isAuthenticated,
+  });
+  
+  // Fetch departments for dropdown
+  const { data: departments } = useQuery({
+    queryKey: ['/api/departments'],
+    queryFn: () => apiRequest('GET', '/api/departments'),
+    enabled: isAuthenticated,
+  });
+  
+  // Fetch company settings
+  const { data: companyData, isLoading: companyLoading } = useQuery({
+    queryKey: ['/api/auth/company'],
+    queryFn: () => apiRequest('GET', '/api/auth/company'),
+    enabled: isAuthenticated,
+  });
   
   // Company form
   const companyForm = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
-      companyName: "Acme Corporation",
-      industry: "technology",
-      companySize: "51-200",
-      description: "A leading provider of innovative solutions for businesses of all sizes.",
-      website: "https://acme.com",
+      companyName: "",
+      industry: "",
+      companySize: "",
+      description: "",
+      website: "",
       timezone: "America/New_York",
       logo: "",
-      address: "123 Main Street",
-      city: "San Francisco",
-      state: "CA",
-      zipCode: "94105",
-      country: "United States",
+      address: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
     },
   });
   
@@ -102,30 +129,90 @@ export default function Profile() {
   const userForm = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
-      firstName: "Jane",
-      lastName: "Smith",
-      email: "jane.smith@acme.com",
-      jobTitle: "Senior Product Manager",
-      department: "product",
-      bio: "Experienced product manager with a passion for building innovative solutions.",
+      firstName: "",
+      lastName: "",
+      email: "",
+      jobTitle: "",
+      department: "",
+      bio: "",
       language: "en",
       photo: "",
     },
   });
   
+  // Update form defaults when user data is loaded
+  useEffect(() => {
+    if (currentUser) {
+      userForm.reset({
+        firstName: currentUser.firstName || "",
+        lastName: currentUser.lastName || "",
+        email: currentUser.email || "",
+        jobTitle: currentUser.jobTitle || "",
+        department: currentUser.department || "",
+        bio: "", // Bio not in current schema
+        language: "en", // Default language
+        photo: currentUser.profileImage || "",
+      });
+    }
+  }, [currentUser, userForm]);
+  
+  // Update company form defaults when company data is loaded
+  useEffect(() => {
+    if (companyData?.company) {
+      companyForm.reset(companyData.company);
+    }
+  }, [companyData, companyForm]);
+  
+  // User update mutation
+  const updateUserMutation = useMutation({
+    mutationFn: (data: Partial<User>) => apiRequest('PUT', '/api/auth/me', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Company update mutation
+  const updateCompanyMutation = useMutation({
+    mutationFn: (data: CompanyFormValues) => apiRequest('PUT', '/api/auth/company', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/company'] });
+      toast({
+        title: "Company settings updated",
+        description: "Your company settings have been successfully updated",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error?.message || "Failed to update company settings. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+  
   const onCompanySubmit = (data: CompanyFormValues) => {
-    console.log("Company form submitted:", data);
-    toast({
-      title: "Company settings updated",
-      description: "Your company settings have been successfully updated",
-    });
+    updateCompanyMutation.mutate(data);
   };
   
   const onUserSubmit = (data: UserFormValues) => {
-    console.log("User form submitted:", data);
-    toast({
-      title: "Profile updated",
-      description: "Your profile has been successfully updated",
+    updateUserMutation.mutate({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      jobTitle: data.jobTitle,
+      department: data.department,
+      profileImage: data.photo,
     });
   };
 
@@ -313,7 +400,9 @@ export default function Profile() {
                       />
                       
                       <div className="pt-4">
-                        <Button type="submit">Save Company Settings</Button>
+                        <Button type="submit" disabled={updateCompanyMutation.isPending || companyLoading}>
+                          {updateCompanyMutation.isPending ? "Saving..." : "Save Company Settings"}
+                        </Button>
                       </div>
                     </form>
                   </Form>
@@ -331,7 +420,13 @@ export default function Profile() {
                       <div className="flex flex-col md:flex-row gap-8">
                         <div className="flex flex-col items-center justify-center">
                           <div className="w-40 h-40 mb-4 rounded-full bg-secondary overflow-hidden flex items-center justify-center">
-                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=160&h=160" alt="Profile" className="w-full h-full object-cover" />
+                            {currentUser?.profileImage ? (
+                              <img src={currentUser.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-4xl font-bold">
+                                {currentUser?.firstName?.[0]}{currentUser?.lastName?.[0]}
+                              </div>
+                            )}
                           </div>
                           <Button variant="outline" size="sm">
                             <Upload className="h-4 w-4 mr-2" />
@@ -412,16 +507,24 @@ export default function Profile() {
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      <SelectItem value="engineering">Engineering</SelectItem>
-                                      <SelectItem value="product">Product</SelectItem>
-                                      <SelectItem value="design">Design</SelectItem>
-                                      <SelectItem value="marketing">Marketing</SelectItem>
-                                      <SelectItem value="sales">Sales</SelectItem>
-                                      <SelectItem value="support">Support</SelectItem>
-                                      <SelectItem value="hr">Human Resources</SelectItem>
-                                      <SelectItem value="operations">Operations</SelectItem>
-                                      <SelectItem value="finance">Finance</SelectItem>
-                                      <SelectItem value="legal">Legal</SelectItem>
+                                      {departments?.map((dept: Department) => (
+                                        <SelectItem key={dept.id} value={dept.name.toLowerCase()}>
+                                          {dept.name}
+                                        </SelectItem>
+                                      )) || (
+                                        <>
+                                          <SelectItem value="engineering">Engineering</SelectItem>
+                                          <SelectItem value="product">Product</SelectItem>
+                                          <SelectItem value="design">Design</SelectItem>
+                                          <SelectItem value="marketing">Marketing</SelectItem>
+                                          <SelectItem value="sales">Sales</SelectItem>
+                                          <SelectItem value="support">Support</SelectItem>
+                                          <SelectItem value="hr">Human Resources</SelectItem>
+                                          <SelectItem value="operations">Operations</SelectItem>
+                                          <SelectItem value="finance">Finance</SelectItem>
+                                          <SelectItem value="legal">Legal</SelectItem>
+                                        </>
+                                      )}
                                     </SelectContent>
                                   </Select>
                                   <FormMessage />
@@ -474,7 +577,9 @@ export default function Profile() {
                       />
                       
                       <div className="pt-4">
-                        <Button type="submit">Save Profile</Button>
+                        <Button type="submit" disabled={updateUserMutation.isPending || userLoading}>
+                          {updateUserMutation.isPending ? "Saving..." : "Save Profile"}
+                        </Button>
                       </div>
                     </form>
                   </Form>

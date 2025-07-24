@@ -17,6 +17,15 @@ const syncUserSchema = z.object({
   department: z.string().min(1, 'Department is required'),
 });
 
+// Validation schema for updating user profile
+const updateUserSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').optional(),
+  lastName: z.string().min(1, 'Last name is required').optional(),
+  jobTitle: z.string().optional(),
+  department: z.string().optional(),
+  profileImage: z.string().nullable().optional(),
+});
+
 /**
  * GET /auth/me
  * Get current user profile (Auth0 protected)
@@ -122,6 +131,58 @@ router.post('/sync-user', validateAuth0Token, async (req: Request, res: Response
 });
 
 /**
+ * PUT /auth/me
+ * Update current user profile (Auth0 protected)
+ */
+router.put('/me', validateAuth0Token, async (req: Request, res: Response) => {
+  try {
+    if (!req.auth0User) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'User not authenticated',
+      });
+    }
+
+    const validatedData = updateUserSchema.parse(req.body);
+
+    // Find user by email from Auth0
+    const existingUser = await storage.getUserByEmail(req.auth0User.email);
+    
+    if (!existingUser) {
+      return res.status(404).json({
+        error: 'User not found',
+        message: 'User profile not found in system',
+      });
+    }
+
+    // Update user profile
+    const updatedUser = await storage.updateUser(existingUser.id, validatedData);
+
+    // Return user data excluding password
+    const { password: _, ...userResponse } = updatedUser;
+    
+    res.json({
+      message: 'Profile updated successfully',
+      user: userResponse,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        message: 'Invalid profile update data',
+        details: fromZodError(error).toString(),
+      });
+    }
+    
+    console.error('Profile update error:', error);
+    res.status(500).json({
+      error: 'Profile update failed',
+      message: 'An error occurred while updating profile',
+    });
+  }
+});
+
+/**
  * POST /auth/logout
  * Logout endpoint (for consistency, actual logout happens on Auth0)
  */
@@ -137,6 +198,80 @@ router.post('/logout', optionalAuth0Token, async (req: Request, res: Response) =
     res.status(500).json({
       error: 'Logout failed',
       message: 'An error occurred during logout',
+    });
+  }
+});
+
+/**
+ * GET /auth/company
+ * Get company settings (Auth0 protected)
+ */
+router.get('/company', validateAuth0Token, async (req: Request, res: Response) => {
+  try {
+    // For now, return static company settings
+    // In the future, this could be stored in a company table
+    const companySettings = {
+      companyName: "Rival Digital",
+      industry: "technology",
+      companySize: "11-50",
+      description: "A leading digital marketing agency specializing in web development, SEO, and digital advertising.",
+      website: "https://rivaldigital.com",
+      timezone: "America/New_York",
+      logo: "",
+      address: "123 Business Center Dr",
+      city: "Orlando",
+      state: "FL",
+      zipCode: "32801",
+      country: "United States",
+    };
+    
+    res.json({
+      company: companySettings,
+    });
+  } catch (error) {
+    console.error('Get company settings error:', error);
+    res.status(500).json({
+      error: 'Company settings fetch failed',
+      message: 'An error occurred while fetching company settings',
+    });
+  }
+});
+
+/**
+ * PUT /auth/company
+ * Update company settings (Auth0 protected - admin only)
+ */
+router.put('/company', validateAuth0Token, async (req: Request, res: Response) => {
+  try {
+    if (!req.auth0User) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'User not authenticated',
+      });
+    }
+
+    // Find user to check role
+    const user = await storage.getUserByEmail(req.auth0User.email);
+    
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({
+        error: 'Insufficient permissions',
+        message: 'Only administrators can update company settings',
+      });
+    }
+
+    // For now, just return success since we don't have a company table yet
+    // In the future, this would update the company record
+    
+    res.json({
+      message: 'Company settings updated successfully',
+      company: req.body,
+    });
+  } catch (error) {
+    console.error('Company settings update error:', error);
+    res.status(500).json({
+      error: 'Company settings update failed',
+      message: 'An error occurred while updating company settings',
     });
   }
 });

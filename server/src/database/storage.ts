@@ -26,6 +26,7 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(userId: number, userData: Partial<InsertUser>): Promise<User>;
   getAllUsers(): Promise<User[]>;
   updateUserPassword(userId: number, hashedPassword: string): Promise<void>;
   
@@ -637,6 +638,24 @@ export class DatabaseStorage implements IStorage {
 
   async createUser(userData: InsertUser): Promise<User> {
     return db.users.create(userData);
+  }
+
+  async updateUser(userId: number, userData: Partial<InsertUser>): Promise<User> {
+    // Check if it's a demo user
+    if (userId >= 1 && userId <= 33 && this.demoUsers[userId]) {
+      // Update demo user in memory
+      const updatedUser = { ...this.demoUsers[userId], ...userData, updatedAt: new Date() };
+      this.demoUsers[userId] = updatedUser;
+      return updatedUser;
+    }
+    
+    // Update real user in database
+    const [updatedUser] = await db.update(users)
+      .set({ ...userData, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
   }
 
   async getAllUsers(): Promise<User[]> {
