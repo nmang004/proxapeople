@@ -37,8 +37,9 @@ export default function OneOnOne() {
   });
 
   // Metrics calculations (in a real app, these would come from the API)
+  const now = new Date();
   const upcomingMeetingsCount = meetings?.filter(m => 
-    m.status === "scheduled" && new Date(m.scheduledAt) > new Date()
+    m.status === "scheduled" && new Date(m.scheduledAt) > now
   )?.length || 0;
   
   const completionRate = meetings && meetings.length > 0 ? 
@@ -61,11 +62,14 @@ export default function OneOnOne() {
   
   // Filter meetings based on active tab
   const filteredMeetings = meetings?.filter(meeting => {
+    const meetingDate = new Date(meeting.scheduledAt);
+    const now = new Date();
+    
     if (activeTab === "upcoming") {
-      return meeting.status === "scheduled" && new Date(meeting.scheduledAt) >= new Date();
+      return meeting.status === "scheduled" && meetingDate > now;
     } else if (activeTab === "past") {
       return meeting.status === "completed" || 
-             (meeting.status === "scheduled" && new Date(meeting.scheduledAt) < new Date());
+             (meeting.status === "scheduled" && meetingDate < now);
     } else if (activeTab === "action") {
       return meeting.agendaItems && Array.isArray(meeting.agendaItems) && meeting.agendaItems.length > 0;
     }
